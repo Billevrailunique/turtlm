@@ -1,0 +1,8 @@
+(executable
+	 (name dessin)
+	 (libraries graphics))
+(ocamllex (modules lexer))
+(menhir
+  (modules parser)
+  (infer true)
+  (flags --explain --dump))
