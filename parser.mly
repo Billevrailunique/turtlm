@@ -27,7 +27,7 @@ instruction:
 expression: 
   | n=NUM { Valeur n }
   | LPAREN e=expression RPAREN { e }
-  | l=expression op=operateur r=expression { Op (l, op, r) }
+  | l=expression op=operateur r=expression { Op (l, op, r, $startpos) }
 
 %inline operateur:
   | PLUS { Plus }

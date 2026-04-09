@@ -1,12 +1,14 @@
 {
   open Parser
+  exception Error of string
 }
 
-let layout = [ ' ' '\t' '\n' ]
+let layout = [ ' ' '\t' ]
 let num = ['0'-'9']
 
 rule token = parse
-  | layout  { token lexbuf }  (* TODO *)
+  | layout  { token lexbuf }  
+  | '\n' {Lexing.new_line lexbuf; token lexbuf}
   | "BaisserPinceau"  { DRAW_ON }
   | "LeverPinceau"  { DRAW_OFF }
   | "Avancer"  { MOVE }
@@ -20,4 +22,4 @@ rule token = parse
   | '/' {DIVIDE}
   | ';' {SEMICOLON}
   | eof { EOF }
-  | _			{ failwith "unexpected character" }
+  | _			{ raise (Error (Printf.sprintf "caractère inattendu : %c" (Lexing.lexeme_char lexbuf 0))) }

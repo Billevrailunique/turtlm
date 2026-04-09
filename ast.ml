@@ -4,7 +4,7 @@ and instruction = Draw_on
                 | Move of expression
                 | Turn of expression
 and expression = Valeur of string
-                | Op of expression * operateur * expression
+                | Op of expression * operateur * expression * Lexing.position
 and operateur = Plus 
                 | Minus
                 | Time 
