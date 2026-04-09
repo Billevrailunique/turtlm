@@ -1,7 +1,14 @@
+%{
+open Ast
+%}
+
 %token EOF DRAW_OFF DRAW_ON DIVIDE TIME MINUS PLUS MOVE TURN RPAREN LPAREN SEMICOLON
 %token<string> ID NUM
 
-%start<unit> programme
+%left PLUS MINUS
+%left TIME DIVIDE
+
+%start<bloc_instruction> programme
 
 %%
 
@@ -9,7 +16,7 @@ programme: b=bloc_instruction EOF { b }
 
 
 (*cf doc menhir option -> epsilon *)
-bloc_instruction: i=instruction SEMICOLON b=bloc_instruction { i :: b }
+bloc_instruction: l=separated_list(SEMICOLON, instruction) { l }
 
 instruction: 
   | DRAW_ON { Draw_on }
@@ -20,9 +27,9 @@ instruction:
 expression: 
   | n=NUM { Valeur n }
   | LPAREN e=expression RPAREN { e }
-  | l=expression op=operateur r=expression { Op l op r }
+  | l=expression op=operateur r=expression { Op (l, op, r) }
 
-operation:
+%inline operateur:
   | PLUS { Plus }
   | MINUS { Minus }
   | TIME { Time }

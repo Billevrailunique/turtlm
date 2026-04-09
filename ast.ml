@@ -1,6 +1,6 @@
 (* parser *)
  
-type bloc_instruction = List of instruction
+type bloc_instruction = instruction list
 and instruction = Draw_on
                 | Draw_off
                 | Move of expression
