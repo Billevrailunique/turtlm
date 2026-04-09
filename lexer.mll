@@ -6,7 +6,7 @@ let layout = [ ' ' '\t' '\n' ]
 let num = ['0'-'9']
 
 rule token = parse
-  | layout  { main lexbuf }  (* TODO *)
+  | layout  { token lexbuf }  (* TODO *)
   | "BaisserPinceau"  { DRAW_ON }
   | "LeverPinceau"  { DRAW_OFF }
   | "Avancer"  { MOVE }

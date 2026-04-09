@@ -5,6 +5,8 @@ open Ast
 %token EOF DRAW_OFF DRAW_ON DIVIDE TIME MINUS PLUS MOVE TURN RPAREN LPAREN SEMICOLON
 %token<string> ID NUM
 
+
+
 %left PLUS MINUS
 %left TIME DIVIDE
 
@@ -14,8 +16,6 @@ open Ast
 
 programme: b=bloc_instruction EOF { b }
 
-
-(*cf doc menhir option -> epsilon *)
 bloc_instruction: l=separated_list(SEMICOLON, instruction) { l }
 
 instruction: 

@@ -1,6 +1,7 @@
 (executable
-	 (name dessin)
-	 (libraries graphics))
+	 (name main)
+   (modules main parser lexer ast)
+	 (libraries graphics)) 
 (ocamllex (modules lexer))
 (menhir
   (modules parser)
