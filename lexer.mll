@@ -15,7 +15,27 @@ rule token = parse
   | "LeverPinceau"  { DRAW_OFF }
   | "Avancer"  { MOVE }
   | "Tourner"  { TURN }
+  | "Vrais"  {TRUE}
+  | "Faux"  {FALSE}
   | "Var" { VAR }
+  | "Si" { IF }
+  | "==" {BOOL_EQUAL}
+  | "<=" {LESS_EQUAL}
+  | ">=" {MORE_EQUAL}
+  | "!=" {NOT_EQUAL}
+  | "<"  { LESS }
+  | ">"  {MORE}
+  | "Faire" { DO }
+  | "Alors" {THEN}
+  | "Sinon" {ELSE}
+  | "Repeter"  {REPEAT}
+  | "Fois" { MANY_TIMES }
+  | "Tant que" {WHILE}
+  | "Et" {AND}
+  | "Not" {NOT}
+  | "Ou" {OR}
+  | "Debut" {START}
+  | "Fin"  {END}
   | "=" {EGALE }
   | num+  { NUM (Lexing.lexeme lexbuf) }
   | "LargeurPinceau" { WIDTH_CHANGE }

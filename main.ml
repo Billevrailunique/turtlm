@@ -48,16 +48,38 @@ let rec next_action = function
                     Printf.eprintf "Erreur var %s already declared quand on arrive à la ligne %d\n" name pos.Lexing.pos_lnum;
                     exit 1 
                 end
-    | VarDeclaInit (name, value, pos) -> if not (already_declared name !vars) then let a = ref (name, Some value) in vars := a :: !vars else
+    | VarDeclaInit (name, value, pos) -> if not (already_declared name !vars) then let a = ref (name, Some (eval_exp value)) in vars := a :: !vars else
                  begin
                     Printf.eprintf "Erreur var %s already declared quand on arrive à la ligne %d\n" name pos.Lexing.pos_lnum;
                     exit 1 
                 end
-    | VarInit (name, value, pos) -> if (change_val name value !vars) then () else 
+    | VarInit (name, value, pos) -> let v = (eval_exp value) in if (change_val name v !vars) then () else 
                 begin
                     Printf.eprintf "Erreur var %s not declared yet quand on arrive à la ligne %d\n" name pos.Lexing.pos_lnum;
                     exit 1 
                 end
+    | Repeat (n,i) -> for _ = 0 to int_of_string n do 
+                        decode i
+                    done
+    | While (c,i) -> while (eval_bool c) do 
+                       decode i 
+                    done 
+    | IfThen (c,i) -> if eval_bool c then decode i 
+    | IfThenElse (c,i1,i2) -> if eval_bool c then decode i1 else decode i2
+
+and eval_bool = function    
+    | True -> true 
+    | False -> false 
+    | And (c1,c2) -> (eval_bool c1) && (eval_bool c2)
+    | Or (c1,c2) -> (eval_bool c1) || (eval_bool c2)
+    | Not c -> not (eval_bool c)
+    | TestBool (e1, op, e2) ->  let a = (eval_exp e1) and  b = (eval_exp e2) in match op with 
+                                | Less -> a < b 
+                                | More -> a > b
+                                | Less_equal -> a <= b 
+                                | More_equal -> a >= b 
+                                | Bool_equal -> a == b 
+                                | Not_equal -> a != b 
 
 and already_declared name = function 
     | [] -> false     
@@ -76,7 +98,7 @@ and eval_exp = function
     | Valeur a -> float_of_string a
     | Op (l, op, r, pos) -> eval_op pos l r op 
     | Var (name, pos) -> match get_val name !vars with 
-                            | Some e -> eval_exp e
+                            | Some e -> e
                             | None -> 
                 begin 
                     Printf.eprintf "Erreur var %s not initialisé yet quand on arrive à la ligne %d\n" name pos.Lexing.pos_lnum ;
@@ -106,7 +128,7 @@ and get_val name = function
     | r :: l  -> match !r with (a,b) -> if String.equal a name then b else get_val name l
     
 
-let rec decode bloc =  match bloc with 
+and decode bloc =  match bloc with 
                     | i :: suite -> next_action i; decode suite
                     | [] -> ()
                 
