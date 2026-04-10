@@ -15,6 +15,7 @@ rule token = parse
   | "Avancer"  { MOVE }
   | "Tourner"  { TURN }
   | num+  { NUM (Lexing.lexeme lexbuf) }
+  | "LargeurPinceau" { WIDTH_CHANGE }
   | "CouleurPinceau" { COLOR_CHANGE }
   | hexcode hexcode hexcode hexcode hexcode hexcode {HEX (Lexing.lexeme lexbuf)}
   | "rouge"  {RED}

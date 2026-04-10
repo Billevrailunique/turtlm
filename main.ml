@@ -30,6 +30,7 @@ let rec next_action = function
                     else rmoveto dx dy
     | Turn e -> val_angle := !val_angle +. eval_exp e
     | CouleurPinceau c -> let couleur = eval_couleur c in set_color couleur
+    | LargeurPinceau e -> set_line_width (int_of_float (eval_exp e))
 
 and eval_exp = function 
     | Valeur a -> float_of_string a

@@ -2,7 +2,7 @@
 open Ast
 %}
 
-%token EOF DRAW_OFF DRAW_ON DIVIDE TIME MINUS PLUS MOVE TURN RPAREN LPAREN SEMICOLON RED BLUE GREEN BLACK YELLOW COLOR_CHANGE
+%token EOF DRAW_OFF DRAW_ON DIVIDE TIME MINUS PLUS MOVE TURN RPAREN LPAREN SEMICOLON RED BLUE GREEN BLACK YELLOW COLOR_CHANGE WIDTH_CHANGE
 %token<string> HEX NUM
 
 
@@ -24,6 +24,7 @@ instruction:
   | MOVE c=expression { Move c }
   | TURN c=expression { Turn c }
   | COLOR_CHANGE c=color { CouleurPinceau c }
+  | WIDTH_CHANGE e=expression { LargeurPinceau e }
 
 %inline color: 
   | RED { Red }

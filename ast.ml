@@ -4,6 +4,7 @@ and instruction = Draw_on
                 | Move of expression
                 | Turn of expression
                 | CouleurPinceau of color
+                | LargeurPinceau of expression
 and expression = Valeur of string
                 | Op of expression * operateur * expression * Lexing.position
 and operateur = Plus 
