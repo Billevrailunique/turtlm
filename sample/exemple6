@@ -1,0 +1,9 @@
+CouleurPinceau vert ;
+BaisserPinceau ;
+Avancer 50;
+Tourner 120;
+CouleurPinceau bleu ;
+Avancer 50;
+Tourner 120;
+CouleurPinceau FF1493 ;
+Avancer 50

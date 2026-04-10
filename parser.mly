@@ -2,8 +2,8 @@
 open Ast
 %}
 
-%token EOF DRAW_OFF DRAW_ON DIVIDE TIME MINUS PLUS MOVE TURN RPAREN LPAREN SEMICOLON
-%token<string> ID NUM
+%token EOF DRAW_OFF DRAW_ON DIVIDE TIME MINUS PLUS MOVE TURN RPAREN LPAREN SEMICOLON RED BLUE GREEN BLACK YELLOW COLOR_CHANGE WIDTH_CHANGE
+%token<string> HEX NUM
 
 
 
@@ -21,8 +21,19 @@ bloc_instruction: l=separated_list(SEMICOLON, instruction) { l }
 instruction: 
   | DRAW_ON { Draw_on }
   | DRAW_OFF { Draw_off }
-  | MOVE c=expression { Move c }
+  | MOVE c=expression { Move (c, $startpos) }
   | TURN c=expression { Turn c }
+  | COLOR_CHANGE c=color { CouleurPinceau c }
+  | WIDTH_CHANGE e=expression { LargeurPinceau (e,$startpos) }
+
+%inline color: 
+  | RED { Red }
+  | BLUE { Blue }
+  | GREEN { Green }
+  | BLACK { Black }
+  | YELLOW  { Yellow }
+  | v=HEX  { Hexcode v }
+
 
 expression: 
   | n=NUM { Valeur n }
