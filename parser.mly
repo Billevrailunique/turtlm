@@ -2,8 +2,8 @@
 open Ast
 %}
 
-%token EOF DRAW_OFF DRAW_ON DIVIDE TIME MINUS PLUS MOVE TURN RPAREN LPAREN SEMICOLON RED BLUE GREEN BLACK YELLOW COLOR_CHANGE WIDTH_CHANGE
-%token<string> HEX NUM
+%token EOF DRAW_OFF DRAW_ON DIVIDE TIME MINUS PLUS MOVE TURN RPAREN LPAREN SEMICOLON RED BLUE GREEN BLACK YELLOW COLOR_CHANGE WIDTH_CHANGE VAR EGALE
+%token<string> HEX NUM ID
 
 
 
@@ -25,6 +25,9 @@ instruction:
   | TURN c=expression { Turn c }
   | COLOR_CHANGE c=color { CouleurPinceau c }
   | WIDTH_CHANGE e=expression { LargeurPinceau (e,$startpos) }
+  | VAR str=ID { VarDecla (str, $startpos) } 
+  | VAR str=ID EGALE e=expression  { VarDeclaInit (str, e, $startpos) }
+  | str=ID EGALE e=expression  { VarInit (str, e, $startpos) }
 
 %inline color: 
   | RED { Red }
@@ -39,6 +42,7 @@ expression:
   | n=NUM { Valeur n }
   | LPAREN e=expression RPAREN { e }
   | l=expression op=operateur r=expression { Op (l, op, r, $startpos) }
+  | str=ID  { Var (str,$startpos) }
 
 %inline operateur:
   | PLUS { Plus }
