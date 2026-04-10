@@ -1,0 +1,10 @@
+Var angleDroit = 90;
+Var longueur = 10;
+BaisserPinceau ;
+Avancer longueur ;
+Tourner angleDroit ;
+Avancer longueur ;
+Tourner angleDroit ;
+Avancer longueur ;
+Tourner angleDroit ;
+Avancer longueur 

@@ -5,7 +5,8 @@
 
 let layout = [ ' ' '\t' ]
 let num = ['0'-'9']
-let hexcode = ['A'-'F' '0'- '9']
+let hexcode = ['A'-'F' '0'-'9']
+let id = ['a'-'z']['A'-'Z' '0'-'9' 'a'-'z']*
 
 rule token = parse
   | layout  { token lexbuf }  
@@ -14,6 +15,8 @@ rule token = parse
   | "LeverPinceau"  { DRAW_OFF }
   | "Avancer"  { MOVE }
   | "Tourner"  { TURN }
+  | "Var" { VAR }
+  | "=" {EGALE }
   | num+  { NUM (Lexing.lexeme lexbuf) }
   | "LargeurPinceau" { WIDTH_CHANGE }
   | "CouleurPinceau" { COLOR_CHANGE }
@@ -30,5 +33,6 @@ rule token = parse
   | '*' {TIME}
   | '/' {DIVIDE}
   | ';' {SEMICOLON}
+  | id { ID (Lexing.lexeme lexbuf)}
   | eof { EOF }
   | _			{ raise (Error (Printf.sprintf "caractère inattendu : %c" (Lexing.lexeme_char lexbuf 0))) }
