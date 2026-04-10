@@ -2,8 +2,8 @@
 open Ast
 %}
 
-%token EOF DRAW_OFF DRAW_ON DIVIDE TIME MINUS PLUS MOVE TURN RPAREN LPAREN SEMICOLON
-%token<string> ID NUM
+%token EOF DRAW_OFF DRAW_ON DIVIDE TIME MINUS PLUS MOVE TURN RPAREN LPAREN SEMICOLON RED BLUE GREEN BLACK YELLOW COLOR_CHANGE
+%token<string> HEX NUM
 
 
 
@@ -23,6 +23,16 @@ instruction:
   | DRAW_OFF { Draw_off }
   | MOVE c=expression { Move c }
   | TURN c=expression { Turn c }
+  | COLOR_CHANGE c=color { CouleurPinceau c }
+
+%inline color: 
+  | RED { Red }
+  | BLUE { Blue }
+  | GREEN { Green }
+  | BLACK { Black }
+  | YELLOW  { Yellow }
+  | v=HEX  { Hexcode v }
+
 
 expression: 
   | n=NUM { Valeur n }

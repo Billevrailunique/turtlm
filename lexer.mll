@@ -5,6 +5,7 @@
 
 let layout = [ ' ' '\t' ]
 let num = ['0'-'9']
+let hexcode = ['A'-'F' '0'- '9']
 
 rule token = parse
   | layout  { token lexbuf }  
@@ -14,6 +15,13 @@ rule token = parse
   | "Avancer"  { MOVE }
   | "Tourner"  { TURN }
   | num+  { NUM (Lexing.lexeme lexbuf) }
+  | "CouleurPinceau" { COLOR_CHANGE }
+  | hexcode hexcode hexcode hexcode hexcode hexcode {HEX (Lexing.lexeme lexbuf)}
+  | "rouge"  {RED}
+  | "bleu" {BLUE}
+  | "vert" {GREEN}
+  | "noir" {BLACK}
+  | "jaune" {YELLOW}
   | ')'	{ RPAREN }
   | '('	{ LPAREN }
   | '+' {PLUS}

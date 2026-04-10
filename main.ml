@@ -16,7 +16,7 @@ let angle () = !val_angle *. Float.pi /. 180.
 
 let init_graphics () = open_graph " 800x800";
         set_window_title "projet GAS6";
-        set_line_width 5;
+        set_line_width 1;
         set_color black;
         moveto 400 400
 
@@ -29,6 +29,7 @@ let rec next_action = function
                  in if !draw then rlineto dx dy
                     else rmoveto dx dy
     | Turn e -> val_angle := !val_angle +. eval_exp e
+    | CouleurPinceau c -> let couleur = eval_couleur c in set_color couleur
 
 and eval_exp = function 
     | Valeur a -> float_of_string a
@@ -41,6 +42,13 @@ and eval_exp = function
                                     Printf.eprintf "Erreur division par 0 à la ligne %d\n" pos.Lexing.pos_lnum ;
                                     exit 1
                                 end
+and eval_couleur = function
+    | Red  -> red
+    | Blue  -> blue
+    | Green  -> green
+    | Yellow -> yellow 
+    | Black  -> black 
+    | Hexcode v  ->  let v1 = int_of_string ("0X" ^ String.sub v 0 2 ) and v2 = int_of_string ("0X" ^ String.sub v 2 2 ) and v3 = int_of_string ("0X" ^ String.sub v 4 2 ) in rgb v1 v2 v3
 
 let rec decode bloc =  match bloc with 
                     | i :: suite -> next_action i; decode suite
