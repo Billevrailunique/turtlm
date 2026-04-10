@@ -1,0 +1,8 @@
+BaisserPinceau ;
+Avancer 1+2+3+4;
+Tourner 3*3*5+45;
+Avancer (1 + (2 + (3 + (4))));
+Tourner 90/2*2;
+Avancer 5/1 + (2+3);
+Tourner 90;
+Avancer 10
