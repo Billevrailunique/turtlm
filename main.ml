@@ -45,17 +45,17 @@ let rec next_action = function
                     end
     | VarDecla (name, pos) -> if not (already_declared name !vars) then let a = ref (name, None) in vars := a :: !vars else 
                 begin
-                    Printf.eprintf "var %s already declared quand on arrive à la ligne %d\n" name pos.Lexing.pos_lnum;
+                    Printf.eprintf "Erreur var %s already declared quand on arrive à la ligne %d\n" name pos.Lexing.pos_lnum;
                     exit 1 
                 end
     | VarDeclaInit (name, value, pos) -> if not (already_declared name !vars) then let a = ref (name, Some value) in vars := a :: !vars else
                  begin
-                    Printf.eprintf "var %s already declared quand on arrive à la ligne %d\n" name pos.Lexing.pos_lnum;
+                    Printf.eprintf "Erreur var %s already declared quand on arrive à la ligne %d\n" name pos.Lexing.pos_lnum;
                     exit 1 
                 end
     | VarInit (name, value, pos) -> if (change_val name value !vars) then () else 
                 begin
-                    Printf.eprintf "var %s not declared yet quand on arrive à la ligne %d\n" name pos.Lexing.pos_lnum;
+                    Printf.eprintf "Erreur var %s not declared yet quand on arrive à la ligne %d\n" name pos.Lexing.pos_lnum;
                     exit 1 
                 end
 
@@ -79,7 +79,7 @@ and eval_exp = function
                             | Some e -> eval_exp e
                             | None -> 
                 begin 
-                    Printf.eprintf "Erreur var %s not declared yet quand on arrive à la ligne %d\n" name pos.Lexing.pos_lnum ;
+                    Printf.eprintf "Erreur var %s not initialisé yet quand on arrive à la ligne %d\n" name pos.Lexing.pos_lnum ;
                     exit 1
                 end
 
