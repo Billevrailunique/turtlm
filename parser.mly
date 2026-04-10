@@ -21,10 +21,10 @@ bloc_instruction: l=separated_list(SEMICOLON, instruction) { l }
 instruction: 
   | DRAW_ON { Draw_on }
   | DRAW_OFF { Draw_off }
-  | MOVE c=expression { Move c }
+  | MOVE c=expression { Move (c, $startpos) }
   | TURN c=expression { Turn c }
   | COLOR_CHANGE c=color { CouleurPinceau c }
-  | WIDTH_CHANGE e=expression { LargeurPinceau e }
+  | WIDTH_CHANGE e=expression { LargeurPinceau (e,$startpos) }
 
 %inline color: 
   | RED { Red }
