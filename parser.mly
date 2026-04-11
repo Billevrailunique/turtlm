@@ -29,11 +29,10 @@ instruction:
   | VAR str=ID { VarDecla (str, $startpos) } 
   | VAR str=ID EGALE e=expression  { VarDeclaInit (str, e, $startpos) }
   | str=ID EGALE e=expression  { VarInit (str, e, $startpos) }
-  | IF c=condition THEN i1=bloc_instruction ELSE i2=bloc_instruction  { IfThenElse (c, i1, i2) } 
-  | IF c=condition THEN i=bloc_instruction { IfThen (c,i) }
+  | IF c=condition THEN START i1=bloc_instruction END ELSE START i2=bloc_instruction END  { IfThenElse (c, i1, i2) } 
+  | IF c=condition THEN START i=bloc_instruction END { IfThen (c,i) }
   | WHILE c=condition DO START i=bloc_instruction END  { While (c,i) }
   | REPEAT n=NUM MANY_TIMES START i=bloc_instruction END { Repeat (n,i) }
-  | LPAREN i=instruction RPAREN  { i }
   
 
 %inline color: 

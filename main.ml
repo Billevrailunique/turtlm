@@ -2,6 +2,8 @@ open Ast
 open Graphics
 exception Division_by_zero
 
+let is_tested = Sys.getenv_opt "NO_WAIT" = None
+
 let lexbuf = Lexing.from_channel stdin 
 
 let ast =  try Parser.programme Lexer.token lexbuf
@@ -161,8 +163,9 @@ and aux bloc =  match bloc with
                     | [] -> ()
 
 
-let () = init_graphics () ;
+let () =
+        init_graphics () ;
          decode ast;
 
-        ignore(read_key());
+        if is_tested then ignore(read_key());
         close_graph () ;

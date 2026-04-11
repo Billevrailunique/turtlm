@@ -1,10 +1,14 @@
 BaisserPinceau;
 LargeurPinceau 100;
 Var a = 1;
-(Si a != 0
+Si a != 0
 Alors 
-Var b = 1 );
+Debut 
+Var b = 1 
+Fin;
 Si b != 0 
 Alors 
-CouleurPinceau rouge;
+Debut
+CouleurPinceau rouge
+Fin;
 Avancer 1
