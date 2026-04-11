@@ -1,0 +1,9 @@
+BaisserPinceau;
+Var a = 1;
+Var count = 0;
+Tant que count < 10 Faire
+Debut 
+Var b = 2;
+count = count + 1
+Fin;
+Var b = 3

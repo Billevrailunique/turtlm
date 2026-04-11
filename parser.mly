@@ -33,6 +33,7 @@ instruction:
   | IF c=condition THEN i=bloc_instruction { IfThen (c,i) }
   | WHILE c=condition DO START i=bloc_instruction END  { While (c,i) }
   | REPEAT n=NUM MANY_TIMES START i=bloc_instruction END { Repeat (n,i) }
+  | LPAREN i=instruction RPAREN  { i }
   
 
 %inline color: 

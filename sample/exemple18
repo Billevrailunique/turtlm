@@ -1,0 +1,10 @@
+BaisserPinceau;
+LargeurPinceau 100;
+Var a = 1;
+(Si a != 0
+Alors 
+Var b = 1 );
+Si b != 0 
+Alors 
+CouleurPinceau rouge;
+Avancer 1

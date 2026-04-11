@@ -14,7 +14,7 @@ let draw = ref false
 let val_angle = ref 90. 
 let angle () = !val_angle *. Float.pi /. 180. 
 
-let (vars:declared ref) = ref []
+let (env:environnement) = ref []
 
 let init_graphics () = open_graph " 800x800";
         set_window_title "projet GAS6";
@@ -43,17 +43,32 @@ let rec next_action = function
                     Printf.eprintf "Erreur largeur pinceau trop grande à la ligne %d\n" pos.Lexing.pos_lnum;
                     exit 1
                     end
-    | VarDecla (name, pos) -> if not (already_declared name !vars) then let a = ref (name, None) in vars := a :: !vars else 
-                begin
+    | VarDecla (name, pos) -> if not (already_declared name (flatten_spe !env)) then let a = ref (name, None) in 
+                                (match !env with 
+                                | vars :: _ -> vars := a :: !vars  
+                                | [] -> 
+                                    begin 
+                                        Printf.eprintf "Erreur, env n'est pas sencé être vide";
+                                        exit 1
+                                    end)
+                 
+                else begin
                     Printf.eprintf "Erreur var %s already declared quand on arrive à la ligne %d\n" name pos.Lexing.pos_lnum;
                     exit 1 
                 end
-    | VarDeclaInit (name, value, pos) -> if not (already_declared name !vars) then let a = ref (name, Some (eval_exp value)) in vars := a :: !vars else
-                 begin
+    | VarDeclaInit (name, value, pos) -> if not (already_declared name (flatten_spe !env)) then let a = ref (name, Some (eval_exp value)) in 
+                                            (match !env with 
+                                            | vars :: _ -> vars := a :: !vars
+                                            | [] -> 
+                                                begin 
+                                                    Printf.eprintf "Erreur, env n'est pas sencé être vide";
+                                                    exit 1
+                                                end)
+                else begin
                     Printf.eprintf "Erreur var %s already declared quand on arrive à la ligne %d\n" name pos.Lexing.pos_lnum;
                     exit 1 
                 end
-    | VarInit (name, value, pos) -> let v = (eval_exp value) in if (change_val name v !vars) then () else 
+    | VarInit (name, value, pos) -> let v = (eval_exp value) in if (change_val name v (flatten_spe !env)) then () else 
                 begin
                     Printf.eprintf "Erreur var %s not declared yet quand on arrive à la ligne %d\n" name pos.Lexing.pos_lnum;
                     exit 1 
@@ -86,18 +101,22 @@ and already_declared name = function
     | a :: otre -> match !a with (str,_) -> (if String.equal name str then true else already_declared name otre)
     
 
-and change_val name value = function 
-    | [] -> false
-    | r :: otre -> match !r with 
-                    | (a,_) -> if String.equal name a
-                                 then (r := (a, Some value) ; true)
-                                 else change_val name value otre
+and change_val name value = function
+                            | [] -> false
+                            | r :: otre -> match !r with 
+                                    | (a,_) -> if String.equal name a
+                                                then (r := (a, Some value) ; true)
+                                                else change_val name value otre
     
+
+and flatten_spe (env:declared list) = match env with 
+                                | [] -> []
+                                | r :: suite -> !r @ flatten_spe suite
 
 and eval_exp = function 
     | Valeur a -> float_of_string a
     | Op (l, op, r, pos) -> eval_op pos l r op 
-    | Var (name, pos) -> match get_val name !vars with 
+    | Var (name, pos) -> match get_val name (flatten_spe !env) with 
                             | Some e -> e
                             | None -> 
                 begin 
@@ -124,14 +143,22 @@ and eval_couleur = function
     | Hexcode v  ->  let v1 = int_of_string ("0X" ^ String.sub v 0 2 ) and v2 = int_of_string ("0X" ^ String.sub v 2 2 ) and v3 = int_of_string ("0X" ^ String.sub v 4 2 ) in rgb v1 v2 v3
 
 and get_val name = function 
-    | [] -> None
-    | r :: l  -> match !r with (a,b) -> if String.equal a name then b else get_val name l
+                    | [] -> None
+                    | r :: otre -> match !r with (a,b) -> if String.equal a name then b else get_val name otre
     
 
-and decode bloc =  match bloc with 
-                    | i :: suite -> next_action i; decode suite
+and decode bloc = env := ref [] :: !env ;
+                aux bloc;
+                match !env with 
+                    | _ :: l -> env := l
+                    | [] -> 
+                            begin
+                                Printf.eprintf "Erreur, dépiler env vide \n" ;
+                                exit 1
+                            end
+and aux bloc =  match bloc with 
+                    | i :: suite -> next_action i; aux suite
                     | [] -> ()
-                
 
 
 let () = init_graphics () ;

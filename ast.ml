@@ -38,6 +38,8 @@ and op_num = Less
             | Not_equal
             | Bool_equal 
 
-type declared =  (string * float option ) ref list
+type variable = (string * float option ) ref 
+type declared =  variable list ref 
+type environnement = declared list ref 
 
 
