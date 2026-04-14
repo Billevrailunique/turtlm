@@ -1,0 +1,10 @@
+Def foo (x, y)
+Debut 
+Var a = x;
+x = y;
+y = a
+Fin ;
+Var c = 100;
+CallProc foo(c , 4);
+BaisserPinceau;
+Avancer c

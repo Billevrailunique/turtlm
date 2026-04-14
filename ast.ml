@@ -12,9 +12,13 @@ and instruction = Draw_on
                 | While of condition * bloc_instruction
                 | IfThenElse of condition * bloc_instruction * bloc_instruction
                 | IfThen of condition * bloc_instruction
+                | FunDecla of string * string list * bloc_instruction 
+                | Return of expression * Lexing.position
+                | ProcCall of string * expression list * Lexing.position
 and expression = Valeur of string
                 | Op of expression * operateur * expression * Lexing.position
                 | Var of string * Lexing.position
+                | FunCall of string * expression list * Lexing.position
 and operateur = Plus 
                 | Minus
                 | Time 
@@ -41,5 +45,15 @@ and op_num = Less
 type variable = (string * float option ) ref 
 type declared =  variable list ref 
 type environnement = declared list ref 
+
+type fonction = (string * variable list * bloc_instruction) ref
+
+type contex = Global 
+            | Fonction
+
+
+exception ReturnValue of float
+exception TooManyArgsException
+exception ArgsMissingException
 
 

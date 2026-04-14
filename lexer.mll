@@ -18,6 +18,11 @@ rule token = parse
   | "Vrais"  {TRUE}
   | "Faux"  {FALSE}
   | "Var" { VAR }
+  | ","  {COMA}
+  | "CallProc"  { CALLPROC }
+  | "CallFun"  { CALLFUN }
+  | "Def" { DEF }
+  | "Retourn"  {RETURN}
   | "Si" { IF }
   | "==" {BOOL_EQUAL}
   | "<=" {LESS_EQUAL}
