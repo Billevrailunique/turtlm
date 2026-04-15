@@ -19,6 +19,7 @@ and expression = Valeur of unit option * string
                 | Op of expression * operateur * expression * Lexing.position
                 | Var of string * Lexing.position
                 | FunCall of string * expression list * Lexing.position
+                | GenN of expression list * Lexing.position
 and operateur = Plus 
                 | Minus
                 | Time 
@@ -42,6 +43,9 @@ and op_num = Less
             | More_equal   
             | Not_equal
             | Bool_equal 
+and flag = Number
+        | Color 
+        | Bool
 
 type variable = (string * float option ) ref 
 type declared =  variable list ref 
