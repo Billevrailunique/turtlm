@@ -30,6 +30,7 @@ rule token = parse
   | "!=" {NOT_EQUAL}
   | "<"  { LESS }
   | ">"  {MORE}
+  | "mod" {MODULO}
   | "Faire" { DO }
   | "Alors" {THEN}
   | "Sinon" {ELSE}

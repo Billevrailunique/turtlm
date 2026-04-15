@@ -8,14 +8,14 @@ and instruction = Draw_on
                 | VarDecla of string * Lexing.position
                 | VarDeclaInit of string * expression * Lexing.position
                 | VarInit of string * expression * Lexing.position
-                | Repeat of string * bloc_instruction
+                | Repeat of expression * bloc_instruction
                 | While of condition * bloc_instruction
                 | IfThenElse of condition * bloc_instruction * bloc_instruction
                 | IfThen of condition * bloc_instruction
                 | FunDecla of string * string list * bloc_instruction 
                 | Return of expression * Lexing.position
                 | ProcCall of string * expression list * Lexing.position
-and expression = Valeur of string
+and expression = Valeur of unit option * string
                 | Op of expression * operateur * expression * Lexing.position
                 | Var of string * Lexing.position
                 | FunCall of string * expression list * Lexing.position
@@ -23,6 +23,7 @@ and operateur = Plus
                 | Minus
                 | Time 
                 | Divided 
+                | Mod
 and color = Hexcode of string
             | Black
             | Blue

@@ -19,7 +19,9 @@ let rec eval_bool = function
                                 | Not_equal -> a <> b )
 
 and eval_exp = function 
-    | Valeur a -> float_of_string a
+    | Valeur (s,a) -> (match s with 
+                        | Some _ -> -1. *. float_of_string a
+                        | None -> float_of_string a)
     | Op (l, op, r, pos) -> eval_op pos l r op 
     | Var (name, pos) -> (match get_val name !env with 
                             | Some e -> e
@@ -53,6 +55,11 @@ and eval_op pos l r = function
                 Printf.eprintf "Erreur division par 0 à la ligne %d\n" pos.Lexing.pos_lnum ;
                 exit 1
             end
+    | Mod -> let le = (eval_exp l) and re = (eval_exp r) in if re <> 0. then ( mod_float le re ) else  
+               begin
+                Printf.eprintf "Erreur division par 0 à la ligne %d\n" pos.Lexing.pos_lnum ;
+                exit 1
+            end 
 
 and eval_couleur = function
     | Red  -> red

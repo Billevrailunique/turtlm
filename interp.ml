@@ -35,8 +35,10 @@ and next_action = function
     | Draw_off -> draw := false
     | Move (e,pos) -> let distance = eval_exp e in let a = angle () in 
                 let dx = (int_of_float (distance *. cos a)) in
-                let dy = (int_of_float (distance *. sin a)) 
-                 in if current_x () + dx <= size_x () && current_y () + dy <= size_y () then
+                let dy = (int_of_float (distance *. sin a)) in 
+                let nx = current_x () + dx in 
+                let ny = current_y () + dy
+                 in if nx <= size_x () && ny <= size_y () && nx >= 0 && ny >= 0 then
                      (if !draw then rlineto dx dy
                         else rmoveto dx dy)
                     else 
@@ -81,7 +83,7 @@ and next_action = function
                     Printf.eprintf "Erreur var %s not declared yet quand on arrive à la ligne %d\n" name pos.Lexing.pos_lnum;
                     exit 1 
                 end
-    | Repeat (x,i) -> let n = int_of_string x in for _ = 1 to n do 
+    | Repeat (x,i) -> let n = int_of_float (eval_exp x) in for _ = 1 to n do 
                         decode i
                     done
     | While (c,i) -> while (eval_bool c) do 
@@ -100,8 +102,9 @@ and next_action = function
                             | a :: l -> (match !a with (str, vars , instr) -> if String.equal str name 
                                         then (try 
                                             let x = eval_list argsValue in
-                                            setFonction vars x ; 
-                                            decode ~initial_decla:vars instr; 
+                                            let fresh_vars = List.map (fun r -> let (n,_) = !r in ref (n, None)) vars in 
+                                            setFonction fresh_vars x ; 
+                                            decode ~initial_decla:fresh_vars instr; 
                                             unsetFonction ()
                                             with  
                                                 | TooManyArgsException -> (Printf.eprintf "la fonction à la ligne %d demande moins d'argument \n" pos.Lexing.pos_lnum;

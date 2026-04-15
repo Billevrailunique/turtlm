@@ -2,11 +2,11 @@
 open Ast
 %}
 
-%token EOF DRAW_OFF DRAW_ON DIVIDE TIME MINUS CALLFUN CALLPROC PLUS MOVE COMA TURN TRUE DEF RETURN AND OR FALSE RPAREN LPAREN SEMICOLON RED BLUE GREEN BLACK YELLOW COLOR_CHANGE WIDTH_CHANGE VAR EGALE IF THEN ELSE WHILE DO REPEAT MANY_TIMES NOT_EQUAL LESS_EQUAL MORE_EQUAL BOOL_EQUAL LESS MORE START END NOT
+%token EOF DRAW_OFF DRAW_ON DIVIDE TIME MINUS CALLFUN MODULO CALLPROC PLUS MOVE COMA TURN TRUE DEF RETURN AND OR FALSE RPAREN LPAREN SEMICOLON RED BLUE GREEN BLACK YELLOW COLOR_CHANGE WIDTH_CHANGE VAR EGALE IF THEN ELSE WHILE DO REPEAT MANY_TIMES NOT_EQUAL LESS_EQUAL MORE_EQUAL BOOL_EQUAL LESS MORE START END NOT
 %token<string> HEX NUM ID
 
 %left PLUS MINUS OR
-%left TIME DIVIDE AND
+%left TIME DIVIDE AND MODULO
 %left NOT
 
 %start<bloc_instruction> programme
@@ -30,7 +30,7 @@ instruction:
   | IF c=condition THEN START i1=bloc_instruction END ELSE START i2=bloc_instruction END  { IfThenElse (c, i1, i2) } 
   | IF c=condition THEN START i=bloc_instruction END { IfThen (c,i) }
   | WHILE c=condition DO START i=bloc_instruction END  { While (c,i) }
-  | REPEAT n=NUM MANY_TIMES START i=bloc_instruction END { Repeat (n,i) }
+  | REPEAT e=expression MANY_TIMES START i=bloc_instruction END { Repeat (e,i) }
   | RETURN e=expression { Return (e,$startpos) }
   | DEF n=ID LPAREN a=separated_list(COMA, ID) RPAREN START i=bloc_instruction END { FunDecla (n, a, i) }
   | CALLPROC n=ID LPAREN a=separated_list(COMA, expression) RPAREN  {ProcCall (n,a, $startpos)}
@@ -62,7 +62,7 @@ condition:
   | NOT_EQUAL  {Not_equal}
 
 expression: 
-  | n=NUM { Valeur n }
+  | signe=option(MINUS) n=NUM { Valeur (signe, n) } 
   | LPAREN e=expression RPAREN { e }
   | l=expression op=operateur r=expression { Op (l, op, r, $startpos) }
   | str=ID  { Var (str,$startpos) }
@@ -73,3 +73,4 @@ expression:
   | MINUS { Minus }
   | TIME { Time }
   | DIVIDE { Divided }
+  | MODULO {Mod}
