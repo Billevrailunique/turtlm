@@ -1,3 +1,7 @@
+Tourner 180;
+Avancer 175;
+Tourner 180;
+
 Def dragon(n, taille)
 Debut
 Si n == 0 Alors
@@ -7,12 +11,12 @@ Fin
 Sinon
 Debut
 Tourner 45;
-CallProc dragon(n - 1, taille);
+dragon(n - 1, taille);
 Tourner -90;
-CallProc dragon(n - 1, taille);
+dragon(n - 1, taille);
 Tourner 45
 Fin
 Fin;
 
 BaisserPinceau;
-CallProc dragon(9, 10)
+dragon(12, 5)

@@ -8,7 +8,7 @@ Debut
 Retourn d
 Fin;
 BaisserPinceau;
-CallProc changeColorRouge();
+changeColorRouge();
 LargeurPinceau 100;
-Var a = CallFun distance ();
+Var a = distance ();
 Avancer a

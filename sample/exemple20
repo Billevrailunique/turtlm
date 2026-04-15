@@ -5,6 +5,6 @@ x = y;
 y = a
 Fin ;
 Var c = 100;
-CallProc foo(c , 4);
+foo(c , 4);
 BaisserPinceau;
 Avancer c

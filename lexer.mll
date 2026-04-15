@@ -19,8 +19,6 @@ rule token = parse
   | "Faux"  {FALSE}
   | "Var" { VAR }
   | ","  {COMA}
-  | "CallProc"  { CALLPROC }
-  | "CallFun"  { CALLFUN }
   | "Def" { DEF }
   | "Retourn"  {RETURN}
   | "Si" { IF }
