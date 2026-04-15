@@ -1,22 +1,48 @@
 open Ast 
 
 let (env:environnement) = ref []
+let (envFun:fonction list ref) = ref []
+let context_actuel = ref Global
 
 let rec already_declared name = function 
     | [] -> false     
-    | a :: otre -> match !a with (str,_) -> (if String.equal name str then true else already_declared name otre)
+    | l :: otre -> let rec aux y = match y with 
+                                | [] -> already_declared name otre
+                                | a :: reste -> match !a with (str,_) -> (if String.equal name str then true else aux reste)
+                    in aux !l
+
+and already_declared_fun name = function 
+                                | [] -> false     
+                                | f :: otre -> let (str,_,_) = !f in (if String.equal name str then true else already_declared_fun name otre)
     
 and change_val name value = function
                             | [] -> false
-                            | r :: otre -> match !r with 
-                                    | (a,_) -> if String.equal name a
-                                                then (r := (a, Some value) ; true)
-                                                else change_val name value otre    
-
-and flatten_spe (env:declared list) = match env with 
-                                | [] -> []
-                                | r :: suite -> !r @ flatten_spe suite
+                            | l :: otre -> 
+                                    let rec aux y = match y with 
+                                                    | [] -> change_val name value otre
+                                                    | r :: reste -> (let (a,_) = !r in if String.equal name a
+                                                                                                then (r := (a, Some value) ; true)
+                                                                                                else aux reste)
+                                            in aux !l
+                                
 
 and get_val name = function 
                     | [] -> None
-                    | r :: otre -> match !r with (a,b) -> if String.equal a name then b else get_val name otre
+                    | l :: otre -> let rec aux y = match y with 
+                                    | [] -> get_val name otre
+                                    | r :: z -> (match !r with (a,b) -> if String.equal a name then b else aux z)
+                                    in aux !l
+
+and setVars (l:string list) = match l with 
+                                | [] -> let (vs: variable list) = [] in vs
+                                | str :: reste -> ref (str, None) :: setVars reste
+
+and setFonction vars argsValue = context_actuel := Fonction; 
+        let rec aux a b  = match (a,b) with 
+        | ([] , []) -> ()
+        | (r :: l , s :: m) -> let (a,_) = !r in r:= (a,Some s) ; aux l m
+        | (_::_, []) -> raise ArgsMissingException
+        | ([], _::_) -> raise TooManyArgsException
+        in aux vars argsValue  
+
+and unsetFonction () = context_actuel := Global

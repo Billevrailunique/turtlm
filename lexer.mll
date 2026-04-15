@@ -18,6 +18,9 @@ rule token = parse
   | "Vrais"  {TRUE}
   | "Faux"  {FALSE}
   | "Var" { VAR }
+  | ","  {COMA}
+  | "Def" { DEF }
+  | "Retourn"  {RETURN}
   | "Si" { IF }
   | "==" {BOOL_EQUAL}
   | "<=" {LESS_EQUAL}
@@ -25,6 +28,7 @@ rule token = parse
   | "!=" {NOT_EQUAL}
   | "<"  { LESS }
   | ">"  {MORE}
+  | "mod" {MODULO}
   | "Faire" { DO }
   | "Alors" {THEN}
   | "Sinon" {ELSE}
