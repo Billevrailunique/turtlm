@@ -78,6 +78,13 @@ and eval_couleur = function
     | Yellow -> yellow 
     | Black  -> black 
     | Hexcode v  ->  let v1 = int_of_string ("0X" ^ String.sub v 0 2 ) and v2 = int_of_string ("0X" ^ String.sub v 2 2 ) and v3 = int_of_string ("0X" ^ String.sub v 4 2 ) in rgb v1 v2 v3
+    | GenC args -> match args with 
+                            | None -> (if not !seed_init then Random.self_init () ; seed_init := true ; 
+                                    let r = (Random.int_in_range ~min:0 ~max:255) and g = (Random.int_in_range ~min:0 ~max:255) and b = (Random.int_in_range ~min:0 ~max:255) in rgb r g b)
+                            | Some a -> (Random.init(int_of_float (eval_exp a)); seed_init := true; 
+                                    let r = (Random.int_in_range ~min:0 ~max:255) and g = (Random.int_in_range ~min:0 ~max:255) and b = (Random.int_in_range ~min:0 ~max:255)  in rgb r g b )
+                            
+                        
 
 and eval_list = function 
     | [] -> []

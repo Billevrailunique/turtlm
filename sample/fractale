@@ -1,12 +1,14 @@
 Tourner 180;
 Avancer 175;
 Tourner 180;
+LargeurPinceau 2;
 
 Def dragon(n, taille)
 Debut
 Si n == 0 Alors
 Debut
-Avancer taille
+Avancer taille;
+CouleurPinceau GenC ()
 Fin
 Sinon
 Debut

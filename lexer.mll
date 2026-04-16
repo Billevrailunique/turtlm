@@ -13,6 +13,7 @@ rule token = parse
   | '\n' {Lexing.new_line lexbuf; token lexbuf}
   | "BaisserPinceau"  { DRAW_ON }
   | "GenN" { GENN }
+  | "GenC" { GENC }
   | "LeverPinceau"  { DRAW_OFF }
   | "Avancer"  { MOVE }
   | "Tourner"  { TURN }

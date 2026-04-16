@@ -31,6 +31,7 @@ and color = Hexcode of string
             | Red 
             | Yellow
             | Green
+            | GenC of expression option 
 and condition = True 
             | False 
             | TestBool of expression * op_num * expression
