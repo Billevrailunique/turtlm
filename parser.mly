@@ -2,7 +2,7 @@
 open Ast
 %}
 
-%token EOF DRAW_OFF DRAW_ON DIVIDE TIME MINUS MODULO PLUS MOVE COMA TURN TRUE DEF RETURN AND OR FALSE RPAREN LPAREN SEMICOLON RED BLUE GREEN BLACK YELLOW COLOR_CHANGE WIDTH_CHANGE VAR EGALE IF THEN ELSE WHILE DO REPEAT MANY_TIMES NOT_EQUAL LESS_EQUAL MORE_EQUAL BOOL_EQUAL LESS MORE START END NOT
+%token EOF DRAW_OFF DRAW_ON GENC DIVIDE TIME GENN MINUS MODULO PLUS MOVE COMA TURN TRUE DEF RETURN AND OR FALSE RPAREN LPAREN SEMICOLON RED BLUE GREEN BLACK YELLOW COLOR_CHANGE WIDTH_CHANGE VAR EGALE IF THEN ELSE WHILE DO REPEAT MANY_TIMES NOT_EQUAL LESS_EQUAL MORE_EQUAL BOOL_EQUAL LESS MORE START END NOT
 %token<string> HEX NUM ID
 
 %left PLUS MINUS OR
@@ -43,6 +43,7 @@ instruction:
   | BLACK { Black }
   | YELLOW  { Yellow }
   | v=HEX  { Hexcode v }
+  | GENC LPAREN a=option(expression) RPAREN  { GenC a }
 
 condition: 
   | TRUE {True}
@@ -66,6 +67,7 @@ expression:
   | LPAREN e=expression RPAREN { e }
   | l=expression op=operateur r=expression { Op (l, op, r, $startpos) }
   | str=ID  { Var (str,$startpos) }
+  | GENN LPAREN a=separated_list(COMA, expression) RPAREN {GenN (a,$startpos)}
   | n=ID LPAREN a=separated_list(COMA, expression) RPAREN  {FunCall (n,a, $startpos)}
 
 %inline operateur:

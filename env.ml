@@ -3,6 +3,7 @@ open Ast
 let (env:environnement) = ref []
 let (envFun:fonction list ref) = ref []
 let context_actuel = ref Global
+let seed_init = ref false
 
 let rec already_declared name = function 
     | [] -> false     

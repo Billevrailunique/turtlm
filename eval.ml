@@ -1,6 +1,7 @@
 open Ast 
 open Env
 open Graphics
+open Random 
 
 let decode_ref : (?initial_decla:variable list -> instruction list -> unit ) ref = ref (fun ?initial_decla:_ _ -> ())
 
@@ -45,7 +46,16 @@ and eval_exp = function
                                                 exit 1
                                                 end
                                     in aux !envFun
-
+    | GenN (args, pos) -> try match args with
+                            | a :: b :: c :: [] -> Random.init (int_of_float (eval_exp a)) ; seed_init := true ; float_of_int (Random.int_in_range ~min:(int_of_float (eval_exp b)) ~max:(int_of_float (eval_exp c))) 
+                            | a :: b :: [] -> (if not !seed_init then self_init (); seed_init := true) ; float_of_int (Random.int_in_range ~min:(int_of_float(eval_exp a)) ~max:(int_of_float(eval_exp b)))
+                            | a :: [] -> (if not !seed_init then self_init () ; seed_init := true) ; float_of_int (Random.int_in_range ~min:1 ~max:(int_of_float(eval_exp a)))
+                            | _ -> invalid_arg ""
+                        with 
+                            | Invalid_argument _ -> begin
+                                                Printf.eprintf "Erreur, argument invalide,probablement min < max; ligne : %d\n" pos.Lexing.pos_lnum;
+                                                exit 1 
+                                                end 
 and eval_op pos l r = function 
     | Plus -> (eval_exp l) +. (eval_exp r)
     | Minus -> (eval_exp l) -. (eval_exp r)
@@ -68,6 +78,13 @@ and eval_couleur = function
     | Yellow -> yellow 
     | Black  -> black 
     | Hexcode v  ->  let v1 = int_of_string ("0X" ^ String.sub v 0 2 ) and v2 = int_of_string ("0X" ^ String.sub v 2 2 ) and v3 = int_of_string ("0X" ^ String.sub v 4 2 ) in rgb v1 v2 v3
+    | GenC args -> match args with 
+                            | None -> (if not !seed_init then Random.self_init () ; seed_init := true ; 
+                                    let r = (Random.int_in_range ~min:0 ~max:255) and g = (Random.int_in_range ~min:0 ~max:255) and b = (Random.int_in_range ~min:0 ~max:255) in rgb r g b)
+                            | Some a -> (Random.init(int_of_float (eval_exp a)); seed_init := true; 
+                                    let r = (Random.int_in_range ~min:0 ~max:255) and g = (Random.int_in_range ~min:0 ~max:255) and b = (Random.int_in_range ~min:0 ~max:255)  in rgb r g b )
+                            
+                        
 
 and eval_list = function 
     | [] -> []
