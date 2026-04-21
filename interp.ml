@@ -19,12 +19,22 @@ let init_graphics () = open_graph " 800x800";
 let rec decode ?(initial_decla=[]) bloc  = env := ref initial_decla :: !env ;
                 debloc bloc;
                 match !env with 
-                    | _ :: l -> env := l
+                    | a :: _ -> !a
                     | [] -> 
                             begin
                                 Printf.eprintf "Erreur, dépiler env vide \n" ;
                                 exit 1
                             end
+                
+                
+and depile_env () = match !env with 
+                    | _ :: l -> env := l
+                    | [] -> 
+                            begin
+                                Printf.eprintf "Erreur, foutriquet dépiler env vide \n" ;
+                                exit 1
+                            end
+                
 
 and debloc bloc =  match bloc with 
                     | i :: suite -> next_action i; debloc suite
@@ -84,13 +94,13 @@ and next_action = function
                     exit 1 
                 end
     | Repeat (x,i) -> let n = int_of_float (eval_exp x) in for _ = 1 to n do 
-                        decode i
+                        ignore (decode i); depile_env ()
                     done
     | While (c,i) -> while (eval_bool c) do 
-                       decode i 
+                       ignore (decode i); depile_env ()
                     done 
-    | IfThen (c,i) -> if eval_bool c then decode i 
-    | IfThenElse (c,i1,i2) -> if eval_bool c then decode i1 else decode i2
+    | IfThen (c,i) -> if eval_bool c then (ignore (decode i) ; depile_env ()) 
+    | IfThenElse (c,i1,i2) -> if eval_bool c then ( ignore (decode i1); depile_env ())  else (ignore (decode i2) ; depile_env ()) 
     | FunDecla (name, args, bloc) -> if not (already_declared_fun name !envFun) 
                                             then let vs = setVars args in let a = ref (name, vs, bloc) in envFun := a :: !envFun
                                             else begin 
@@ -104,7 +114,7 @@ and next_action = function
                                             let x = eval_list argsValue in
                                             let fresh_vars = List.map (fun r -> let (n,_) = !r in ref (n, None)) vars in 
                                             setFonction fresh_vars x ; 
-                                            decode ~initial_decla:fresh_vars instr; 
+                                            ignore(decode ~initial_decla:fresh_vars instr); depile_env ();
                                             unsetFonction ()
                                             with  
                                                 | TooManyArgsException -> (Printf.eprintf "la fonction à la ligne %d demande moins d'argument \n" pos.Lexing.pos_lnum;
