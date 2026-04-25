@@ -13,16 +13,17 @@ let () =
         if is_interactif 
         then 
                 begin 
+                Printf.printf "mode interactif :\n> ";
                 let envext = ref [] in 
-                let buf = Buffer.create 2048 in
+                let buf = Buffer.create 512 in
                 while true do 
-                        
+                        Buffer.clear buf;
                         try 
                                 while true do
                                         Buffer.add_string buf (read_line());
                                 done 
                         with 
-                        | End_of_file -> let lexbuf = Lexing.from_string (Buffer.contents buf) in
+                        | End_of_file -> Printf.printf "> "; let lexbuf = Lexing.from_string (Buffer.contents buf) in
                                          let ast =  try Parser.programme Lexer.token lexbuf
                                                 with 
                                                 | Lexer.Error a -> Printf.eprintf "Erreur lexicale %s\n" a; exit 1
