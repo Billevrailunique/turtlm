@@ -3,7 +3,7 @@ open Env
 open Graphics
 open Random 
 
-let decode_ref : (?initial_decla:variable list -> instruction list -> unit ) ref = ref (fun ?initial_decla:_ _ -> ())
+let decode_ref : (?initial_decla:variable list -> instruction list -> variable list ) ref = ref (fun ?initial_decla:_ _ -> [])
 
 let rec eval_bool = function    
     | True -> true 
@@ -36,7 +36,7 @@ and eval_exp = function
                                                     then (try
                                                         let x = eval_list argsValue in
                                                         setFonction param x ;
-                                                        !decode_ref ~initial_decla:param instr; 
+                                                        ignore(!decode_ref ~initial_decla:param instr); 
                                                         0.
                                                         with 
                                                             | ReturnValue v -> unsetFonction () ; v  )

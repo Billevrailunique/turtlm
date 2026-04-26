@@ -1,7 +1,7 @@
 (executable
 	 (name main)
    (modules main parser lexer ast env eval interp)
-	 (libraries graphics)) 
+	 (libraries graphics unix)) 
 (ocamllex (modules lexer))
 (menhir
   (modules parser)
