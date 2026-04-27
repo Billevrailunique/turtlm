@@ -38,7 +38,7 @@ rule token = parse
   | "Fois" { MANY_TIMES }
   | "Tant que" {WHILE}
   | "Et" {AND}
-  | "Not" {NOT}
+  | "Non" {NOT}
   | "Ou" {OR}
   | "Debut" {START}
   | "Fin"  {END}

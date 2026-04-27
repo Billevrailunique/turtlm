@@ -2,16 +2,16 @@ type bloc_instruction = instruction list
 and instruction = Draw_on
                 | Draw_off
                 | Move of expression * Lexing.position
-                | Turn of expression
-                | CouleurPinceau of color
+                | Turn of expression * Lexing.position
+                | CouleurPinceau of expression *Lexing.position
                 | LargeurPinceau of expression * Lexing.position
                 | VarDecla of string * Lexing.position
                 | VarDeclaInit of string * expression * Lexing.position
                 | VarInit of string * expression * Lexing.position
-                | Repeat of expression * bloc_instruction
-                | While of condition * bloc_instruction
-                | IfThenElse of condition * bloc_instruction * bloc_instruction
-                | IfThen of condition * bloc_instruction
+                | Repeat of expression * bloc_instruction * Lexing.position
+                | While of expression * bloc_instruction * Lexing.position
+                | IfThenElse of expression * bloc_instruction * bloc_instruction * Lexing.position
+                | IfThen of expression * bloc_instruction * Lexing.position
                 | FunDecla of string * string list * bloc_instruction 
                 | Return of expression * Lexing.position
                 | ProcCall of string * expression list * Lexing.position
@@ -20,35 +20,39 @@ and expression = Valeur of unit option * string
                 | Var of string * Lexing.position
                 | FunCall of string * expression list * Lexing.position
                 | GenN of expression list * Lexing.position
+                | True 
+                | False 
+                | TestBool of expression * op_num * expression * Lexing.position
+                | Not of expression * Lexing.position
+                | And of expression * expression * Lexing.position
+                | Or of expression * expression * Lexing.position
+                | VarCond of string * Lexing.position
+                | Hexcode of string
+                | Black
+                | Blue
+                | Red 
+                | Yellow
+                | Green
+                | GenC of expression option * Lexing.position
 and operateur = Plus 
                 | Minus
                 | Time 
                 | Divided 
                 | Mod
-and color = Hexcode of string
-            | Black
-            | Blue
-            | Red 
-            | Yellow
-            | Green
-            | GenC of expression option 
-and condition = True 
-            | False 
-            | TestBool of expression * op_num * expression
-            | Not of condition
-            | And of condition * condition
-            | Or of condition * condition
 and op_num = Less 
             | More 
             | Less_equal
             | More_equal   
             | Not_equal
             | Bool_equal 
-and flag = Number
-        | Color 
-        | Bool
 
-type variable = (string * float option ) ref 
+type value =
+    | VFloat of float
+    | VBool of bool
+    | VCool of Graphics.color
+    | No
+
+type variable = (string * value option ) ref 
 type declared =  variable list ref 
 type environnement = declared list ref 
 
@@ -57,8 +61,7 @@ type fonction = (string * variable list * bloc_instruction) ref
 type contex = Global 
             | Fonction
 
-
-exception ReturnValue of float
+exception ReturnValue of value
 exception TooManyArgsException
 exception ArgsMissingException
 

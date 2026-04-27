@@ -7,7 +7,8 @@ open Ast
 
 %left PLUS MINUS OR
 %left TIME DIVIDE AND MODULO
-%left NOT
+%nonassoc LESS MORE LESS_EQUAL MORE_EQUAL BOOL_EQUAL NOT_EQUAL
+%right NOT
 
 %start<bloc_instruction> programme
 
@@ -21,46 +22,19 @@ instruction:
   | DRAW_ON { Draw_on }
   | DRAW_OFF { Draw_off }
   | MOVE c=expression { Move (c, $startpos) }
-  | TURN c=expression { Turn c }
-  | COLOR_CHANGE c=color { CouleurPinceau c }
+  | TURN c=expression { Turn (c, $startpos) }
+  | COLOR_CHANGE c=expression { CouleurPinceau (c, $startpos) }
   | WIDTH_CHANGE e=expression { LargeurPinceau (e,$startpos) }
   | VAR str=ID { VarDecla (str, $startpos) } 
-  | VAR str=ID EGALE e=expression  { VarDeclaInit (str, e, $startpos) }
-  | str=ID EGALE e=expression  { VarInit (str, e, $startpos) }
-  | IF c=condition THEN START i1=bloc_instruction END ELSE START i2=bloc_instruction END  { IfThenElse (c, i1, i2) } 
-  | IF c=condition THEN START i=bloc_instruction END { IfThen (c,i) }
-  | WHILE c=condition DO START i=bloc_instruction END  { While (c,i) }
-  | REPEAT e=expression MANY_TIMES START i=bloc_instruction END { Repeat (e,i) }
+  | VAR str=ID EGALE t=expression  { VarDeclaInit (str, t, $startpos) }
+  | str=ID EGALE t=expression  { VarInit (str, t, $startpos) }
+  | IF c=expression THEN START i1=bloc_instruction END ELSE START i2=bloc_instruction END  { IfThenElse (c, i1, i2, $startpos) } 
+  | IF c=expression THEN START i=bloc_instruction END { IfThen (c,i, $startpos) }
+  | WHILE c=expression DO START i=bloc_instruction END  { While (c,i, $startpos) }
+  | REPEAT e=expression MANY_TIMES START i=bloc_instruction END { Repeat (e,i, $startpos) }
   | RETURN e=expression { Return (e,$startpos) }
   | DEF n=ID LPAREN a=separated_list(COMA, ID) RPAREN START i=bloc_instruction END { FunDecla (n, a, i) }
   | n=ID LPAREN a=separated_list(COMA, expression) RPAREN  {ProcCall (n,a, $startpos)}
-
-
-%inline color: 
-  | RED { Red }
-  | BLUE { Blue }
-  | GREEN { Green }
-  | BLACK { Black }
-  | YELLOW  { Yellow }
-  | v=HEX  { Hexcode v }
-  | GENC LPAREN a=option(expression) RPAREN  { GenC a }
-
-condition: 
-  | TRUE {True}
-  | FALSE {False}
-  | e1=expression op=op_num e2=expression {TestBool (e1, op, e2)}
-  | NOT c=condition  { Not c}
-  | c1=condition AND c2=condition  {And (c1, c2)} 
-  | c1=condition OR c2=condition {Or (c1, c2)}
-  | LPAREN c=condition RPAREN  {c}
-
-%inline op_num:
-  | LESS {Less}
-  | MORE {More}
-  | LESS_EQUAL {Less_equal}
-  | MORE_EQUAL {More_equal}
-  | BOOL_EQUAL {Bool_equal}
-  | NOT_EQUAL  {Not_equal}
 
 expression: 
   | signe=option(MINUS) n=NUM { Valeur (signe, n) } 
@@ -69,6 +43,19 @@ expression:
   | str=ID  { Var (str,$startpos) }
   | GENN LPAREN a=separated_list(COMA, expression) RPAREN {GenN (a,$startpos)}
   | n=ID LPAREN a=separated_list(COMA, expression) RPAREN  {FunCall (n,a, $startpos)}
+  | TRUE {True}
+  | FALSE {False}
+  | e1=expression op=op_num e2=expression {TestBool (e1, op, e2, $startpos)}
+  | NOT c=expression  { Not (c,$startpos)}
+  | c1=expression AND c2=expression  {And (c1, c2,$startpos)} 
+  | c1=expression OR c2=expression {Or (c1, c2,$startpos)}
+  | RED { Red }
+  | BLUE { Blue }
+  | GREEN { Green }
+  | BLACK { Black }
+  | YELLOW  { Yellow }
+  | v=HEX  { Hexcode v }
+  | GENC LPAREN a=option(expression) RPAREN  { GenC (a,$startpos) }
 
 %inline operateur:
   | PLUS { Plus }
@@ -76,3 +63,11 @@ expression:
   | TIME { Time }
   | DIVIDE { Divided }
   | MODULO {Mod}
+
+%inline op_num:
+  | LESS {Less}
+  | MORE {More}
+  | LESS_EQUAL {Less_equal}
+  | MORE_EQUAL {More_equal}
+  | BOOL_EQUAL {Bool_equal}
+  | NOT_EQUAL  {Not_equal}
