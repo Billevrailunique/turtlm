@@ -2,8 +2,8 @@
 open Ast
 %}
 
-%token EOF DRAW_OFF DRAW_ON GENC DIVIDE TIME GENN MINUS MODULO PLUS MOVE COMA TURN TRUE DEF RETURN AND OR FALSE RPAREN LPAREN SEMICOLON RED BLUE GREEN BLACK YELLOW COLOR_CHANGE WIDTH_CHANGE VAR EGALE IF THEN ELSE WHILE DO REPEAT MANY_TIMES NOT_EQUAL LESS_EQUAL MORE_EQUAL BOOL_EQUAL LESS MORE START END NOT
-%token<string> HEX NUM ID
+%token EOF DRAW_OFF DRAW_ON GENC DIVIDE TIME GENN PRINT MINUS MODULO PLUS MOVE COMA TURN TRUE DEF RETURN AND OR FALSE RPAREN LPAREN SEMICOLON RED BLUE GREEN BLACK YELLOW COLOR_CHANGE WIDTH_CHANGE VAR EGALE IF THEN ELSE WHILE DO REPEAT MANY_TIMES NOT_EQUAL LESS_EQUAL MORE_EQUAL BOOL_EQUAL LESS MORE START END NOT
+%token<string> HEX NUM ID TXT
 
 %left PLUS MINUS OR
 %left TIME DIVIDE AND MODULO
@@ -35,6 +35,7 @@ instruction:
   | RETURN e=expression { Return (e,$startpos) }
   | DEF n=ID LPAREN a=separated_list(COMA, ID) RPAREN START i=bloc_instruction END { FunDecla (n, a, i) }
   | n=ID LPAREN a=separated_list(COMA, expression) RPAREN  {ProcCall (n,a, $startpos)}
+  | PRINT e=expression { Print e }
 
 expression: 
   | signe=option(MINUS) n=NUM { Valeur (signe, n) } 
@@ -56,6 +57,7 @@ expression:
   | YELLOW  { Yellow }
   | v=HEX  { Hexcode v }
   | GENC LPAREN a=option(expression) RPAREN  { GenC (a,$startpos) }
+  | str=TXT { Text str } 
 
 %inline operateur:
   | PLUS { Plus }

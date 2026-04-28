@@ -13,6 +13,7 @@ and instruction = Draw_on
                 | IfThenElse of expression * bloc_instruction * bloc_instruction * Lexing.position
                 | IfThen of expression * bloc_instruction * Lexing.position
                 | FunDecla of string * string list * bloc_instruction 
+                | Print of expression
                 | Return of expression * Lexing.position
                 | ProcCall of string * expression list * Lexing.position
 and expression = Valeur of unit option * string
@@ -26,7 +27,6 @@ and expression = Valeur of unit option * string
                 | Not of expression * Lexing.position
                 | And of expression * expression * Lexing.position
                 | Or of expression * expression * Lexing.position
-                | VarCond of string * Lexing.position
                 | Hexcode of string
                 | Black
                 | Blue
@@ -34,6 +34,7 @@ and expression = Valeur of unit option * string
                 | Yellow
                 | Green
                 | GenC of expression option * Lexing.position
+                | Text of string
 and operateur = Plus 
                 | Minus
                 | Time 
@@ -50,6 +51,7 @@ type value =
     | VFloat of float
     | VBool of bool
     | VCool of Graphics.color
+    | VText of string
     | No
 
 type variable = (string * value option ) ref 

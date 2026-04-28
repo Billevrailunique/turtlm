@@ -134,6 +134,7 @@ and next_action = function
                                 Printf.eprintf "Erreur, return en dehors d'une fonction à la ligne %d\n" pos.Lexing.pos_lnum;
                                 exit 1
                             end 
+    | Print e -> draw_string (as_string (eval_exp e))
 
 let () = Eval.decode_ref := decode
                                 

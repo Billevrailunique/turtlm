@@ -65,7 +65,7 @@ let rec eval_exp = function
                                 | More_equal -> a >= b 
                                 | Bool_equal -> a = b 
                                 | Not_equal -> a <> b ) in VBool rep
-    | _ -> No
+    | Text str -> VText str
 and eval_op pos l r = function 
     | Plus -> as_float(eval_exp l) pos +. as_float(eval_exp r) pos
     | Minus -> as_float(eval_exp l) pos -. as_float(eval_exp r) pos 
@@ -96,6 +96,15 @@ and as_color v pos = match v with
             | _ -> begin
                 Printf.eprintf "Erreur, couleur attandue à la ligne %d\n" pos.Lexing.pos_lnum ; exit 1
             end 
+and as_string = function 
+            | VText s -> String.sub s 1 ((String.length s) -2)
+            | VBool b -> Bool.to_string b
+            | VFloat f -> Float.to_string f
+            | VCool c -> let r = (c lsr 16) land 0xFF in
+                        let g = (c lsr 8) land 0xFF in
+                        let b = c land 0xFF in
+                        "r:" ^ Int.to_string r ^ " g:" ^ Int.to_string g ^ " b:" ^ Int.to_string b 
+            | No -> "NO"
 
 and eval_list = function 
     | [] -> []
