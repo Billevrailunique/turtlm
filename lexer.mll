@@ -7,12 +7,15 @@ let layout = [ ' ' '\t' ]
 let num = ['0'-'9']
 let hexcode = ['A'-'F' '0'-'9']
 let id = ['a'-'z']['A'-'Z' '0'-'9' 'a'-'z']*
+let str = ['A'-'Z' '0'-'9' 'a'-'z' ' ' ''']+
 
 rule token = parse
   | layout  { token lexbuf }  
   | '\n' {Lexing.new_line lexbuf; token lexbuf}
   | "BaisserPinceau"  { DRAW_ON }
   | "GenN" { GENN }
+  | "Afficher" { PRINT }
+  | "<" str ">" { TXT (Lexing.lexeme lexbuf) }
   | "GenC" { GENC }
   | "LeverPinceau"  { DRAW_OFF }
   | "Avancer"  { MOVE }
@@ -38,7 +41,7 @@ rule token = parse
   | "Fois" { MANY_TIMES }
   | "Tant que" {WHILE}
   | "Et" {AND}
-  | "Not" {NOT}
+  | "Non" {NOT}
   | "Ou" {OR}
   | "Debut" {START}
   | "Fin"  {END}

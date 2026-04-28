@@ -43,7 +43,7 @@ and debloc bloc =  match bloc with
 and next_action = function
     | Draw_on -> draw := true
     | Draw_off -> draw := false
-    | Move (e,pos) -> let distance = eval_exp e in let a = angle () in 
+    | Move (e,pos) -> let distance = as_float (eval_exp e) pos in let a = angle () in 
                 let dx = (int_of_float (distance *. cos a)) in
                 let dy = (int_of_float (distance *. sin a)) in 
                 let nx = current_x () + dx in 
@@ -56,9 +56,9 @@ and next_action = function
                     Printf.eprintf "Erreur curseur en dehors de l'écran à la ligne %d\n" pos.Lexing.pos_lnum;
                     exit 1
                 end
-    | Turn e -> val_angle := !val_angle +. eval_exp e
-    | CouleurPinceau c -> let couleur = eval_couleur c in set_color couleur
-    | LargeurPinceau (e, pos) -> let value = int_of_float (eval_exp e) in if value < 878 then set_line_width value else
+    | Turn (e,pos) -> val_angle := !val_angle +. as_float(eval_exp e) pos 
+    | CouleurPinceau (c,pos) -> let couleur = as_color(eval_exp c) pos in set_color couleur
+    | LargeurPinceau (e, pos) -> let value = int_of_float (as_float(eval_exp e)pos) in if value < 878 then set_line_width value else
                 begin 
                     Printf.eprintf "Erreur largeur pinceau trop grande à la ligne %d\n" pos.Lexing.pos_lnum;
                     exit 1
@@ -76,7 +76,7 @@ and next_action = function
                     Printf.eprintf "Erreur var %s already declared quand on arrive à la ligne %d\n" name pos.Lexing.pos_lnum;
                     exit 1 
                 end
-    | VarDeclaInit (name, value, pos) -> if not (already_declared name  !env) then let a = ref (name, Some (eval_exp value)) in 
+    | VarDeclaInit (name, value, pos) -> if not (already_declared name  !env) then let v = eval_exp value in let a = ref (name, Some v) in 
                                             (match !env with 
                                             | vars :: _ -> vars := a :: !vars
                                             | [] -> 
@@ -88,19 +88,20 @@ and next_action = function
                     Printf.eprintf "Erreur var %s already declared quand on arrive à la ligne %d\n" name pos.Lexing.pos_lnum;
                     exit 1 
                 end
-    | VarInit (name, value, pos) -> let v = (eval_exp value) in if (change_val name v !env) then () else 
+    | VarInit (name, value, pos) -> let v = eval_exp value
+                                in if (change_val name v !env) then () else 
                 begin
                     Printf.eprintf "Erreur var %s not declared yet quand on arrive à la ligne %d\n" name pos.Lexing.pos_lnum;
                     exit 1 
                 end
-    | Repeat (x,i) -> let n = int_of_float (eval_exp x) in for _ = 1 to n do 
+    | Repeat (x,i,pos) -> let n = int_of_float (as_float(eval_exp x)pos) in for _ = 1 to n do 
                         ignore (decode i); depile_env ()
                     done
-    | While (c,i) -> while (eval_bool c) do 
+    | While (c,i,pos) -> while (as_bool(eval_exp c)pos) do 
                        ignore (decode i); depile_env ()
                     done 
-    | IfThen (c,i) -> if eval_bool c then (ignore (decode i) ; depile_env ()) 
-    | IfThenElse (c,i1,i2) -> if eval_bool c then ( ignore (decode i1); depile_env ())  else (ignore (decode i2) ; depile_env ()) 
+    | IfThen (c,i,pos) -> if (as_bool(eval_exp c)pos) then (ignore (decode i) ; depile_env ()) 
+    | IfThenElse (c,i1,i2,pos) -> if (as_bool(eval_exp c)pos) then ( ignore (decode i1); depile_env ())  else (ignore (decode i2) ; depile_env ()) 
     | FunDecla (name, args, bloc) -> if not (already_declared_fun name !envFun) 
                                             then let vs = setVars args in let a = ref (name, vs, bloc) in envFun := a :: !envFun
                                             else begin 
@@ -133,6 +134,7 @@ and next_action = function
                                 Printf.eprintf "Erreur, return en dehors d'une fonction à la ligne %d\n" pos.Lexing.pos_lnum;
                                 exit 1
                             end 
+    | Print e -> draw_string (as_string (eval_exp e))
 
 let () = Eval.decode_ref := decode
                                 
