@@ -33,9 +33,9 @@ let rec eval_exp = function
                                                 end
                                     in aux !envFun
     | GenN (args, pos) -> (try match args with
-                            | a :: b :: c :: [] -> Random.init (int_of_float (as_float(eval_exp a) pos)) ; seed_init := true ; VFloat (float_of_int (Random.int_in_range ~min:(int_of_float (as_float(eval_exp b)pos)) ~max:(int_of_float (as_float(eval_exp c)pos)))) 
-                            | a :: b :: [] -> (if not !seed_init then self_init (); seed_init := true) ; VFloat (float_of_int (Random.int_in_range ~min:(int_of_float(as_float(eval_exp a)pos)) ~max:(int_of_float(as_float(eval_exp b)pos))))
-                            | a :: [] -> (if not !seed_init then self_init () ; seed_init := true) ; VFloat (float_of_int (Random.int_in_range ~min:1 ~max:(int_of_float(as_float(eval_exp a)pos))))
+                            | a :: b :: c :: [] -> init (int_of_float (as_float(eval_exp a) pos)) ; seed_init := true ; VFloat (float_of_int (int_in_range ~min:(int_of_float (as_float(eval_exp b)pos)) ~max:(int_of_float (as_float(eval_exp c)pos)))) 
+                            | a :: b :: [] -> (if not !seed_init then self_init (); seed_init := true) ; VFloat (float_of_int (int_in_range ~min:(int_of_float(as_float(eval_exp a)pos)) ~max:(int_of_float(as_float(eval_exp b)pos))))
+                            | a :: [] -> (if not !seed_init then self_init () ; seed_init := true) ; VFloat (float_of_int (int_in_range ~min:1 ~max:(int_of_float(as_float(eval_exp a)pos))))
                             | _ -> invalid_arg ""
                         with 
                             | Invalid_argument _ -> begin
@@ -49,10 +49,10 @@ let rec eval_exp = function
     | Black  -> VCool black 
     | Hexcode v  ->  let v1 = int_of_string ("0X" ^ String.sub v 0 2 ) and v2 = int_of_string ("0X" ^ String.sub v 2 2 ) and v3 = int_of_string ("0X" ^ String.sub v 4 2 ) in VCool (rgb v1 v2 v3)
     | GenC (args,pos) -> (match args with 
-                            | None -> (if not !seed_init then Random.self_init () ; seed_init := true ; 
-                                    let r = (Random.int_in_range ~min:0 ~max:255) and g = (Random.int_in_range ~min:0 ~max:255) and b = (Random.int_in_range ~min:0 ~max:255) in VCool(rgb r g b))
-                            | Some a -> (Random.init(int_of_float (as_float(eval_exp a) pos)); seed_init := true; 
-                                    let r = (Random.int_in_range ~min:0 ~max:255) and g = (Random.int_in_range ~min:0 ~max:255) and b = (Random.int_in_range ~min:0 ~max:255)  in VCool(rgb r g b) ))
+                            | None -> (if not !seed_init then self_init () ; seed_init := true ; 
+                                    let r = (int_in_range ~min:0 ~max:255) and g = (int_in_range ~min:0 ~max:255) and b = (int_in_range ~min:0 ~max:255) in VCool(rgb r g b))
+                            | Some a -> (init(int_of_float (as_float(eval_exp a) pos)); seed_init := true; 
+                                    let r = (int_in_range ~min:0 ~max:255) and g = (int_in_range ~min:0 ~max:255) and b = (int_in_range ~min:0 ~max:255)  in VCool(rgb r g b) ))
     | True -> VBool true 
     | False -> VBool false 
     | And (c1,c2, pos) -> VBool(as_bool(eval_exp c1) pos && as_bool(eval_exp c2) pos)
@@ -110,3 +110,35 @@ and eval_list = function
     | [] -> []
     | a :: l ->  (eval_exp a) :: eval_list l
 
+
+and exp_as_string = function 
+        | Valeur (signe, v) -> (if signe = None then "" else "-") ^ v
+        | Op (l, op, r, _) -> let opStr = (match op with 
+                                            | Plus -> "+"
+                                            | Minus -> "-"
+                                            | Time -> "*"
+                                            | Divided -> "/"
+                                            | Mod -> "mod" ) in (exp_as_string l) ^ opStr ^ (exp_as_string r)
+        | Var (x,_) -> x
+        | FunCall (x,l,_) -> x ^ "(" ^ (List.fold_left (fun str e -> str ^ "," ^ (exp_as_string e)) "" l)  ^ ")"
+        | GenN _ -> "G"
+        | True  -> "Vrais"
+        | False -> "Faux"
+        | TestBool (l,op,r,_) -> let opStr = (match op with 
+                                                | Less -> "<"
+                                                | More -> ">"
+                                                | Less_equal -> "<="
+                                                | More_equal -> ">="
+                                                | Bool_equal -> "="
+                                                | Not_equal -> "!=" ) in (exp_as_string l) ^ opStr ^ (exp_as_string r)
+        | Not (e,_) -> "Non " ^ exp_as_string e
+        | And (e1,e2,_) -> (exp_as_string e1) ^ " Et " ^ exp_as_string e2
+        | Or (e1,e2,_) -> (exp_as_string e1) ^ " Ou " ^ exp_as_string e2
+        | Hexcode h -> h
+        | Black -> "noir"
+        | Blue -> "bleu"
+        | Red -> "rouge"
+        | Yellow -> "jaune"
+        | Green -> "vert"
+        | GenC _ -> "G2"
+        | Text txt -> txt

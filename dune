@@ -1,6 +1,6 @@
 (executable
 	 (name main)
-   (modules main parser lexer ast env eval interp)
+   (modules main parser lexer ast env eval interp seq)
 	 (libraries graphics unix)) 
 (ocamllex (modules lexer))
 (menhir
