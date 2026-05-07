@@ -6,6 +6,8 @@ exception Division_by_zero
 let is_tested = Sys.getenv_opt "NO_WAIT" = None
 let is_interactif = Unix.isatty Unix.stdin
 
+
+
 let parse lexbuf = try Parser.programme Lexer.token lexbuf
                 with 
                 | Lexer.Error a -> Printf.eprintf "Erreur lexicale %s\n" a; exit 1
@@ -31,6 +33,11 @@ let mode_fichier () = let ast =  parse (Lexing.from_channel stdin) in
                         if is_tested then ignore(read_key())
 
 let () =
+        if Array.length Sys.argv > 1 && Sys.argv.(1) = "--debug" then 
+        begin
+                Seq.on := true;
+                Printf.printf "Mode debug\n"
+        end;
         init_graphics () ;
         (if is_interactif 
         then mode_interactif ()

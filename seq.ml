@@ -1,6 +1,11 @@
-open Interp
 open Ast
 open Eval
+
+let on = ref false
+
+type status = 
+  | Run of float
+  | Stop
 
 let pretty_printing_instr = function
   | Draw_on -> "Draw_on"
@@ -20,3 +25,14 @@ let pretty_printing_instr = function
   | Print e -> "Print " ^ exp_as_string e
   | Return (e,_) -> "Return " ^ exp_as_string e
   | ProcCall (name,l,_) -> "ProcCall : " ^ name ^ "(" ^ List.fold_left (fun str x -> str ^ "," ^ exp_as_string x) "" l  ^ ")"
+
+let print_info instr val_angle draw = 
+    Printf.printf "----------------------------------------------\n";
+    Printf.printf "instruction : %s\n" (pretty_printing_instr instr);
+    Printf.printf "angle actuel : %d\n" (val_angle 360);
+    Printf.printf "pinceau %s\n" (if draw then "baissé" else "levé")
+
+let step instr val_angle draw = 
+    if not !on then () else 
+    print_info instr val_angle draw
+

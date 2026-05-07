@@ -3,12 +3,10 @@ open Env
 open Eval
 open Graphics
 
-
 let draw = ref false
 
 let val_angle = ref 90. 
 let angle () = !val_angle *. Float.pi /. 180. 
-
 
 let init_graphics () = open_graph " 800x800";
         set_window_title "projet GAS6";
@@ -40,7 +38,7 @@ and debloc bloc =  match bloc with
                     | i :: suite -> next_action i; debloc suite
                     | [] -> ()
 
-and next_action = function
+and next_action instr = Seq.step instr !val_angle !draw; match instr with
     | Draw_on -> draw := true
     | Draw_off -> draw := false
     | Move (e,pos) -> let distance = as_float (eval_exp e) pos in let a = angle () in 
