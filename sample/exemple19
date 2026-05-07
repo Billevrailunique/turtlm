@@ -1,14 +1,14 @@
 Def changeColorRouge ()
 Debut 
-CouleurPinceau rouge 
+CouleurPinceau rouge ;
 Fin;
 Var d = 100;
 Def distance ()
 Debut 
-Retourn d
+Retourn d;
 Fin;
 BaisserPinceau;
 changeColorRouge();
 LargeurPinceau 100;
 Var a = distance ();
-Avancer a
+Avancer a;

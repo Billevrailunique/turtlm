@@ -2,12 +2,14 @@
 Def petit (a)
 Debut
 Si a < 10 
-Alors Debut 
-Retourn 100 Fin 
+Alors 
+Debut 
+Retourn 100 ; 
+Fin 
 Sinon Debut
-Retourn 0 Fin
+Retourn 0; Fin;
 Fin;
 
 BaisserPinceau;
 
-Avancer petit (1)
+Avancer petit (1);

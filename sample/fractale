@@ -8,7 +8,7 @@ Debut
 Si n == 0 Alors
 Debut
 Avancer taille;
-CouleurPinceau GenC ()
+CouleurPinceau GenC ();
 Fin
 Sinon
 Debut
@@ -16,9 +16,9 @@ Tourner 45;
 dragon(n - 1, taille);
 Tourner -90;
 dragon(n - 1, taille);
-Tourner 45
+Tourner 45;
 Fin
 Fin;
 
 BaisserPinceau;
-dragon(12, 5)
+dragon(12, 5);

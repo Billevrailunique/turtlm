@@ -16,7 +16,9 @@ open Ast
 
 programme: b=bloc_instruction EOF { b }
 
-bloc_instruction: l=separated_list(SEMICOLON, instruction) { l }
+bloc_instruction:
+  |    { [] }
+  | i=instruction SEMICOLON b=bloc_instruction { i::b }
 
 instruction: 
   | DRAW_ON { Draw_on }
