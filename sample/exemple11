@@ -5,4 +5,4 @@ a = 100;
 
 BaisserPinceau;
 LargeurPinceau c+a;
-Avancer 10
+Avancer 10;

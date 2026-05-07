@@ -14,7 +14,8 @@ let ast =  try Parser.programme Lexer.token lexbuf
 
 let () =
         init_graphics () ;
-         decode ast;
 
+        decode ast;
+        
         if is_tested then ignore(read_key());
         close_graph () ;

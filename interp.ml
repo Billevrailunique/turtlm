@@ -27,6 +27,7 @@ let rec decode bloc = env := ref [] :: !env ;
 
 and debloc bloc =  match bloc with 
                     | i :: suite -> next_action i; debloc suite
+                                    
                     | [] -> ()
 
 and next_action = function

@@ -4,11 +4,11 @@ Var a = 1;
 Si a != 0
 Alors 
 Debut 
-Var b = 1 
+Var b = 1 ;
 Fin;
 Si b != 0 
 Alors 
 Debut
-CouleurPinceau rouge
+CouleurPinceau rouge;
 Fin;
-Avancer 1
+Avancer 1;

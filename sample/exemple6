@@ -6,4 +6,4 @@ CouleurPinceau bleu ;
 Avancer 50;
 Tourner 120;
 CouleurPinceau FF1493 ;
-Avancer 50
+Avancer 50;
