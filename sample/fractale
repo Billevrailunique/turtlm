@@ -17,7 +17,7 @@ dragon(n - 1, taille);
 Tourner -90;
 dragon(n - 1, taille);
 Tourner 45;
-Fin
+Fin;
 Fin;
 
 BaisserPinceau;
