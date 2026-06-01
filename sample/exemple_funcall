@@ -1,0 +1,13 @@
+Def foo (x)
+Debut
+Si x <= 0
+Alors 
+Debut
+Retourn 0;
+Fin
+Sinon Debut 
+Retourn (foo (x-1) + x);
+Fin;
+Fin;
+
+Afficher (foo(1) + foo(2));

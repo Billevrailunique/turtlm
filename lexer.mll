@@ -45,11 +45,11 @@ rule token = parse
   | "Ou" {OR}
   | "Debut" {START}
   | "Fin"  {END}
+  | hexcode hexcode hexcode hexcode hexcode hexcode {HEX (Lexing.lexeme lexbuf)}
   | "=" {EGALE }
   | num+  { NUM (Lexing.lexeme lexbuf) }
   | "LargeurPinceau" { WIDTH_CHANGE }
   | "CouleurPinceau" { COLOR_CHANGE }
-  | hexcode hexcode hexcode hexcode hexcode hexcode {HEX (Lexing.lexeme lexbuf)}
   | "rouge"  {RED}
   | "bleu" {BLUE}
   | "vert" {GREEN}
