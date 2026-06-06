@@ -10,27 +10,20 @@ let rec eval_exp = function
                         | Some _ -> VFloat (-1. *. float_of_string a)
                         | None -> VFloat(float_of_string a))
     | Op (l, op, r, pos) -> VFloat (eval_op pos l r op) 
-    | Var (name, pos) -> (match get_val name !env with 
+    | Var (name, pos) -> let (flag,res) =  (get_val name !env) in  (match res with 
                             | Some e -> e
-                            | None -> 
-                begin 
-                    Printf.eprintf "Erreur var %s not initialisé yet quand on arrive à la ligne %d\n" name pos.Lexing.pos_lnum ;
-                    exit 1
-                end)
+                            | None -> if flag then raise (NotYetInitVar (name, pos)) else raise (UnknownVar (name,pos)))
     | FunCall (n, argsValue ,pos) ->  let rec aux liste = match liste with
                                         | a :: l -> (match !a with (str, param, instr) -> if String.equal str n 
                                                     then (try
                                                         let x = eval_list argsValue in
-                                                        setFonction param x ;
+                                                        setFonction n pos param x ;
                                                         ignore(!decode_ref ~initial_decla:param instr); 
                                                         No
                                                         with 
                                                             | ReturnValue (v:value) -> unsetFonction () ; v  )
                                                     else aux l)  
-                                        | [] -> begin
-                                                Printf.eprintf "Erreur fonction inconnu à la ligne %d\n" pos.Lexing.pos_lnum;
-                                                exit 1
-                                                end
+                                        | [] -> raise (UnknownFun (n,pos))
                                     in aux !envFun
     | GenN (args, pos) -> (try match args with
                             | a :: b :: c :: [] -> Random.init (int_of_float (as_float(eval_exp a) pos)) ; seed_init := true ; VFloat (float_of_int (Random.int_in_range ~min:(int_of_float (as_float(eval_exp b)pos)) ~max:(int_of_float (as_float(eval_exp c)pos)))) 
@@ -38,10 +31,7 @@ let rec eval_exp = function
                             | a :: [] -> (if not !seed_init then self_init () ; seed_init := true) ; VFloat (float_of_int (Random.int_in_range ~min:1 ~max:(int_of_float(as_float(eval_exp a)pos))))
                             | _ -> invalid_arg ""
                         with 
-                            | Invalid_argument _ -> begin
-                                                Printf.eprintf "Erreur, argument invalide,probablement min < max; ligne : %d\n" pos.Lexing.pos_lnum;
-                                                exit 1 
-                                                end) 
+                            | Invalid_argument _ -> raise (Invalid_argumentGenN pos))
     | Red  -> VCool red
     | Blue  -> VCool blue
     | Green  -> VCool green
@@ -70,32 +60,18 @@ and eval_op pos l r = function
     | Plus -> as_float(eval_exp l) pos +. as_float(eval_exp r) pos
     | Minus -> as_float(eval_exp l) pos -. as_float(eval_exp r) pos 
     | Time -> as_float(eval_exp l) pos *. as_float(eval_exp r) pos
-    | Divided -> let q = as_float(eval_exp r) pos in if q <> 0. then as_float(eval_exp l) pos /. q else 
-            begin
-                Printf.eprintf "Erreur division par 0 à la ligne %d\n" pos.Lexing.pos_lnum ;
-                exit 1
-            end
-    | Mod -> let le = as_float(eval_exp l) pos and re = as_float(eval_exp r) pos in if re <> 0. then ( mod_float le re ) else  
-               begin
-                Printf.eprintf "Erreur division par 0 à la ligne %d\n" pos.Lexing.pos_lnum ;
-                exit 1
-            end 
+    | Divided -> let q = as_float(eval_exp r) pos in if q <> 0. then as_float(eval_exp l) pos /. q else raise (Division_by_zero pos)
+    | Mod -> let le = as_float(eval_exp l) pos and re = as_float(eval_exp r) pos in if re <> 0. then ( mod_float le re ) else raise (Division_by_zero pos)
             
 and as_float v pos = match v with 
             | VFloat a -> a
-            | _ -> begin
-                Printf.eprintf "Erreur, float attandue à la ligne %d\n" pos.Lexing.pos_lnum ; exit 1
-            end 
+            | _ -> raise (FloatWaited pos)
 and as_bool v pos = match v with 
             | VBool a -> a
-            | _ -> begin
-                Printf.eprintf "Erreur, bool attandue à la ligne %d\n" pos.Lexing.pos_lnum ; exit 1
-            end 
+            | _ -> raise (BoolWaited pos)
 and as_color v pos = match v with 
             | VCool a -> a
-            | _ -> begin
-                Printf.eprintf "Erreur, couleur attandue à la ligne %d\n" pos.Lexing.pos_lnum ; exit 1
-            end 
+            | _ -> raise (ColorWaited pos)
 and as_string = function 
             | VText s -> String.sub s 1 ((String.length s) -2)
             | VBool b -> Bool.to_string b

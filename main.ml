@@ -1,7 +1,6 @@
 open Interp
 open Graphics
-
-exception Division_by_zero
+open Ast
 
 let is_tested = Sys.getenv_opt "NO_WAIT" = None
 let is_interactif = Unix.isatty Unix.stdin
@@ -32,7 +31,27 @@ let mode_fichier () = let ast =  parse (Lexing.from_channel stdin) in
 
 let () =
         init_graphics () ;
-        (if is_interactif 
-        then mode_interactif ()
-        else mode_fichier ());
+        try (if is_interactif 
+                then mode_interactif ()
+                else mode_fichier ())
+        with
+        | Division_by_zero pos -> Printf.eprintf "division par 0 à la ligne %d\n" pos.Lexing.pos_lnum
+        | TooManyArgsException (name,pos) -> Printf.eprintf "trop d'argument donné à la fonction %s à la ligne %d\n" name pos.Lexing.pos_lnum
+        | ArgsMissingException (name ,pos) -> Printf.eprintf "pas assez d'argument donné à la fonction %s à la ligne %d\n" name pos.Lexing.pos_lnum
+        | DepileEnvEmpty -> Printf.eprintf "environnement vide lorsque dépiler"
+        | OutOfBoundsCursor pos -> Printf.eprintf "curseur en dehors de l'écran à la ligne %d\n" pos.Lexing.pos_lnum
+        | OutOfBoundsPencilWidth pos -> Printf.eprintf "largeur pinceau trop grande à la ligne %d\n" pos.Lexing.pos_lnum
+        | AlreadyDeclaredVar (name,pos) -> Printf.eprintf "variable %s déjà déclaré quand on arrive à la ligne %d\n" name pos.Lexing.pos_lnum
+        | AlreadyDeclaredFun  (name,pos) -> Printf.eprintf "fonction %s déjà déclaré quand on arrive à la ligne %d\n" name pos.Lexing.pos_lnum
+        | UnknownFun (name,pos) -> Printf.eprintf "fonction %s inconnu à la ligne %d\n" name pos.Lexing.pos_lnum
+        | UnknownVar (name, pos) -> Printf.eprintf "variable %s inconnu à la ligne %d\n" name pos.Lexing.pos_lnum
+        | OutOfContextReturn pos -> Printf.eprintf "return en dehors d'une donction à la ligne %d\n" pos.Lexing.pos_lnum
+        | NotYetInitVar (name,pos) -> Printf.eprintf "variable %s pas encore initialisé à la ligne %d\n" name pos.Lexing.pos_lnum
+        | Invalid_argumentGenN pos -> Printf.eprintf "GenN mal utiliser à la ligne %d\n" pos.Lexing.pos_lnum
+        | FloatWaited pos-> Printf.eprintf "float attandu à la ligne %d\n" pos.Lexing.pos_lnum
+        | BoolWaited pos-> Printf.eprintf "bool attendu à la ligne %d\n" pos.Lexing.pos_lnum
+        | ColorWaited pos-> Printf.eprintf "couleur attendu à la ligne %d\n" pos.Lexing.pos_lnum
+        | _ -> Printf.eprintf "erreur non pris en charge" 
+        
+        ;
         close_graph ()

@@ -35,7 +35,7 @@ instruction:
   | WHILE c=expression DO START i=bloc_instruction END  { While (c,i, $startpos) }
   | REPEAT e=expression MANY_TIMES START i=bloc_instruction END { Repeat (e,i, $startpos) }
   | RETURN e=expression { Return (e,$startpos) }
-  | DEF n=ID LPAREN a=separated_list(COMA, ID) RPAREN START i=bloc_instruction END { FunDecla (n, a, i) }
+  | DEF n=ID LPAREN a=separated_list(COMA, ID) RPAREN START i=bloc_instruction END { FunDecla (n, a, i, $startpos) }
   | n=ID LPAREN a=separated_list(COMA, expression) RPAREN  {ProcCall (n,a, $startpos)}
   | PRINT e=expression { Print e }
 
