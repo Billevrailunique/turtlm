@@ -67,7 +67,7 @@ exception ReturnValue of value
 exception TooManyArgsException of string * Lexing.position
 exception ArgsMissingException of string * Lexing.position
 exception Division_by_zero of Lexing.position
-exception DepileEnvEmpty
+exception EnvEmpty
 exception OutOfBoundsCursor of Lexing.position 
 exception OutOfBoundsPencilWidth of Lexing.position 
 exception AlreadyDeclaredVar of string * Lexing.position 

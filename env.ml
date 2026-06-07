@@ -47,3 +47,25 @@ and setFonction name pos vars argsValue = context_actuel := Fonction;
         in aux vars argsValue  
 
 and unsetFonction () = context_actuel := Global
+
+and resetEnv () =  env := []; envFun := []
+
+and afficherDeclared declared = let rec aux = function 
+                | a :: l -> (match !a with (name,_) -> Printf.printf "%s\n" name) ; aux l
+                | [] -> () 
+        in aux !declared
+        
+and afficherfun (func:fonction) = match !func with (name, _, _) -> Printf.printf "%s\n" name
+and afficherEnv () =  
+        Printf.printf "affichage var début : \n";
+        (let rec aux = function
+                | a :: m -> afficherDeclared a ; aux m
+                | [] -> ()
+        in aux !env);
+        Printf.printf "fin\n";
+        Printf.printf "affichage fonction début : \n";
+        let rec aux = (function
+        | a :: m -> afficherfun a; aux m
+        | [] -> ()) 
+        in aux !envFun;
+        Printf.printf "fin\n";
