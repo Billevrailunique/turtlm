@@ -9,7 +9,7 @@ let rec eval_exp = function
     | Valeur (s,a) -> (match s with 
                         | Some _ -> VFloat (-1. *. float_of_string a)
                         | None -> VFloat(float_of_string a))
-    | Op (l, op, r, pos) -> VFloat (eval_op pos l r op) 
+    | Op (l, op, r, pos) ->  eval_op pos l r op 
     | Var (name, pos) -> let (flag,res) =  (get_val name !env) in  (match res with 
                             | Some e -> e
                             | None -> if flag then raise (NotYetInitVar (name, pos)) else raise (UnknownVar (name,pos)))
@@ -45,25 +45,26 @@ let rec eval_exp = function
                                     let r = (Random.int_in_range ~min:0 ~max:255) and g = (Random.int_in_range ~min:0 ~max:255) and b = (Random.int_in_range ~min:0 ~max:255) in VCool(rgb r g b))
                             | Some a -> (Random.init(int_of_float (as_float(eval_exp a) pos)); seed_init := true; 
                                     let r = (Random.int_in_range ~min:0 ~max:255) and g = (Random.int_in_range ~min:0 ~max:255) and b = (Random.int_in_range ~min:0 ~max:255)  in VCool(rgb r g b) ))
-    | True -> VBool true 
-    | False -> VBool false 
-    | And (c1,c2, pos) -> VBool(as_bool(eval_exp c1) pos && as_bool(eval_exp c2) pos)
-    | Or (c1,c2, pos) -> VBool(as_bool(eval_exp c1) pos || as_bool(eval_exp c2) pos)
+    | ValBool b -> (match b with
+                    | "Vrais" -> VBool true
+                    | _ -> VBool false )
     | Not (c, pos) -> VBool(not (as_bool(eval_exp c) pos))
-    | TestBool (e1, op, e2, pos) ->  let a = as_float(eval_exp e1) pos and  b = as_float(eval_exp e2) pos in let rep = (match op with 
-                                | Less -> a < b 
-                                | More -> a > b
-                                | Less_equal -> a <= b 
-                                | More_equal -> a >= b 
-                                | Bool_equal -> a = b 
-                                | Not_equal -> a <> b ) in VBool rep
     | Text str -> VText str
-and eval_op pos l r = function 
-    | Plus -> as_float(eval_exp l) pos +. as_float(eval_exp r) pos
-    | Minus -> as_float(eval_exp l) pos -. as_float(eval_exp r) pos 
-    | Time -> as_float(eval_exp l) pos *. as_float(eval_exp r) pos
-    | Divided -> let q = as_float(eval_exp r) pos in if q <> 0. then as_float(eval_exp l) pos /. q else raise (Division_by_zero pos)
-    | Mod -> let le = as_float(eval_exp l) pos and re = as_float(eval_exp r) pos in if re <> 0. then ( mod_float le re ) else raise (Division_by_zero pos)
+and eval_op pos l r = 
+    let le = eval_exp l in let re = eval_exp r in function 
+    | Plus -> VFloat (as_float le pos +. as_float re pos)
+    | Minus -> VFloat  (as_float le pos -. as_float re pos) 
+    | Time ->  VFloat (as_float le pos *. as_float re pos)
+    | Divided -> let q = as_float re pos in VFloat (if q <> 0. then as_float le pos /. q else raise (Division_by_zero pos))
+    | Mod -> let le = as_float le pos and re = as_float re pos in VFloat (if re <> 0. then ( mod_float le re ) else raise (Division_by_zero pos))
+    | And -> VBool (as_bool le pos && as_bool re pos)
+    | Or -> VBool (as_bool le pos || as_bool re pos)
+    | Less -> VBool (as_float le pos < as_float re pos)
+    | Less_equal -> VBool (as_float le pos <= as_float re pos )
+    | Bool_equal -> VBool (as_float le pos = as_float re pos)
+    | Not_equal -> VBool (as_float le pos <> as_float re pos)
+    | More -> VBool (as_float le pos > as_float re pos)
+    | More_equal -> VBool (as_float le pos >= as_float re pos)
             
 and as_float v pos = match v with 
             | VFloat a -> a

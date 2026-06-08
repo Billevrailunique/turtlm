@@ -20,8 +20,8 @@ rule token = parse
   | "LeverPinceau"  { DRAW_OFF }
   | "Avancer"  { MOVE }
   | "Tourner"  { TURN }
-  | "Vrais"  {TRUE}
-  | "Faux"  {FALSE}
+  | "Vrais" 
+  | "Faux"  { VALBOOL (Lexing.lexeme lexbuf) }
   | "Var" { VAR }
   | ","  {COMA}
   | "Def" { DEF }
