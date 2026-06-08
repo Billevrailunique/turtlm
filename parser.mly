@@ -2,8 +2,8 @@
 open Ast
 %}
 
-%token EOF DRAW_OFF DRAW_ON GENC DIVIDE TIME GENN PRINT MINUS MODULO PLUS MOVE COMA TURN TRUE DEF RETURN AND OR FALSE RPAREN LPAREN SEMICOLON RED BLUE GREEN BLACK YELLOW COLOR_CHANGE WIDTH_CHANGE VAR EGALE IF THEN ELSE WHILE DO REPEAT MANY_TIMES NOT_EQUAL LESS_EQUAL MORE_EQUAL BOOL_EQUAL LESS MORE START END NOT
-%token<string> HEX NUM ID TXT
+%token EOF DRAW_OFF DRAW_ON GENC DIVIDE TIME GENN PRINT MINUS MODULO PLUS MOVE COMA TURN TRUE DEF RETURN AND OR FALSE RPAREN LPAREN SEMICOLON COLOR_CHANGE WIDTH_CHANGE VAR EGALE IF THEN ELSE WHILE DO REPEAT MANY_TIMES NOT_EQUAL LESS_EQUAL MORE_EQUAL BOOL_EQUAL LESS MORE START END NOT
+%token<string> HEX NUM ID TXT COLOR
 
 %left PLUS MINUS OR
 %left TIME DIVIDE AND MODULO
@@ -11,6 +11,8 @@ open Ast
 %right NOT
 
 %start<bloc_instruction> programme
+
+%on_error_reduce expression
 
 %%
 
@@ -52,11 +54,7 @@ expression:
   | NOT c=expression  { Not (c,$startpos)}
   | c1=expression AND c2=expression  {And (c1, c2,$startpos)} 
   | c1=expression OR c2=expression {Or (c1, c2,$startpos)}
-  | RED { Red }
-  | BLUE { Blue }
-  | GREEN { Green }
-  | BLACK { Black }
-  | YELLOW  { Yellow }
+  | c=COLOR {Color c}
   | v=HEX  { Hexcode v }
   | GENC LPAREN a=option(expression) RPAREN  { GenC (a,$startpos) }
   | str=TXT { Text str } 

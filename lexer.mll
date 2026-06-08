@@ -50,11 +50,11 @@ rule token = parse
   | num+  { NUM (Lexing.lexeme lexbuf) }
   | "LargeurPinceau" { WIDTH_CHANGE }
   | "CouleurPinceau" { COLOR_CHANGE }
-  | "rouge"  {RED}
-  | "bleu" {BLUE}
-  | "vert" {GREEN}
-  | "noir" {BLACK}
-  | "jaune" {YELLOW}
+  | "vert" 
+  | "bleu" 
+  | "rouge" 
+  | "jaune" 
+  | "noir" { COLOR (Lexing.lexeme lexbuf) }
   | ')'	{ RPAREN }
   | '('	{ LPAREN }
   | '+' {PLUS}

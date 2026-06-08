@@ -32,11 +32,13 @@ let rec eval_exp = function
                             | _ -> invalid_arg ""
                         with 
                             | Invalid_argument _ -> raise (Invalid_argumentGenN pos))
-    | Red  -> VCool red
-    | Blue  -> VCool blue
-    | Green  -> VCool green
-    | Yellow -> VCool yellow 
-    | Black  -> VCool black 
+    | Color str -> let (c:Graphics.color) = (match str with 
+                            | "vert" -> green
+                            | "bleu" -> blue
+                            | "jaune" -> yellow
+                            | "rouge" -> red
+                            | _ -> black)
+                    in VCool c 
     | Hexcode v  ->  let v1 = int_of_string ("0X" ^ String.sub v 0 2 ) and v2 = int_of_string ("0X" ^ String.sub v 2 2 ) and v3 = int_of_string ("0X" ^ String.sub v 4 2 ) in VCool (rgb v1 v2 v3)
     | GenC (args,pos) -> (match args with 
                             | None -> (if not !seed_init then Random.self_init () ; seed_init := true ; 

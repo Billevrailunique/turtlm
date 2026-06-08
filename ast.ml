@@ -28,11 +28,7 @@ and expression = Valeur of unit option * string
                 | And of expression * expression * Lexing.position
                 | Or of expression * expression * Lexing.position
                 | Hexcode of string
-                | Black
-                | Blue
-                | Red 
-                | Yellow
-                | Green
+                | Color of string
                 | GenC of expression option * Lexing.position
                 | Text of string
 and operateur = Plus 
