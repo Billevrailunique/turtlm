@@ -1,41 +1,17 @@
 open Interp
 open Graphics
 open Ast
-open Env
+open Printf
 
 let is_tested = Sys.getenv_opt "NO_WAIT" = None
 let is_interactif = Unix.isatty Unix.stdin
 
-let parse lexbuf = try Parser.programme Lexer.token lexbuf
-                with 
-                | Lexer.Error a -> Printf.eprintf "Erreur lexicale %s\n" a; exit 1
-                | Parser.Error -> let pos = lexbuf.Lexing.lex_curr_p in Printf.eprintf "Erreur syntaxique à la ligne : %d et à la colonne %d\n" pos.pos_lnum (pos.Lexing.pos_cnum - pos.Lexing.pos_bol ); exit 1
+module Err = MenhirLib.ErrorReports
+module Lex = MenhirLib.LexerUtil
+module MInter = Parser.MenhirInterpreter
 
-(*TODO : mode_interactif n'est peut-être plus compatible avec le nouveau sys d'erreur*)
-let mode_interactif () = 
-                Printf.printf "mode interactif :\n> ";
-                let envext = ref [] in 
-                let buf = Buffer.create 512 in
-                while true do 
-                        Buffer.clear buf;
-                        (try while true do
-                                Buffer.add_string buf (read_line());
-                                done 
-                        with 
-                        | End_of_file -> ());
-                        Printf.printf "> "; 
-                        let ast = parse (Lexing.from_string (Buffer.contents buf)) in envext := decode ~initial_decla:!envext ast;
-                done
-                
-let mode_fichier () = let ast =  parse (Lexing.from_channel stdin) in
-                         pretraitement ast; resetEnv () ; init_graphics () ; ignore(decode ast);
-                        if is_tested then ignore(read_key())
-
-let () =
-        try (if is_interactif 
-                then (init_graphics () ; mode_interactif ())
-                else mode_fichier ())
-        with
+let succed v = try ignore(decode v)
+with 
         | Division_by_zero pos -> Printf.eprintf "division par 0 à la ligne %d\n" pos.Lexing.pos_lnum
         | TooManyArgsException (name,pos) -> Printf.eprintf "trop d'argument donné à la fonction %s à la ligne %d\n" name pos.Lexing.pos_lnum
         | ArgsMissingException (name ,pos) -> Printf.eprintf "pas assez d'argument donné à la fonction %s à la ligne %d\n" name pos.Lexing.pos_lnum
@@ -53,5 +29,47 @@ let () =
         | BoolWaited pos-> Printf.eprintf "bool attendu à la ligne %d\n" pos.Lexing.pos_lnum
         | ColorWaited pos-> Printf.eprintf "couleur attendu à la ligne %d\n" pos.Lexing.pos_lnum
         | _ -> Printf.eprintf "erreur non pris en charge" 
-        ;
-        close_graph ()
+        
+
+let env checkpoint =
+  match checkpoint with
+  | MInter.HandlingError env -> env
+  | _ -> assert false
+
+let state checkpoint =
+  MInter.current_state_number (env checkpoint)
+
+let fail checkpoint = printf "%s" (ParserMessages.message (state checkpoint)) ;  close_graph () 
+
+let parse lexbuf = 
+  let supplier = MInter.lexer_lexbuf_to_supplier Lexer.token lexbuf in 
+  let checkpoint = Parser.Incremental.programme lexbuf.lex_curr_p in 
+  MInter.loop_handle succed fail supplier checkpoint
+
+(*TODO : mode_interactif n'est peut-être plus compatible avec le nouveau sys d'erreur*)
+(*
+let mode_interactif () = 
+                Printf.printf "mode interactif :\n> ";
+                let envext = ref [] in 
+                let buf = Buffer.create 512 in
+                while true do 
+                        Buffer.clear buf;
+                        (try while true do
+                                Buffer.add_string buf (read_line());
+                                done 
+                        with 
+                        | End_of_file -> ());
+                        Printf.printf "> "; 
+                        let ast = parse (Lexing.from_string (Buffer.contents buf)) in envext := decode ~initial_decla:!envext ast;
+                done
+                *)
+let mode_fichier () = parse (Lexing.from_channel stdin);
+                      if is_tested then try ignore(read_key ()) 
+                                        with | _ -> ()
+
+let () = init_graphics ();
+         if is_interactif 
+                then ()
+                else mode_fichier () ;
+              close_graph ()
+        
