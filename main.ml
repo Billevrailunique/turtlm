@@ -7,28 +7,28 @@ let is_tested = Sys.getenv_opt "NO_WAIT" = None
 let is_interactif = Unix.isatty Unix.stdin
 
 module Err = MenhirLib.ErrorReports
-module Lex = MenhirLib.LexerUtil
 module MInter = Parser.MenhirInterpreter
 
-let succed v = try ignore(decode v)
+(*n'est executé qu'une fois, lorsqu'on réduit à l'axiome*)
+let run v = try ignore(decode v)
 with 
-        | Division_by_zero pos -> Printf.eprintf "division par 0 à la ligne %d\n" pos.Lexing.pos_lnum
-        | TooManyArgsException (name,pos) -> Printf.eprintf "trop d'argument donné à la fonction %s à la ligne %d\n" name pos.Lexing.pos_lnum
-        | ArgsMissingException (name ,pos) -> Printf.eprintf "pas assez d'argument donné à la fonction %s à la ligne %d\n" name pos.Lexing.pos_lnum
-        | EnvEmpty -> Printf.eprintf "environnement vide lorsque dépiler"
-        | OutOfBoundsCursor pos -> Printf.eprintf "curseur en dehors de l'écran à la ligne %d\n" pos.Lexing.pos_lnum
-        | OutOfBoundsPencilWidth pos -> Printf.eprintf "largeur pinceau trop grande à la ligne %d\n" pos.Lexing.pos_lnum
-        | AlreadyDeclaredVar (name,pos) -> Printf.eprintf "variable %s déjà déclaré quand on arrive à la ligne %d\n" name pos.Lexing.pos_lnum
-        | AlreadyDeclaredFun  (name,pos) -> Printf.eprintf "fonction %s déjà déclaré quand on arrive à la ligne %d\n" name pos.Lexing.pos_lnum
-        | UnknownFun (name,pos) -> Printf.eprintf "fonction %s inconnu à la ligne %d\n" name pos.Lexing.pos_lnum
-        | UnknownVar (name, pos) -> Printf.eprintf "variable %s inconnu à la ligne %d\n" name pos.Lexing.pos_lnum
-        | OutOfContextReturn pos -> Printf.eprintf "return en dehors d'une donction à la ligne %d\n" pos.Lexing.pos_lnum
-        | NotYetInitVar (name,pos) -> Printf.eprintf "variable %s pas encore initialisé à la ligne %d\n" name pos.Lexing.pos_lnum
-        | Invalid_argumentGenN pos -> Printf.eprintf "GenN mal utiliser à la ligne %d\n" pos.Lexing.pos_lnum
-        | FloatWaited pos-> Printf.eprintf "float attandu à la ligne %d\n" pos.Lexing.pos_lnum
-        | BoolWaited pos-> Printf.eprintf "bool attendu à la ligne %d\n" pos.Lexing.pos_lnum
-        | ColorWaited pos-> Printf.eprintf "couleur attendu à la ligne %d\n" pos.Lexing.pos_lnum
-        | _ -> Printf.eprintf "erreur non pris en charge" 
+        | Division_by_zero pos -> eprintf "division par 0 à la ligne %d\n" pos.Lexing.pos_lnum
+        | TooManyArgsException (name,pos) -> eprintf "trop d'argument donné à la fonction %s à la ligne %d\n" name pos.Lexing.pos_lnum
+        | ArgsMissingException (name ,pos) -> eprintf "pas assez d'argument donné à la fonction %s à la ligne %d\n" name pos.Lexing.pos_lnum
+        | EnvEmpty -> eprintf "environnement vide lorsque dépiler"
+        | OutOfBoundsCursor pos -> eprintf "curseur en dehors de l'écran à la ligne %d\n" pos.Lexing.pos_lnum
+        | OutOfBoundsPencilWidth pos -> eprintf "largeur pinceau trop grande à la ligne %d\n" pos.Lexing.pos_lnum
+        | AlreadyDeclaredVar (name,pos) -> eprintf "variable %s déjà déclaré quand on arrive à la ligne %d\n" name pos.Lexing.pos_lnum
+        | AlreadyDeclaredFun  (name,pos) -> eprintf "fonction %s déjà déclaré quand on arrive à la ligne %d\n" name pos.Lexing.pos_lnum
+        | UnknownFun (name,pos) -> eprintf "fonction %s inconnu à la ligne %d\n" name pos.Lexing.pos_lnum
+        | UnknownVar (name, pos) -> eprintf "variable %s inconnu à la ligne %d\n" name pos.Lexing.pos_lnum
+        | OutOfContextReturn pos -> eprintf "return en dehors d'une donction à la ligne %d\n" pos.Lexing.pos_lnum
+        | NotYetInitVar (name,pos) -> eprintf "variable %s pas encore initialisé à la ligne %d\n" name pos.Lexing.pos_lnum
+        | Invalid_argumentGenN pos -> eprintf "GenN mal utiliser à la ligne %d\n" pos.Lexing.pos_lnum
+        | FloatWaited pos-> eprintf "float attandu à la ligne %d\n" pos.Lexing.pos_lnum
+        | BoolWaited pos-> eprintf "bool attendu à la ligne %d\n" pos.Lexing.pos_lnum
+        | ColorWaited pos-> eprintf "couleur attendu à la ligne %d\n" pos.Lexing.pos_lnum
+        | _ -> eprintf "erreur non pris en charge" 
         
 
 let env checkpoint =
@@ -39,37 +39,29 @@ let env checkpoint =
 let state checkpoint =
   MInter.current_state_number (env checkpoint)
 
-let fail checkpoint = printf "%s" (ParserMessages.message (state checkpoint)) ;  close_graph () 
+let syntax_error checkpoint = let num = (state checkpoint) in printf "%s(echec état %d)\n" (ParserMessages.message num) num ;  close_graph () 
 
-let parse lexbuf = 
-  let supplier = MInter.lexer_lexbuf_to_supplier Lexer.token lexbuf in 
-  let checkpoint = Parser.Incremental.programme lexbuf.lex_curr_p in 
-  MInter.loop_handle succed fail supplier checkpoint
+let rec parse lexbuf checkpoint =  
+  match checkpoint with
+    | MInter.InputNeeded _ -> (try (let token = Lexer.token lexbuf in 
+                                let startp = lexbuf.lex_start_p
+                                and endp = lexbuf.lex_curr_p in
+                                let checkpoint = MInter.offer checkpoint (token, startp, endp) in 
+                                parse lexbuf checkpoint)
+                              with
+                              | Lexer.Error msg -> printf "Erreur lexicale %s\n" msg; exit 1)
+    | MInter.Shifting _ 
+    | MInter.AboutToReduce _ -> let checkpoint = MInter.resume checkpoint in parse lexbuf checkpoint 
+    | HandlingError _ -> syntax_error checkpoint
+    | Accepted v -> run v 
+    | Rejected -> assert false
 
-(*TODO : mode_interactif n'est peut-être plus compatible avec le nouveau sys d'erreur*)
-(*
-let mode_interactif () = 
-                Printf.printf "mode interactif :\n> ";
-                let envext = ref [] in 
-                let buf = Buffer.create 512 in
-                while true do 
-                        Buffer.clear buf;
-                        (try while true do
-                                Buffer.add_string buf (read_line());
-                                done 
-                        with 
-                        | End_of_file -> ());
-                        Printf.printf "> "; 
-                        let ast = parse (Lexing.from_string (Buffer.contents buf)) in envext := decode ~initial_decla:!envext ast;
-                done
-                *)
-let mode_fichier () = parse (Lexing.from_channel stdin);
+
+let mode_fichier () = let lexbuf = Lexing.from_channel stdin in parse lexbuf (Parser.Incremental.programme lexbuf.lex_curr_p);
                       if is_tested then try ignore(read_key ()) 
                                         with | _ -> ()
 
 let () = init_graphics ();
-         if is_interactif 
-                then ()
-                else mode_fichier () ;
-              close_graph ()
+        mode_fichier () ;
+        close_graph ()
         
