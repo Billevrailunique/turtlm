@@ -20,8 +20,8 @@ rule token = parse
   | "LeverPinceau"  { DRAW_OFF }
   | "Avancer"  { MOVE }
   | "Tourner"  { TURN }
-  | "Vrais"  {TRUE}
-  | "Faux"  {FALSE}
+  | "Vrais" 
+  | "Faux"  { VALBOOL (Lexing.lexeme lexbuf) }
   | "Var" { VAR }
   | ","  {COMA}
   | "Def" { DEF }
@@ -50,11 +50,11 @@ rule token = parse
   | num+  { NUM (Lexing.lexeme lexbuf) }
   | "LargeurPinceau" { WIDTH_CHANGE }
   | "CouleurPinceau" { COLOR_CHANGE }
-  | "rouge"  {RED}
-  | "bleu" {BLUE}
-  | "vert" {GREEN}
-  | "noir" {BLACK}
-  | "jaune" {YELLOW}
+  | "vert" 
+  | "bleu" 
+  | "rouge" 
+  | "jaune" 
+  | "noir" { COLOR (Lexing.lexeme lexbuf) }
   | ')'	{ RPAREN }
   | '('	{ LPAREN }
   | '+' {PLUS}
