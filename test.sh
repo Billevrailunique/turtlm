@@ -15,7 +15,7 @@ for file in sample/exemple*; do
         continue
     fi
 
-    if diff -q <(NO_WAIT=1 _build/default/main.exe < "$file" 2>&1 | tr -d '\n' ) <(tr -d '\n' < "$expected") > /dev/null; then
+    if diff -q <(NO_WAIT=1 _build/default/main.exe "$file" 2>&1 | tr -d '\n' ) <(tr -d '\n' < "$expected") > /dev/null; then
         echo "[$exemple] OK"
         PASS=$((PASS + 1))
     else
