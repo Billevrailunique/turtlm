@@ -16,14 +16,12 @@ and instruction = Draw_on
                 | Print of expression
                 | Return of expression * Lexing.position
                 | ProcCall of string * expression list * Lexing.position
-and expression = Valeur of unit option * string
+and expression = NumOrVarOrHexa of unit option * string * Lexing.position
                 | Op of expression * op_bin * expression * Lexing.position
-                | Var of string * Lexing.position
                 | FunCall of string * expression list * Lexing.position
                 | GenN of expression list * Lexing.position
                 | ValBool of string
                 | Not of expression * Lexing.position
-                | Hexcode of string
                 | Color of string
                 | GenC of expression option * Lexing.position
                 | Text of string
@@ -46,6 +44,7 @@ type value =
     | VBool of bool
     | VCool of Graphics.color
     | VText of string
+    | Unsure of float * string 
     | No
 
 type variable = (string * value option ) ref 

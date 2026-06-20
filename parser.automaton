@@ -5,22 +5,22 @@ State 0:
 programme' -> . programme [ # ]
 ## Transitions:
 -- On WIDTH_CHANGE shift to state 1
--- On WHILE shift to state 58
--- On VAR shift to state 62
--- On TURN shift to state 66
--- On RETURN shift to state 68
--- On REPEAT shift to state 70
--- On PRINT shift to state 74
--- On MOVE shift to state 76
--- On IF shift to state 78
--- On ID shift to state 82
--- On DRAW_ON shift to state 88
--- On DRAW_OFF shift to state 89
--- On DEF shift to state 90
--- On COLOR_CHANGE shift to state 100
--- On programme shift to state 117
--- On instruction shift to state 102
--- On bloc_instruction shift to state 118
+-- On WHILE shift to state 56
+-- On VAR shift to state 60
+-- On TURN shift to state 64
+-- On RETURN shift to state 66
+-- On REPEAT shift to state 68
+-- On PRINT shift to state 72
+-- On MOVE shift to state 74
+-- On IF shift to state 76
+-- On DRAW_ON shift to state 80
+-- On DRAW_OFF shift to state 81
+-- On DEF shift to state 82
+-- On COLOR_CHANGE shift to state 92
+-- On CHARS shift to state 94
+-- On programme shift to state 115
+-- On instruction shift to state 100
+-- On bloc_instruction shift to state 116
 ## Reductions:
 -- On EOF
 --   reduce production bloc_instruction ->
@@ -35,17 +35,13 @@ instruction -> WIDTH_CHANGE . expression [ SEMICOLON ]
 -- On TXT shift to state 3
 -- On NOT shift to state 4
 -- On MINUS shift to state 5
--- On LPAREN shift to state 6
--- On ID shift to state 7
--- On HEX shift to state 9
--- On GENN shift to state 10
--- On GENC shift to state 12
--- On COLOR shift to state 14
--- On option(MINUS) shift to state 17
--- On expression shift to state 57
+-- On LPAREN shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On expression shift to state 55
 ## Reductions:
--- On NUM
---   reduce production option(MINUS) ->
 
 State 2:
 ## Known stack suffix:
@@ -77,29 +73,34 @@ expression -> NOT . expression [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MO
 -- On TXT shift to state 3
 -- On NOT shift to state 4
 -- On MINUS shift to state 5
--- On LPAREN shift to state 6
--- On ID shift to state 7
--- On HEX shift to state 9
--- On GENN shift to state 10
--- On GENC shift to state 12
--- On COLOR shift to state 14
--- On option(MINUS) shift to state 17
--- On expression shift to state 56
+-- On LPAREN shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On expression shift to state 54
 ## Reductions:
--- On NUM
---   reduce production option(MINUS) ->
 
 State 5:
 ## Known stack suffix:
 ## MINUS
 ## LR(1) items:
-option(MINUS) -> MINUS . [ NUM ]
+expression -> MINUS . CHARS [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
 ## Transitions:
+-- On CHARS shift to state 6
 ## Reductions:
--- On NUM
---   reduce production option(MINUS) -> MINUS
 
 State 6:
+## Known stack suffix:
+## MINUS CHARS
+## LR(1) items:
+expression -> MINUS CHARS . [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
+## Transitions:
+## Reductions:
+-- On TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND
+--   reduce production expression -> MINUS CHARS
+
+State 7:
 ## Known stack suffix:
 ## LPAREN
 ## LR(1) items:
@@ -109,76 +110,24 @@ expression -> LPAREN . expression RPAREN [ TIME THEN SEMICOLON RPAREN PLUS OR NO
 -- On TXT shift to state 3
 -- On NOT shift to state 4
 -- On MINUS shift to state 5
--- On LPAREN shift to state 6
--- On ID shift to state 7
--- On HEX shift to state 9
--- On GENN shift to state 10
--- On GENC shift to state 12
--- On COLOR shift to state 14
--- On option(MINUS) shift to state 17
--- On expression shift to state 54
+-- On LPAREN shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On expression shift to state 52
 ## Reductions:
--- On NUM
---   reduce production option(MINUS) ->
-
-State 7:
-## Known stack suffix:
-## ID
-## LR(1) items:
-expression -> ID . [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
-expression -> ID . LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
-## Transitions:
--- On LPAREN shift to state 8
-## Reductions:
--- On TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND
---   reduce production expression -> ID
 
 State 8:
-## Known stack suffix:
-## ID LPAREN
-## LR(1) items:
-expression -> ID LPAREN . loption(separated_nonempty_list(COMA,expression)) RPAREN [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
-## Transitions:
--- On VALBOOL shift to state 2
--- On TXT shift to state 3
--- On NOT shift to state 4
--- On MINUS shift to state 5
--- On LPAREN shift to state 6
--- On ID shift to state 7
--- On HEX shift to state 9
--- On GENN shift to state 10
--- On GENC shift to state 12
--- On COLOR shift to state 14
--- On separated_nonempty_list(COMA,expression) shift to state 46
--- On option(MINUS) shift to state 17
--- On loption(separated_nonempty_list(COMA,expression)) shift to state 52
--- On expression shift to state 49
-## Reductions:
--- On RPAREN
---   reduce production loption(separated_nonempty_list(COMA,expression)) ->
--- On NUM
---   reduce production option(MINUS) ->
-
-State 9:
-## Known stack suffix:
-## HEX
-## LR(1) items:
-expression -> HEX . [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
-## Transitions:
-## Reductions:
--- On TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND
---   reduce production expression -> HEX
-
-State 10:
 ## Known stack suffix:
 ## GENN
 ## LR(1) items:
 expression -> GENN . LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
 ## Transitions:
--- On LPAREN shift to state 11
+-- On LPAREN shift to state 9
 ## Reductions:
 
-State 11:
+State 9:
 ## Known stack suffix:
 ## GENN LPAREN
 ## LR(1) items:
@@ -188,32 +137,28 @@ expression -> GENN LPAREN . loption(separated_nonempty_list(COMA,expression)) RP
 -- On TXT shift to state 3
 -- On NOT shift to state 4
 -- On MINUS shift to state 5
--- On LPAREN shift to state 6
--- On ID shift to state 7
--- On HEX shift to state 9
--- On GENN shift to state 10
--- On GENC shift to state 12
--- On COLOR shift to state 14
--- On separated_nonempty_list(COMA,expression) shift to state 46
--- On option(MINUS) shift to state 17
--- On loption(separated_nonempty_list(COMA,expression)) shift to state 47
--- On expression shift to state 49
+-- On LPAREN shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On separated_nonempty_list(COMA,expression) shift to state 15
+-- On loption(separated_nonempty_list(COMA,expression)) shift to state 50
+-- On expression shift to state 18
 ## Reductions:
 -- On RPAREN
 --   reduce production loption(separated_nonempty_list(COMA,expression)) ->
--- On NUM
---   reduce production option(MINUS) ->
 
-State 12:
+State 10:
 ## Known stack suffix:
 ## GENC
 ## LR(1) items:
 expression -> GENC . LPAREN option(expression) RPAREN [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
 ## Transitions:
--- On LPAREN shift to state 13
+-- On LPAREN shift to state 11
 ## Reductions:
 
-State 13:
+State 11:
 ## Known stack suffix:
 ## GENC LPAREN
 ## LR(1) items:
@@ -223,22 +168,18 @@ expression -> GENC LPAREN . option(expression) RPAREN [ TIME THEN SEMICOLON RPAR
 -- On TXT shift to state 3
 -- On NOT shift to state 4
 -- On MINUS shift to state 5
--- On LPAREN shift to state 6
--- On ID shift to state 7
--- On HEX shift to state 9
--- On GENN shift to state 10
--- On GENC shift to state 12
--- On COLOR shift to state 14
--- On option(expression) shift to state 15
--- On option(MINUS) shift to state 17
--- On expression shift to state 19
+-- On LPAREN shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On option(expression) shift to state 47
+-- On expression shift to state 49
 ## Reductions:
--- On NUM
---   reduce production option(MINUS) ->
 -- On RPAREN
 --   reduce production option(expression) ->
 
-State 14:
+State 12:
 ## Known stack suffix:
 ## COLOR
 ## LR(1) items:
@@ -248,81 +189,108 @@ expression -> COLOR . [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL 
 -- On TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND
 --   reduce production expression -> COLOR
 
+State 13:
+## Known stack suffix:
+## CHARS
+## LR(1) items:
+expression -> CHARS . [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
+expression -> CHARS . LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
+## Transitions:
+-- On LPAREN shift to state 14
+## Reductions:
+-- On TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND
+--   reduce production expression -> CHARS
+
+State 14:
+## Known stack suffix:
+## CHARS LPAREN
+## LR(1) items:
+expression -> CHARS LPAREN . loption(separated_nonempty_list(COMA,expression)) RPAREN [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
+## Transitions:
+-- On VALBOOL shift to state 2
+-- On TXT shift to state 3
+-- On NOT shift to state 4
+-- On MINUS shift to state 5
+-- On LPAREN shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On separated_nonempty_list(COMA,expression) shift to state 15
+-- On loption(separated_nonempty_list(COMA,expression)) shift to state 16
+-- On expression shift to state 18
+## Reductions:
+-- On RPAREN
+--   reduce production loption(separated_nonempty_list(COMA,expression)) ->
+
 State 15:
 ## Known stack suffix:
-## GENC LPAREN option(expression)
+## separated_nonempty_list(COMA,expression)
 ## LR(1) items:
-expression -> GENC LPAREN option(expression) . RPAREN [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
+loption(separated_nonempty_list(COMA,expression)) -> separated_nonempty_list(COMA,expression) . [ RPAREN ]
 ## Transitions:
--- On RPAREN shift to state 16
 ## Reductions:
+-- On RPAREN
+--   reduce production loption(separated_nonempty_list(COMA,expression)) -> separated_nonempty_list(COMA,expression)
 
 State 16:
 ## Known stack suffix:
-## GENC LPAREN option(expression) RPAREN
+## CHARS LPAREN loption(separated_nonempty_list(COMA,expression))
 ## LR(1) items:
-expression -> GENC LPAREN option(expression) RPAREN . [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
+expression -> CHARS LPAREN loption(separated_nonempty_list(COMA,expression)) . RPAREN [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
 ## Transitions:
+-- On RPAREN shift to state 17
 ## Reductions:
--- On TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND
---   reduce production expression -> GENC LPAREN option(expression) RPAREN
 
 State 17:
 ## Known stack suffix:
-## option(MINUS)
+## CHARS LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN
 ## LR(1) items:
-expression -> option(MINUS) . NUM [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
-## Transitions:
--- On NUM shift to state 18
-## Reductions:
-
-State 18:
-## Known stack suffix:
-## option(MINUS) NUM
-## LR(1) items:
-expression -> option(MINUS) NUM . [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
+expression -> CHARS LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN . [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
 ## Transitions:
 ## Reductions:
 -- On TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND
---   reduce production expression -> option(MINUS) NUM
+--   reduce production expression -> CHARS LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN
 
-State 19:
+State 18:
 ## Known stack suffix:
 ## expression
 ## LR(1) items:
-expression -> expression . PLUS expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
-expression -> expression . MINUS expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
-expression -> expression . TIME expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
-expression -> expression . DIVIDE expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
-expression -> expression . MODULO expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
-expression -> expression . LESS expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
-expression -> expression . MORE expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
-expression -> expression . LESS_EQUAL expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
-expression -> expression . MORE_EQUAL expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
-expression -> expression . BOOL_EQUAL expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
-expression -> expression . NOT_EQUAL expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
-expression -> expression . AND expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
-expression -> expression . OR expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
-option(expression) -> expression . [ RPAREN ]
+expression -> expression . PLUS expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE COMA BOOL_EQUAL AND ]
+expression -> expression . MINUS expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE COMA BOOL_EQUAL AND ]
+expression -> expression . TIME expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE COMA BOOL_EQUAL AND ]
+expression -> expression . DIVIDE expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE COMA BOOL_EQUAL AND ]
+expression -> expression . MODULO expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE COMA BOOL_EQUAL AND ]
+expression -> expression . LESS expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE COMA BOOL_EQUAL AND ]
+expression -> expression . MORE expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE COMA BOOL_EQUAL AND ]
+expression -> expression . LESS_EQUAL expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE COMA BOOL_EQUAL AND ]
+expression -> expression . MORE_EQUAL expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE COMA BOOL_EQUAL AND ]
+expression -> expression . BOOL_EQUAL expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE COMA BOOL_EQUAL AND ]
+expression -> expression . NOT_EQUAL expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE COMA BOOL_EQUAL AND ]
+expression -> expression . AND expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE COMA BOOL_EQUAL AND ]
+expression -> expression . OR expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE COMA BOOL_EQUAL AND ]
+separated_nonempty_list(COMA,expression) -> expression . [ RPAREN ]
+separated_nonempty_list(COMA,expression) -> expression . COMA separated_nonempty_list(COMA,expression) [ RPAREN ]
 ## Transitions:
--- On TIME shift to state 20
--- On PLUS shift to state 34
--- On OR shift to state 42
--- On NOT_EQUAL shift to state 22
--- On MORE_EQUAL shift to state 24
--- On MORE shift to state 26
--- On MODULO shift to state 36
--- On MINUS shift to state 44
--- On LESS_EQUAL shift to state 28
--- On LESS shift to state 30
--- On DIVIDE shift to state 38
--- On BOOL_EQUAL shift to state 32
--- On AND shift to state 40
+-- On TIME shift to state 19
+-- On PLUS shift to state 33
+-- On OR shift to state 41
+-- On NOT_EQUAL shift to state 21
+-- On MORE_EQUAL shift to state 23
+-- On MORE shift to state 25
+-- On MODULO shift to state 35
+-- On MINUS shift to state 43
+-- On LESS_EQUAL shift to state 27
+-- On LESS shift to state 29
+-- On DIVIDE shift to state 37
+-- On COMA shift to state 45
+-- On BOOL_EQUAL shift to state 31
+-- On AND shift to state 39
 ## Reductions:
 -- On RPAREN
---   reduce production option(expression) -> expression
+--   reduce production separated_nonempty_list(COMA,expression) -> expression
 
-State 20:
+State 19:
 ## Known stack suffix:
 ## expression TIME
 ## LR(1) items:
@@ -332,19 +300,15 @@ expression -> expression TIME . expression [ TIME THEN SEMICOLON RPAREN PLUS OR 
 -- On TXT shift to state 3
 -- On NOT shift to state 4
 -- On MINUS shift to state 5
--- On LPAREN shift to state 6
--- On ID shift to state 7
--- On HEX shift to state 9
--- On GENN shift to state 10
--- On GENC shift to state 12
--- On COLOR shift to state 14
--- On option(MINUS) shift to state 17
--- On expression shift to state 21
+-- On LPAREN shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On expression shift to state 20
 ## Reductions:
--- On NUM
---   reduce production option(MINUS) ->
 
-State 21:
+State 20:
 ## Known stack suffix:
 ## expression TIME expression
 ## LR(1) items:
@@ -363,17 +327,17 @@ expression -> expression . NOT_EQUAL expression [ TIME THEN SEMICOLON RPAREN PLU
 expression -> expression . AND expression [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
 expression -> expression . OR expression [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
 ## Transitions:
--- On NOT_EQUAL shift to state 22
--- On MORE_EQUAL shift to state 24
--- On MORE shift to state 26
--- On LESS_EQUAL shift to state 28
--- On LESS shift to state 30
--- On BOOL_EQUAL shift to state 32
+-- On NOT_EQUAL shift to state 21
+-- On MORE_EQUAL shift to state 23
+-- On MORE shift to state 25
+-- On LESS_EQUAL shift to state 27
+-- On LESS shift to state 29
+-- On BOOL_EQUAL shift to state 31
 ## Reductions:
 -- On TIME THEN SEMICOLON RPAREN PLUS OR MODULO MINUS MANY_TIMES DO DIVIDE COMA AND
 --   reduce production expression -> expression TIME expression
 
-State 22:
+State 21:
 ## Known stack suffix:
 ## expression NOT_EQUAL
 ## LR(1) items:
@@ -383,19 +347,15 @@ expression -> expression NOT_EQUAL . expression [ TIME THEN SEMICOLON RPAREN PLU
 -- On TXT shift to state 3
 -- On NOT shift to state 4
 -- On MINUS shift to state 5
--- On LPAREN shift to state 6
--- On ID shift to state 7
--- On HEX shift to state 9
--- On GENN shift to state 10
--- On GENC shift to state 12
--- On COLOR shift to state 14
--- On option(MINUS) shift to state 17
--- On expression shift to state 23
+-- On LPAREN shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On expression shift to state 22
 ## Reductions:
--- On NUM
---   reduce production option(MINUS) ->
 
-State 23:
+State 22:
 ## Known stack suffix:
 ## expression NOT_EQUAL expression
 ## LR(1) items:
@@ -418,7 +378,7 @@ expression -> expression . OR expression [ TIME THEN SEMICOLON RPAREN PLUS OR NO
 -- On TIME THEN SEMICOLON RPAREN PLUS OR MODULO MINUS MANY_TIMES DO DIVIDE COMA AND
 --   reduce production expression -> expression NOT_EQUAL expression
 
-State 24:
+State 23:
 ## Known stack suffix:
 ## expression MORE_EQUAL
 ## LR(1) items:
@@ -428,19 +388,15 @@ expression -> expression MORE_EQUAL . expression [ TIME THEN SEMICOLON RPAREN PL
 -- On TXT shift to state 3
 -- On NOT shift to state 4
 -- On MINUS shift to state 5
--- On LPAREN shift to state 6
--- On ID shift to state 7
--- On HEX shift to state 9
--- On GENN shift to state 10
--- On GENC shift to state 12
--- On COLOR shift to state 14
--- On option(MINUS) shift to state 17
--- On expression shift to state 25
+-- On LPAREN shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On expression shift to state 24
 ## Reductions:
--- On NUM
---   reduce production option(MINUS) ->
 
-State 25:
+State 24:
 ## Known stack suffix:
 ## expression MORE_EQUAL expression
 ## LR(1) items:
@@ -463,7 +419,7 @@ expression -> expression . OR expression [ TIME THEN SEMICOLON RPAREN PLUS OR NO
 -- On TIME THEN SEMICOLON RPAREN PLUS OR MODULO MINUS MANY_TIMES DO DIVIDE COMA AND
 --   reduce production expression -> expression MORE_EQUAL expression
 
-State 26:
+State 25:
 ## Known stack suffix:
 ## expression MORE
 ## LR(1) items:
@@ -473,19 +429,15 @@ expression -> expression MORE . expression [ TIME THEN SEMICOLON RPAREN PLUS OR 
 -- On TXT shift to state 3
 -- On NOT shift to state 4
 -- On MINUS shift to state 5
--- On LPAREN shift to state 6
--- On ID shift to state 7
--- On HEX shift to state 9
--- On GENN shift to state 10
--- On GENC shift to state 12
--- On COLOR shift to state 14
--- On option(MINUS) shift to state 17
--- On expression shift to state 27
+-- On LPAREN shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On expression shift to state 26
 ## Reductions:
--- On NUM
---   reduce production option(MINUS) ->
 
-State 27:
+State 26:
 ## Known stack suffix:
 ## expression MORE expression
 ## LR(1) items:
@@ -508,7 +460,7 @@ expression -> expression . OR expression [ TIME THEN SEMICOLON RPAREN PLUS OR NO
 -- On TIME THEN SEMICOLON RPAREN PLUS OR MODULO MINUS MANY_TIMES DO DIVIDE COMA AND
 --   reduce production expression -> expression MORE expression
 
-State 28:
+State 27:
 ## Known stack suffix:
 ## expression LESS_EQUAL
 ## LR(1) items:
@@ -518,19 +470,15 @@ expression -> expression LESS_EQUAL . expression [ TIME THEN SEMICOLON RPAREN PL
 -- On TXT shift to state 3
 -- On NOT shift to state 4
 -- On MINUS shift to state 5
--- On LPAREN shift to state 6
--- On ID shift to state 7
--- On HEX shift to state 9
--- On GENN shift to state 10
--- On GENC shift to state 12
--- On COLOR shift to state 14
--- On option(MINUS) shift to state 17
--- On expression shift to state 29
+-- On LPAREN shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On expression shift to state 28
 ## Reductions:
--- On NUM
---   reduce production option(MINUS) ->
 
-State 29:
+State 28:
 ## Known stack suffix:
 ## expression LESS_EQUAL expression
 ## LR(1) items:
@@ -553,7 +501,7 @@ expression -> expression . OR expression [ TIME THEN SEMICOLON RPAREN PLUS OR NO
 -- On TIME THEN SEMICOLON RPAREN PLUS OR MODULO MINUS MANY_TIMES DO DIVIDE COMA AND
 --   reduce production expression -> expression LESS_EQUAL expression
 
-State 30:
+State 29:
 ## Known stack suffix:
 ## expression LESS
 ## LR(1) items:
@@ -563,19 +511,15 @@ expression -> expression LESS . expression [ TIME THEN SEMICOLON RPAREN PLUS OR 
 -- On TXT shift to state 3
 -- On NOT shift to state 4
 -- On MINUS shift to state 5
--- On LPAREN shift to state 6
--- On ID shift to state 7
--- On HEX shift to state 9
--- On GENN shift to state 10
--- On GENC shift to state 12
--- On COLOR shift to state 14
--- On option(MINUS) shift to state 17
--- On expression shift to state 31
+-- On LPAREN shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On expression shift to state 30
 ## Reductions:
--- On NUM
---   reduce production option(MINUS) ->
 
-State 31:
+State 30:
 ## Known stack suffix:
 ## expression LESS expression
 ## LR(1) items:
@@ -598,7 +542,7 @@ expression -> expression . OR expression [ TIME THEN SEMICOLON RPAREN PLUS OR NO
 -- On TIME THEN SEMICOLON RPAREN PLUS OR MODULO MINUS MANY_TIMES DO DIVIDE COMA AND
 --   reduce production expression -> expression LESS expression
 
-State 32:
+State 31:
 ## Known stack suffix:
 ## expression BOOL_EQUAL
 ## LR(1) items:
@@ -608,19 +552,15 @@ expression -> expression BOOL_EQUAL . expression [ TIME THEN SEMICOLON RPAREN PL
 -- On TXT shift to state 3
 -- On NOT shift to state 4
 -- On MINUS shift to state 5
--- On LPAREN shift to state 6
--- On ID shift to state 7
--- On HEX shift to state 9
--- On GENN shift to state 10
--- On GENC shift to state 12
--- On COLOR shift to state 14
--- On option(MINUS) shift to state 17
--- On expression shift to state 33
+-- On LPAREN shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On expression shift to state 32
 ## Reductions:
--- On NUM
---   reduce production option(MINUS) ->
 
-State 33:
+State 32:
 ## Known stack suffix:
 ## expression BOOL_EQUAL expression
 ## LR(1) items:
@@ -643,7 +583,7 @@ expression -> expression . OR expression [ TIME THEN SEMICOLON RPAREN PLUS OR NO
 -- On TIME THEN SEMICOLON RPAREN PLUS OR MODULO MINUS MANY_TIMES DO DIVIDE COMA AND
 --   reduce production expression -> expression BOOL_EQUAL expression
 
-State 34:
+State 33:
 ## Known stack suffix:
 ## expression PLUS
 ## LR(1) items:
@@ -653,19 +593,15 @@ expression -> expression PLUS . expression [ TIME THEN SEMICOLON RPAREN PLUS OR 
 -- On TXT shift to state 3
 -- On NOT shift to state 4
 -- On MINUS shift to state 5
--- On LPAREN shift to state 6
--- On ID shift to state 7
--- On HEX shift to state 9
--- On GENN shift to state 10
--- On GENC shift to state 12
--- On COLOR shift to state 14
--- On option(MINUS) shift to state 17
--- On expression shift to state 35
+-- On LPAREN shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On expression shift to state 34
 ## Reductions:
--- On NUM
---   reduce production option(MINUS) ->
 
-State 35:
+State 34:
 ## Known stack suffix:
 ## expression PLUS expression
 ## LR(1) items:
@@ -684,21 +620,21 @@ expression -> expression . NOT_EQUAL expression [ TIME THEN SEMICOLON RPAREN PLU
 expression -> expression . AND expression [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
 expression -> expression . OR expression [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
 ## Transitions:
--- On TIME shift to state 20
--- On NOT_EQUAL shift to state 22
--- On MORE_EQUAL shift to state 24
--- On MORE shift to state 26
--- On MODULO shift to state 36
--- On LESS_EQUAL shift to state 28
--- On LESS shift to state 30
--- On DIVIDE shift to state 38
--- On BOOL_EQUAL shift to state 32
--- On AND shift to state 40
+-- On TIME shift to state 19
+-- On NOT_EQUAL shift to state 21
+-- On MORE_EQUAL shift to state 23
+-- On MORE shift to state 25
+-- On MODULO shift to state 35
+-- On LESS_EQUAL shift to state 27
+-- On LESS shift to state 29
+-- On DIVIDE shift to state 37
+-- On BOOL_EQUAL shift to state 31
+-- On AND shift to state 39
 ## Reductions:
 -- On THEN SEMICOLON RPAREN PLUS OR MINUS MANY_TIMES DO COMA
 --   reduce production expression -> expression PLUS expression
 
-State 36:
+State 35:
 ## Known stack suffix:
 ## expression MODULO
 ## LR(1) items:
@@ -708,19 +644,15 @@ expression -> expression MODULO . expression [ TIME THEN SEMICOLON RPAREN PLUS O
 -- On TXT shift to state 3
 -- On NOT shift to state 4
 -- On MINUS shift to state 5
--- On LPAREN shift to state 6
--- On ID shift to state 7
--- On HEX shift to state 9
--- On GENN shift to state 10
--- On GENC shift to state 12
--- On COLOR shift to state 14
--- On option(MINUS) shift to state 17
--- On expression shift to state 37
+-- On LPAREN shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On expression shift to state 36
 ## Reductions:
--- On NUM
---   reduce production option(MINUS) ->
 
-State 37:
+State 36:
 ## Known stack suffix:
 ## expression MODULO expression
 ## LR(1) items:
@@ -739,17 +671,17 @@ expression -> expression . NOT_EQUAL expression [ TIME THEN SEMICOLON RPAREN PLU
 expression -> expression . AND expression [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
 expression -> expression . OR expression [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
 ## Transitions:
--- On NOT_EQUAL shift to state 22
--- On MORE_EQUAL shift to state 24
--- On MORE shift to state 26
--- On LESS_EQUAL shift to state 28
--- On LESS shift to state 30
--- On BOOL_EQUAL shift to state 32
+-- On NOT_EQUAL shift to state 21
+-- On MORE_EQUAL shift to state 23
+-- On MORE shift to state 25
+-- On LESS_EQUAL shift to state 27
+-- On LESS shift to state 29
+-- On BOOL_EQUAL shift to state 31
 ## Reductions:
 -- On TIME THEN SEMICOLON RPAREN PLUS OR MODULO MINUS MANY_TIMES DO DIVIDE COMA AND
 --   reduce production expression -> expression MODULO expression
 
-State 38:
+State 37:
 ## Known stack suffix:
 ## expression DIVIDE
 ## LR(1) items:
@@ -759,19 +691,15 @@ expression -> expression DIVIDE . expression [ TIME THEN SEMICOLON RPAREN PLUS O
 -- On TXT shift to state 3
 -- On NOT shift to state 4
 -- On MINUS shift to state 5
--- On LPAREN shift to state 6
--- On ID shift to state 7
--- On HEX shift to state 9
--- On GENN shift to state 10
--- On GENC shift to state 12
--- On COLOR shift to state 14
--- On option(MINUS) shift to state 17
--- On expression shift to state 39
+-- On LPAREN shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On expression shift to state 38
 ## Reductions:
--- On NUM
---   reduce production option(MINUS) ->
 
-State 39:
+State 38:
 ## Known stack suffix:
 ## expression DIVIDE expression
 ## LR(1) items:
@@ -790,17 +718,17 @@ expression -> expression . NOT_EQUAL expression [ TIME THEN SEMICOLON RPAREN PLU
 expression -> expression . AND expression [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
 expression -> expression . OR expression [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
 ## Transitions:
--- On NOT_EQUAL shift to state 22
--- On MORE_EQUAL shift to state 24
--- On MORE shift to state 26
--- On LESS_EQUAL shift to state 28
--- On LESS shift to state 30
--- On BOOL_EQUAL shift to state 32
+-- On NOT_EQUAL shift to state 21
+-- On MORE_EQUAL shift to state 23
+-- On MORE shift to state 25
+-- On LESS_EQUAL shift to state 27
+-- On LESS shift to state 29
+-- On BOOL_EQUAL shift to state 31
 ## Reductions:
 -- On TIME THEN SEMICOLON RPAREN PLUS OR MODULO MINUS MANY_TIMES DO DIVIDE COMA AND
 --   reduce production expression -> expression DIVIDE expression
 
-State 40:
+State 39:
 ## Known stack suffix:
 ## expression AND
 ## LR(1) items:
@@ -810,19 +738,15 @@ expression -> expression AND . expression [ TIME THEN SEMICOLON RPAREN PLUS OR N
 -- On TXT shift to state 3
 -- On NOT shift to state 4
 -- On MINUS shift to state 5
--- On LPAREN shift to state 6
--- On ID shift to state 7
--- On HEX shift to state 9
--- On GENN shift to state 10
--- On GENC shift to state 12
--- On COLOR shift to state 14
--- On option(MINUS) shift to state 17
--- On expression shift to state 41
+-- On LPAREN shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On expression shift to state 40
 ## Reductions:
--- On NUM
---   reduce production option(MINUS) ->
 
-State 41:
+State 40:
 ## Known stack suffix:
 ## expression AND expression
 ## LR(1) items:
@@ -841,17 +765,17 @@ expression -> expression . AND expression [ TIME THEN SEMICOLON RPAREN PLUS OR N
 expression -> expression AND expression . [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
 expression -> expression . OR expression [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
 ## Transitions:
--- On NOT_EQUAL shift to state 22
--- On MORE_EQUAL shift to state 24
--- On MORE shift to state 26
--- On LESS_EQUAL shift to state 28
--- On LESS shift to state 30
--- On BOOL_EQUAL shift to state 32
+-- On NOT_EQUAL shift to state 21
+-- On MORE_EQUAL shift to state 23
+-- On MORE shift to state 25
+-- On LESS_EQUAL shift to state 27
+-- On LESS shift to state 29
+-- On BOOL_EQUAL shift to state 31
 ## Reductions:
 -- On TIME THEN SEMICOLON RPAREN PLUS OR MODULO MINUS MANY_TIMES DO DIVIDE COMA AND
 --   reduce production expression -> expression AND expression
 
-State 42:
+State 41:
 ## Known stack suffix:
 ## expression OR
 ## LR(1) items:
@@ -861,19 +785,15 @@ expression -> expression OR . expression [ TIME THEN SEMICOLON RPAREN PLUS OR NO
 -- On TXT shift to state 3
 -- On NOT shift to state 4
 -- On MINUS shift to state 5
--- On LPAREN shift to state 6
--- On ID shift to state 7
--- On HEX shift to state 9
--- On GENN shift to state 10
--- On GENC shift to state 12
--- On COLOR shift to state 14
--- On option(MINUS) shift to state 17
--- On expression shift to state 43
+-- On LPAREN shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On expression shift to state 42
 ## Reductions:
--- On NUM
---   reduce production option(MINUS) ->
 
-State 43:
+State 42:
 ## Known stack suffix:
 ## expression OR expression
 ## LR(1) items:
@@ -892,21 +812,21 @@ expression -> expression . AND expression [ TIME THEN SEMICOLON RPAREN PLUS OR N
 expression -> expression . OR expression [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
 expression -> expression OR expression . [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
 ## Transitions:
--- On TIME shift to state 20
--- On NOT_EQUAL shift to state 22
--- On MORE_EQUAL shift to state 24
--- On MORE shift to state 26
--- On MODULO shift to state 36
--- On LESS_EQUAL shift to state 28
--- On LESS shift to state 30
--- On DIVIDE shift to state 38
--- On BOOL_EQUAL shift to state 32
--- On AND shift to state 40
+-- On TIME shift to state 19
+-- On NOT_EQUAL shift to state 21
+-- On MORE_EQUAL shift to state 23
+-- On MORE shift to state 25
+-- On MODULO shift to state 35
+-- On LESS_EQUAL shift to state 27
+-- On LESS shift to state 29
+-- On DIVIDE shift to state 37
+-- On BOOL_EQUAL shift to state 31
+-- On AND shift to state 39
 ## Reductions:
 -- On THEN SEMICOLON RPAREN PLUS OR MINUS MANY_TIMES DO COMA
 --   reduce production expression -> expression OR expression
 
-State 44:
+State 43:
 ## Known stack suffix:
 ## expression MINUS
 ## LR(1) items:
@@ -916,19 +836,15 @@ expression -> expression MINUS . expression [ TIME THEN SEMICOLON RPAREN PLUS OR
 -- On TXT shift to state 3
 -- On NOT shift to state 4
 -- On MINUS shift to state 5
--- On LPAREN shift to state 6
--- On ID shift to state 7
--- On HEX shift to state 9
--- On GENN shift to state 10
--- On GENC shift to state 12
--- On COLOR shift to state 14
--- On option(MINUS) shift to state 17
--- On expression shift to state 45
+-- On LPAREN shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On expression shift to state 44
 ## Reductions:
--- On NUM
---   reduce production option(MINUS) ->
 
-State 45:
+State 44:
 ## Known stack suffix:
 ## expression MINUS expression
 ## LR(1) items:
@@ -947,88 +863,21 @@ expression -> expression . NOT_EQUAL expression [ TIME THEN SEMICOLON RPAREN PLU
 expression -> expression . AND expression [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
 expression -> expression . OR expression [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
 ## Transitions:
--- On TIME shift to state 20
--- On NOT_EQUAL shift to state 22
--- On MORE_EQUAL shift to state 24
--- On MORE shift to state 26
--- On MODULO shift to state 36
--- On LESS_EQUAL shift to state 28
--- On LESS shift to state 30
--- On DIVIDE shift to state 38
--- On BOOL_EQUAL shift to state 32
--- On AND shift to state 40
+-- On TIME shift to state 19
+-- On NOT_EQUAL shift to state 21
+-- On MORE_EQUAL shift to state 23
+-- On MORE shift to state 25
+-- On MODULO shift to state 35
+-- On LESS_EQUAL shift to state 27
+-- On LESS shift to state 29
+-- On DIVIDE shift to state 37
+-- On BOOL_EQUAL shift to state 31
+-- On AND shift to state 39
 ## Reductions:
 -- On THEN SEMICOLON RPAREN PLUS OR MINUS MANY_TIMES DO COMA
 --   reduce production expression -> expression MINUS expression
 
-State 46:
-## Known stack suffix:
-## separated_nonempty_list(COMA,expression)
-## LR(1) items:
-loption(separated_nonempty_list(COMA,expression)) -> separated_nonempty_list(COMA,expression) . [ RPAREN ]
-## Transitions:
-## Reductions:
--- On RPAREN
---   reduce production loption(separated_nonempty_list(COMA,expression)) -> separated_nonempty_list(COMA,expression)
-
-State 47:
-## Known stack suffix:
-## GENN LPAREN loption(separated_nonempty_list(COMA,expression))
-## LR(1) items:
-expression -> GENN LPAREN loption(separated_nonempty_list(COMA,expression)) . RPAREN [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
-## Transitions:
--- On RPAREN shift to state 48
-## Reductions:
-
-State 48:
-## Known stack suffix:
-## GENN LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN
-## LR(1) items:
-expression -> GENN LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN . [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
-## Transitions:
-## Reductions:
--- On TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND
---   reduce production expression -> GENN LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN
-
-State 49:
-## Known stack suffix:
-## expression
-## LR(1) items:
-expression -> expression . PLUS expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE COMA BOOL_EQUAL AND ]
-expression -> expression . MINUS expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE COMA BOOL_EQUAL AND ]
-expression -> expression . TIME expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE COMA BOOL_EQUAL AND ]
-expression -> expression . DIVIDE expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE COMA BOOL_EQUAL AND ]
-expression -> expression . MODULO expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE COMA BOOL_EQUAL AND ]
-expression -> expression . LESS expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE COMA BOOL_EQUAL AND ]
-expression -> expression . MORE expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE COMA BOOL_EQUAL AND ]
-expression -> expression . LESS_EQUAL expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE COMA BOOL_EQUAL AND ]
-expression -> expression . MORE_EQUAL expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE COMA BOOL_EQUAL AND ]
-expression -> expression . BOOL_EQUAL expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE COMA BOOL_EQUAL AND ]
-expression -> expression . NOT_EQUAL expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE COMA BOOL_EQUAL AND ]
-expression -> expression . AND expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE COMA BOOL_EQUAL AND ]
-expression -> expression . OR expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE COMA BOOL_EQUAL AND ]
-separated_nonempty_list(COMA,expression) -> expression . [ RPAREN ]
-separated_nonempty_list(COMA,expression) -> expression . COMA separated_nonempty_list(COMA,expression) [ RPAREN ]
-## Transitions:
--- On TIME shift to state 20
--- On PLUS shift to state 34
--- On OR shift to state 42
--- On NOT_EQUAL shift to state 22
--- On MORE_EQUAL shift to state 24
--- On MORE shift to state 26
--- On MODULO shift to state 36
--- On MINUS shift to state 44
--- On LESS_EQUAL shift to state 28
--- On LESS shift to state 30
--- On DIVIDE shift to state 38
--- On COMA shift to state 50
--- On BOOL_EQUAL shift to state 32
--- On AND shift to state 40
-## Reductions:
--- On RPAREN
---   reduce production separated_nonempty_list(COMA,expression) -> expression
-
-State 50:
+State 45:
 ## Known stack suffix:
 ## expression COMA
 ## LR(1) items:
@@ -1038,20 +887,16 @@ separated_nonempty_list(COMA,expression) -> expression COMA . separated_nonempty
 -- On TXT shift to state 3
 -- On NOT shift to state 4
 -- On MINUS shift to state 5
--- On LPAREN shift to state 6
--- On ID shift to state 7
--- On HEX shift to state 9
--- On GENN shift to state 10
--- On GENC shift to state 12
--- On COLOR shift to state 14
--- On separated_nonempty_list(COMA,expression) shift to state 51
--- On option(MINUS) shift to state 17
--- On expression shift to state 49
+-- On LPAREN shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On separated_nonempty_list(COMA,expression) shift to state 46
+-- On expression shift to state 18
 ## Reductions:
--- On NUM
---   reduce production option(MINUS) ->
 
-State 51:
+State 46:
 ## Known stack suffix:
 ## expression COMA separated_nonempty_list(COMA,expression)
 ## LR(1) items:
@@ -1061,26 +906,81 @@ separated_nonempty_list(COMA,expression) -> expression COMA separated_nonempty_l
 -- On RPAREN
 --   reduce production separated_nonempty_list(COMA,expression) -> expression COMA separated_nonempty_list(COMA,expression)
 
-State 52:
+State 47:
 ## Known stack suffix:
-## ID LPAREN loption(separated_nonempty_list(COMA,expression))
+## GENC LPAREN option(expression)
 ## LR(1) items:
-expression -> ID LPAREN loption(separated_nonempty_list(COMA,expression)) . RPAREN [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
+expression -> GENC LPAREN option(expression) . RPAREN [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
 ## Transitions:
--- On RPAREN shift to state 53
+-- On RPAREN shift to state 48
 ## Reductions:
 
-State 53:
+State 48:
 ## Known stack suffix:
-## ID LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN
+## GENC LPAREN option(expression) RPAREN
 ## LR(1) items:
-expression -> ID LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN . [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
+expression -> GENC LPAREN option(expression) RPAREN . [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
 ## Transitions:
 ## Reductions:
 -- On TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND
---   reduce production expression -> ID LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN
+--   reduce production expression -> GENC LPAREN option(expression) RPAREN
 
-State 54:
+State 49:
+## Known stack suffix:
+## expression
+## LR(1) items:
+expression -> expression . PLUS expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
+expression -> expression . MINUS expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
+expression -> expression . TIME expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
+expression -> expression . DIVIDE expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
+expression -> expression . MODULO expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
+expression -> expression . LESS expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
+expression -> expression . MORE expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
+expression -> expression . LESS_EQUAL expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
+expression -> expression . MORE_EQUAL expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
+expression -> expression . BOOL_EQUAL expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
+expression -> expression . NOT_EQUAL expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
+expression -> expression . AND expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
+expression -> expression . OR expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
+option(expression) -> expression . [ RPAREN ]
+## Transitions:
+-- On TIME shift to state 19
+-- On PLUS shift to state 33
+-- On OR shift to state 41
+-- On NOT_EQUAL shift to state 21
+-- On MORE_EQUAL shift to state 23
+-- On MORE shift to state 25
+-- On MODULO shift to state 35
+-- On MINUS shift to state 43
+-- On LESS_EQUAL shift to state 27
+-- On LESS shift to state 29
+-- On DIVIDE shift to state 37
+-- On BOOL_EQUAL shift to state 31
+-- On AND shift to state 39
+## Reductions:
+-- On RPAREN
+--   reduce production option(expression) -> expression
+
+State 50:
+## Known stack suffix:
+## GENN LPAREN loption(separated_nonempty_list(COMA,expression))
+## LR(1) items:
+expression -> GENN LPAREN loption(separated_nonempty_list(COMA,expression)) . RPAREN [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
+## Transitions:
+-- On RPAREN shift to state 51
+## Reductions:
+
+State 51:
+## Known stack suffix:
+## GENN LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN
+## LR(1) items:
+expression -> GENN LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN . [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND ]
+## Transitions:
+## Reductions:
+-- On TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND
+--   reduce production expression -> GENN LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN
+
+State 52:
 ## Known stack suffix:
 ## LPAREN expression
 ## LR(1) items:
@@ -1099,23 +999,23 @@ expression -> expression . NOT_EQUAL expression [ TIME RPAREN PLUS OR NOT_EQUAL 
 expression -> expression . AND expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
 expression -> expression . OR expression [ TIME RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
 ## Transitions:
--- On TIME shift to state 20
--- On RPAREN shift to state 55
--- On PLUS shift to state 34
--- On OR shift to state 42
--- On NOT_EQUAL shift to state 22
--- On MORE_EQUAL shift to state 24
--- On MORE shift to state 26
--- On MODULO shift to state 36
--- On MINUS shift to state 44
--- On LESS_EQUAL shift to state 28
--- On LESS shift to state 30
--- On DIVIDE shift to state 38
--- On BOOL_EQUAL shift to state 32
--- On AND shift to state 40
+-- On TIME shift to state 19
+-- On RPAREN shift to state 53
+-- On PLUS shift to state 33
+-- On OR shift to state 41
+-- On NOT_EQUAL shift to state 21
+-- On MORE_EQUAL shift to state 23
+-- On MORE shift to state 25
+-- On MODULO shift to state 35
+-- On MINUS shift to state 43
+-- On LESS_EQUAL shift to state 27
+-- On LESS shift to state 29
+-- On DIVIDE shift to state 37
+-- On BOOL_EQUAL shift to state 31
+-- On AND shift to state 39
 ## Reductions:
 
-State 55:
+State 53:
 ## Known stack suffix:
 ## LPAREN expression RPAREN
 ## LR(1) items:
@@ -1125,7 +1025,7 @@ expression -> LPAREN expression RPAREN . [ TIME THEN SEMICOLON RPAREN PLUS OR NO
 -- On TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND
 --   reduce production expression -> LPAREN expression RPAREN
 
-State 56:
+State 54:
 ## Known stack suffix:
 ## NOT expression
 ## LR(1) items:
@@ -1148,7 +1048,7 @@ expression -> NOT expression . [ TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MO
 -- On TIME THEN SEMICOLON RPAREN PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DO DIVIDE COMA BOOL_EQUAL AND
 --   reduce production expression -> NOT expression
 
-State 57:
+State 55:
 ## Known stack suffix:
 ## WIDTH_CHANGE expression
 ## LR(1) items:
@@ -1167,24 +1067,24 @@ expression -> expression . AND expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MOR
 expression -> expression . OR expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
 instruction -> WIDTH_CHANGE expression . [ SEMICOLON ]
 ## Transitions:
--- On TIME shift to state 20
--- On PLUS shift to state 34
--- On OR shift to state 42
--- On NOT_EQUAL shift to state 22
--- On MORE_EQUAL shift to state 24
--- On MORE shift to state 26
--- On MODULO shift to state 36
--- On MINUS shift to state 44
--- On LESS_EQUAL shift to state 28
--- On LESS shift to state 30
--- On DIVIDE shift to state 38
--- On BOOL_EQUAL shift to state 32
--- On AND shift to state 40
+-- On TIME shift to state 19
+-- On PLUS shift to state 33
+-- On OR shift to state 41
+-- On NOT_EQUAL shift to state 21
+-- On MORE_EQUAL shift to state 23
+-- On MORE shift to state 25
+-- On MODULO shift to state 35
+-- On MINUS shift to state 43
+-- On LESS_EQUAL shift to state 27
+-- On LESS shift to state 29
+-- On DIVIDE shift to state 37
+-- On BOOL_EQUAL shift to state 31
+-- On AND shift to state 39
 ## Reductions:
 -- On SEMICOLON
 --   reduce production instruction -> WIDTH_CHANGE expression
 
-State 58:
+State 56:
 ## Known stack suffix:
 ## WHILE
 ## LR(1) items:
@@ -1194,19 +1094,15 @@ instruction -> WHILE . expression DO START bloc_instruction END [ SEMICOLON ]
 -- On TXT shift to state 3
 -- On NOT shift to state 4
 -- On MINUS shift to state 5
--- On LPAREN shift to state 6
--- On ID shift to state 7
--- On HEX shift to state 9
--- On GENN shift to state 10
--- On GENC shift to state 12
--- On COLOR shift to state 14
--- On option(MINUS) shift to state 17
--- On expression shift to state 59
+-- On LPAREN shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On expression shift to state 57
 ## Reductions:
--- On NUM
---   reduce production option(MINUS) ->
 
-State 59:
+State 57:
 ## Known stack suffix:
 ## WHILE expression
 ## LR(1) items:
@@ -1225,104 +1121,100 @@ expression -> expression . AND expression [ TIME PLUS OR NOT_EQUAL MORE_EQUAL MO
 expression -> expression . OR expression [ TIME PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DO DIVIDE BOOL_EQUAL AND ]
 instruction -> WHILE expression . DO START bloc_instruction END [ SEMICOLON ]
 ## Transitions:
--- On TIME shift to state 20
--- On PLUS shift to state 34
--- On OR shift to state 42
--- On NOT_EQUAL shift to state 22
--- On MORE_EQUAL shift to state 24
--- On MORE shift to state 26
--- On MODULO shift to state 36
--- On MINUS shift to state 44
--- On LESS_EQUAL shift to state 28
--- On LESS shift to state 30
--- On DO shift to state 60
--- On DIVIDE shift to state 38
--- On BOOL_EQUAL shift to state 32
--- On AND shift to state 40
+-- On TIME shift to state 19
+-- On PLUS shift to state 33
+-- On OR shift to state 41
+-- On NOT_EQUAL shift to state 21
+-- On MORE_EQUAL shift to state 23
+-- On MORE shift to state 25
+-- On MODULO shift to state 35
+-- On MINUS shift to state 43
+-- On LESS_EQUAL shift to state 27
+-- On LESS shift to state 29
+-- On DO shift to state 58
+-- On DIVIDE shift to state 37
+-- On BOOL_EQUAL shift to state 31
+-- On AND shift to state 39
 ## Reductions:
 
-State 60:
+State 58:
 ## Known stack suffix:
 ## WHILE expression DO
 ## LR(1) items:
 instruction -> WHILE expression DO . START bloc_instruction END [ SEMICOLON ]
 ## Transitions:
--- On START shift to state 61
+-- On START shift to state 59
 ## Reductions:
 
-State 61:
+State 59:
 ## Known stack suffix:
 ## WHILE expression DO START
 ## LR(1) items:
 instruction -> WHILE expression DO START . bloc_instruction END [ SEMICOLON ]
 ## Transitions:
 -- On WIDTH_CHANGE shift to state 1
--- On WHILE shift to state 58
--- On VAR shift to state 62
--- On TURN shift to state 66
--- On RETURN shift to state 68
--- On REPEAT shift to state 70
--- On PRINT shift to state 74
--- On MOVE shift to state 76
--- On IF shift to state 78
--- On ID shift to state 82
--- On DRAW_ON shift to state 88
--- On DRAW_OFF shift to state 89
--- On DEF shift to state 90
--- On COLOR_CHANGE shift to state 100
--- On instruction shift to state 102
--- On bloc_instruction shift to state 115
+-- On WHILE shift to state 56
+-- On VAR shift to state 60
+-- On TURN shift to state 64
+-- On RETURN shift to state 66
+-- On REPEAT shift to state 68
+-- On PRINT shift to state 72
+-- On MOVE shift to state 74
+-- On IF shift to state 76
+-- On DRAW_ON shift to state 80
+-- On DRAW_OFF shift to state 81
+-- On DEF shift to state 82
+-- On COLOR_CHANGE shift to state 92
+-- On CHARS shift to state 94
+-- On instruction shift to state 100
+-- On bloc_instruction shift to state 113
 ## Reductions:
 -- On END
 --   reduce production bloc_instruction ->
 
-State 62:
+State 60:
 ## Known stack suffix:
 ## VAR
 ## LR(1) items:
-instruction -> VAR . ID [ SEMICOLON ]
-instruction -> VAR . ID EGALE expression [ SEMICOLON ]
+instruction -> VAR . CHARS [ SEMICOLON ]
+instruction -> VAR . CHARS EGALE expression [ SEMICOLON ]
 ## Transitions:
--- On ID shift to state 63
+-- On CHARS shift to state 61
 ## Reductions:
 
-State 63:
+State 61:
 ## Known stack suffix:
-## VAR ID
+## VAR CHARS
 ## LR(1) items:
-instruction -> VAR ID . [ SEMICOLON ]
-instruction -> VAR ID . EGALE expression [ SEMICOLON ]
+instruction -> VAR CHARS . [ SEMICOLON ]
+instruction -> VAR CHARS . EGALE expression [ SEMICOLON ]
 ## Transitions:
--- On EGALE shift to state 64
+-- On EGALE shift to state 62
 ## Reductions:
 -- On SEMICOLON
---   reduce production instruction -> VAR ID
+--   reduce production instruction -> VAR CHARS
 
-State 64:
+State 62:
 ## Known stack suffix:
-## VAR ID EGALE
+## VAR CHARS EGALE
 ## LR(1) items:
-instruction -> VAR ID EGALE . expression [ SEMICOLON ]
+instruction -> VAR CHARS EGALE . expression [ SEMICOLON ]
 ## Transitions:
 -- On VALBOOL shift to state 2
 -- On TXT shift to state 3
 -- On NOT shift to state 4
 -- On MINUS shift to state 5
--- On LPAREN shift to state 6
--- On ID shift to state 7
--- On HEX shift to state 9
--- On GENN shift to state 10
--- On GENC shift to state 12
--- On COLOR shift to state 14
--- On option(MINUS) shift to state 17
--- On expression shift to state 65
+-- On LPAREN shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On expression shift to state 63
 ## Reductions:
--- On NUM
---   reduce production option(MINUS) ->
 
-State 65:
+State 63:
 ## Known stack suffix:
-## VAR ID EGALE expression
+## VAR CHARS EGALE expression
 ## LR(1) items:
 expression -> expression . PLUS expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
 expression -> expression . MINUS expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
@@ -1337,26 +1229,26 @@ expression -> expression . BOOL_EQUAL expression [ TIME SEMICOLON PLUS OR NOT_EQ
 expression -> expression . NOT_EQUAL expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
 expression -> expression . AND expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
 expression -> expression . OR expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
-instruction -> VAR ID EGALE expression . [ SEMICOLON ]
+instruction -> VAR CHARS EGALE expression . [ SEMICOLON ]
 ## Transitions:
--- On TIME shift to state 20
--- On PLUS shift to state 34
--- On OR shift to state 42
--- On NOT_EQUAL shift to state 22
--- On MORE_EQUAL shift to state 24
--- On MORE shift to state 26
--- On MODULO shift to state 36
--- On MINUS shift to state 44
--- On LESS_EQUAL shift to state 28
--- On LESS shift to state 30
--- On DIVIDE shift to state 38
--- On BOOL_EQUAL shift to state 32
--- On AND shift to state 40
+-- On TIME shift to state 19
+-- On PLUS shift to state 33
+-- On OR shift to state 41
+-- On NOT_EQUAL shift to state 21
+-- On MORE_EQUAL shift to state 23
+-- On MORE shift to state 25
+-- On MODULO shift to state 35
+-- On MINUS shift to state 43
+-- On LESS_EQUAL shift to state 27
+-- On LESS shift to state 29
+-- On DIVIDE shift to state 37
+-- On BOOL_EQUAL shift to state 31
+-- On AND shift to state 39
 ## Reductions:
 -- On SEMICOLON
---   reduce production instruction -> VAR ID EGALE expression
+--   reduce production instruction -> VAR CHARS EGALE expression
 
-State 66:
+State 64:
 ## Known stack suffix:
 ## TURN
 ## LR(1) items:
@@ -1366,19 +1258,15 @@ instruction -> TURN . expression [ SEMICOLON ]
 -- On TXT shift to state 3
 -- On NOT shift to state 4
 -- On MINUS shift to state 5
--- On LPAREN shift to state 6
--- On ID shift to state 7
--- On HEX shift to state 9
--- On GENN shift to state 10
--- On GENC shift to state 12
--- On COLOR shift to state 14
--- On option(MINUS) shift to state 17
--- On expression shift to state 67
+-- On LPAREN shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On expression shift to state 65
 ## Reductions:
--- On NUM
---   reduce production option(MINUS) ->
 
-State 67:
+State 65:
 ## Known stack suffix:
 ## TURN expression
 ## LR(1) items:
@@ -1397,24 +1285,24 @@ expression -> expression . AND expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MOR
 expression -> expression . OR expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
 instruction -> TURN expression . [ SEMICOLON ]
 ## Transitions:
--- On TIME shift to state 20
--- On PLUS shift to state 34
--- On OR shift to state 42
--- On NOT_EQUAL shift to state 22
--- On MORE_EQUAL shift to state 24
--- On MORE shift to state 26
--- On MODULO shift to state 36
--- On MINUS shift to state 44
--- On LESS_EQUAL shift to state 28
--- On LESS shift to state 30
--- On DIVIDE shift to state 38
--- On BOOL_EQUAL shift to state 32
--- On AND shift to state 40
+-- On TIME shift to state 19
+-- On PLUS shift to state 33
+-- On OR shift to state 41
+-- On NOT_EQUAL shift to state 21
+-- On MORE_EQUAL shift to state 23
+-- On MORE shift to state 25
+-- On MODULO shift to state 35
+-- On MINUS shift to state 43
+-- On LESS_EQUAL shift to state 27
+-- On LESS shift to state 29
+-- On DIVIDE shift to state 37
+-- On BOOL_EQUAL shift to state 31
+-- On AND shift to state 39
 ## Reductions:
 -- On SEMICOLON
 --   reduce production instruction -> TURN expression
 
-State 68:
+State 66:
 ## Known stack suffix:
 ## RETURN
 ## LR(1) items:
@@ -1424,19 +1312,15 @@ instruction -> RETURN . expression [ SEMICOLON ]
 -- On TXT shift to state 3
 -- On NOT shift to state 4
 -- On MINUS shift to state 5
--- On LPAREN shift to state 6
--- On ID shift to state 7
--- On HEX shift to state 9
--- On GENN shift to state 10
--- On GENC shift to state 12
--- On COLOR shift to state 14
--- On option(MINUS) shift to state 17
--- On expression shift to state 69
+-- On LPAREN shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On expression shift to state 67
 ## Reductions:
--- On NUM
---   reduce production option(MINUS) ->
 
-State 69:
+State 67:
 ## Known stack suffix:
 ## RETURN expression
 ## LR(1) items:
@@ -1455,24 +1339,24 @@ expression -> expression . AND expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MOR
 expression -> expression . OR expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
 instruction -> RETURN expression . [ SEMICOLON ]
 ## Transitions:
--- On TIME shift to state 20
--- On PLUS shift to state 34
--- On OR shift to state 42
--- On NOT_EQUAL shift to state 22
--- On MORE_EQUAL shift to state 24
--- On MORE shift to state 26
--- On MODULO shift to state 36
--- On MINUS shift to state 44
--- On LESS_EQUAL shift to state 28
--- On LESS shift to state 30
--- On DIVIDE shift to state 38
--- On BOOL_EQUAL shift to state 32
--- On AND shift to state 40
+-- On TIME shift to state 19
+-- On PLUS shift to state 33
+-- On OR shift to state 41
+-- On NOT_EQUAL shift to state 21
+-- On MORE_EQUAL shift to state 23
+-- On MORE shift to state 25
+-- On MODULO shift to state 35
+-- On MINUS shift to state 43
+-- On LESS_EQUAL shift to state 27
+-- On LESS shift to state 29
+-- On DIVIDE shift to state 37
+-- On BOOL_EQUAL shift to state 31
+-- On AND shift to state 39
 ## Reductions:
 -- On SEMICOLON
 --   reduce production instruction -> RETURN expression
 
-State 70:
+State 68:
 ## Known stack suffix:
 ## REPEAT
 ## LR(1) items:
@@ -1482,19 +1366,15 @@ instruction -> REPEAT . expression MANY_TIMES START bloc_instruction END [ SEMIC
 -- On TXT shift to state 3
 -- On NOT shift to state 4
 -- On MINUS shift to state 5
--- On LPAREN shift to state 6
--- On ID shift to state 7
--- On HEX shift to state 9
--- On GENN shift to state 10
--- On GENC shift to state 12
--- On COLOR shift to state 14
--- On option(MINUS) shift to state 17
--- On expression shift to state 71
+-- On LPAREN shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On expression shift to state 69
 ## Reductions:
--- On NUM
---   reduce production option(MINUS) ->
 
-State 71:
+State 69:
 ## Known stack suffix:
 ## REPEAT expression
 ## LR(1) items:
@@ -1513,58 +1393,58 @@ expression -> expression . AND expression [ TIME PLUS OR NOT_EQUAL MORE_EQUAL MO
 expression -> expression . OR expression [ TIME PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS MANY_TIMES LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
 instruction -> REPEAT expression . MANY_TIMES START bloc_instruction END [ SEMICOLON ]
 ## Transitions:
--- On TIME shift to state 20
--- On PLUS shift to state 34
--- On OR shift to state 42
--- On NOT_EQUAL shift to state 22
--- On MORE_EQUAL shift to state 24
--- On MORE shift to state 26
--- On MODULO shift to state 36
--- On MINUS shift to state 44
--- On MANY_TIMES shift to state 72
--- On LESS_EQUAL shift to state 28
--- On LESS shift to state 30
--- On DIVIDE shift to state 38
--- On BOOL_EQUAL shift to state 32
--- On AND shift to state 40
+-- On TIME shift to state 19
+-- On PLUS shift to state 33
+-- On OR shift to state 41
+-- On NOT_EQUAL shift to state 21
+-- On MORE_EQUAL shift to state 23
+-- On MORE shift to state 25
+-- On MODULO shift to state 35
+-- On MINUS shift to state 43
+-- On MANY_TIMES shift to state 70
+-- On LESS_EQUAL shift to state 27
+-- On LESS shift to state 29
+-- On DIVIDE shift to state 37
+-- On BOOL_EQUAL shift to state 31
+-- On AND shift to state 39
 ## Reductions:
 
-State 72:
+State 70:
 ## Known stack suffix:
 ## REPEAT expression MANY_TIMES
 ## LR(1) items:
 instruction -> REPEAT expression MANY_TIMES . START bloc_instruction END [ SEMICOLON ]
 ## Transitions:
--- On START shift to state 73
+-- On START shift to state 71
 ## Reductions:
 
-State 73:
+State 71:
 ## Known stack suffix:
 ## REPEAT expression MANY_TIMES START
 ## LR(1) items:
 instruction -> REPEAT expression MANY_TIMES START . bloc_instruction END [ SEMICOLON ]
 ## Transitions:
 -- On WIDTH_CHANGE shift to state 1
--- On WHILE shift to state 58
--- On VAR shift to state 62
--- On TURN shift to state 66
--- On RETURN shift to state 68
--- On REPEAT shift to state 70
--- On PRINT shift to state 74
--- On MOVE shift to state 76
--- On IF shift to state 78
--- On ID shift to state 82
--- On DRAW_ON shift to state 88
--- On DRAW_OFF shift to state 89
--- On DEF shift to state 90
--- On COLOR_CHANGE shift to state 100
--- On instruction shift to state 102
--- On bloc_instruction shift to state 113
+-- On WHILE shift to state 56
+-- On VAR shift to state 60
+-- On TURN shift to state 64
+-- On RETURN shift to state 66
+-- On REPEAT shift to state 68
+-- On PRINT shift to state 72
+-- On MOVE shift to state 74
+-- On IF shift to state 76
+-- On DRAW_ON shift to state 80
+-- On DRAW_OFF shift to state 81
+-- On DEF shift to state 82
+-- On COLOR_CHANGE shift to state 92
+-- On CHARS shift to state 94
+-- On instruction shift to state 100
+-- On bloc_instruction shift to state 111
 ## Reductions:
 -- On END
 --   reduce production bloc_instruction ->
 
-State 74:
+State 72:
 ## Known stack suffix:
 ## PRINT
 ## LR(1) items:
@@ -1574,19 +1454,15 @@ instruction -> PRINT . expression [ SEMICOLON ]
 -- On TXT shift to state 3
 -- On NOT shift to state 4
 -- On MINUS shift to state 5
--- On LPAREN shift to state 6
--- On ID shift to state 7
--- On HEX shift to state 9
--- On GENN shift to state 10
--- On GENC shift to state 12
--- On COLOR shift to state 14
--- On option(MINUS) shift to state 17
--- On expression shift to state 75
+-- On LPAREN shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On expression shift to state 73
 ## Reductions:
--- On NUM
---   reduce production option(MINUS) ->
 
-State 75:
+State 73:
 ## Known stack suffix:
 ## PRINT expression
 ## LR(1) items:
@@ -1605,24 +1481,24 @@ expression -> expression . AND expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MOR
 expression -> expression . OR expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
 instruction -> PRINT expression . [ SEMICOLON ]
 ## Transitions:
--- On TIME shift to state 20
--- On PLUS shift to state 34
--- On OR shift to state 42
--- On NOT_EQUAL shift to state 22
--- On MORE_EQUAL shift to state 24
--- On MORE shift to state 26
--- On MODULO shift to state 36
--- On MINUS shift to state 44
--- On LESS_EQUAL shift to state 28
--- On LESS shift to state 30
--- On DIVIDE shift to state 38
--- On BOOL_EQUAL shift to state 32
--- On AND shift to state 40
+-- On TIME shift to state 19
+-- On PLUS shift to state 33
+-- On OR shift to state 41
+-- On NOT_EQUAL shift to state 21
+-- On MORE_EQUAL shift to state 23
+-- On MORE shift to state 25
+-- On MODULO shift to state 35
+-- On MINUS shift to state 43
+-- On LESS_EQUAL shift to state 27
+-- On LESS shift to state 29
+-- On DIVIDE shift to state 37
+-- On BOOL_EQUAL shift to state 31
+-- On AND shift to state 39
 ## Reductions:
 -- On SEMICOLON
 --   reduce production instruction -> PRINT expression
 
-State 76:
+State 74:
 ## Known stack suffix:
 ## MOVE
 ## LR(1) items:
@@ -1632,19 +1508,15 @@ instruction -> MOVE . expression [ SEMICOLON ]
 -- On TXT shift to state 3
 -- On NOT shift to state 4
 -- On MINUS shift to state 5
--- On LPAREN shift to state 6
--- On ID shift to state 7
--- On HEX shift to state 9
--- On GENN shift to state 10
--- On GENC shift to state 12
--- On COLOR shift to state 14
--- On option(MINUS) shift to state 17
--- On expression shift to state 77
+-- On LPAREN shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On expression shift to state 75
 ## Reductions:
--- On NUM
---   reduce production option(MINUS) ->
 
-State 77:
+State 75:
 ## Known stack suffix:
 ## MOVE expression
 ## LR(1) items:
@@ -1663,24 +1535,24 @@ expression -> expression . AND expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MOR
 expression -> expression . OR expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
 instruction -> MOVE expression . [ SEMICOLON ]
 ## Transitions:
--- On TIME shift to state 20
--- On PLUS shift to state 34
--- On OR shift to state 42
--- On NOT_EQUAL shift to state 22
--- On MORE_EQUAL shift to state 24
--- On MORE shift to state 26
--- On MODULO shift to state 36
--- On MINUS shift to state 44
--- On LESS_EQUAL shift to state 28
--- On LESS shift to state 30
--- On DIVIDE shift to state 38
--- On BOOL_EQUAL shift to state 32
--- On AND shift to state 40
+-- On TIME shift to state 19
+-- On PLUS shift to state 33
+-- On OR shift to state 41
+-- On NOT_EQUAL shift to state 21
+-- On MORE_EQUAL shift to state 23
+-- On MORE shift to state 25
+-- On MODULO shift to state 35
+-- On MINUS shift to state 43
+-- On LESS_EQUAL shift to state 27
+-- On LESS shift to state 29
+-- On DIVIDE shift to state 37
+-- On BOOL_EQUAL shift to state 31
+-- On AND shift to state 39
 ## Reductions:
 -- On SEMICOLON
 --   reduce production instruction -> MOVE expression
 
-State 78:
+State 76:
 ## Known stack suffix:
 ## IF
 ## LR(1) items:
@@ -1691,19 +1563,15 @@ instruction -> IF . expression THEN START bloc_instruction END [ SEMICOLON ]
 -- On TXT shift to state 3
 -- On NOT shift to state 4
 -- On MINUS shift to state 5
--- On LPAREN shift to state 6
--- On ID shift to state 7
--- On HEX shift to state 9
--- On GENN shift to state 10
--- On GENC shift to state 12
--- On COLOR shift to state 14
--- On option(MINUS) shift to state 17
--- On expression shift to state 79
+-- On LPAREN shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On expression shift to state 77
 ## Reductions:
--- On NUM
---   reduce production option(MINUS) ->
 
-State 79:
+State 77:
 ## Known stack suffix:
 ## IF expression
 ## LR(1) items:
@@ -1723,33 +1591,33 @@ expression -> expression . OR expression [ TIME THEN PLUS OR NOT_EQUAL MORE_EQUA
 instruction -> IF expression . THEN START bloc_instruction END ELSE START bloc_instruction END [ SEMICOLON ]
 instruction -> IF expression . THEN START bloc_instruction END [ SEMICOLON ]
 ## Transitions:
--- On TIME shift to state 20
--- On THEN shift to state 80
--- On PLUS shift to state 34
--- On OR shift to state 42
--- On NOT_EQUAL shift to state 22
--- On MORE_EQUAL shift to state 24
--- On MORE shift to state 26
--- On MODULO shift to state 36
--- On MINUS shift to state 44
--- On LESS_EQUAL shift to state 28
--- On LESS shift to state 30
--- On DIVIDE shift to state 38
--- On BOOL_EQUAL shift to state 32
--- On AND shift to state 40
+-- On TIME shift to state 19
+-- On THEN shift to state 78
+-- On PLUS shift to state 33
+-- On OR shift to state 41
+-- On NOT_EQUAL shift to state 21
+-- On MORE_EQUAL shift to state 23
+-- On MORE shift to state 25
+-- On MODULO shift to state 35
+-- On MINUS shift to state 43
+-- On LESS_EQUAL shift to state 27
+-- On LESS shift to state 29
+-- On DIVIDE shift to state 37
+-- On BOOL_EQUAL shift to state 31
+-- On AND shift to state 39
 ## Reductions:
 
-State 80:
+State 78:
 ## Known stack suffix:
 ## IF expression THEN
 ## LR(1) items:
 instruction -> IF expression THEN . START bloc_instruction END ELSE START bloc_instruction END [ SEMICOLON ]
 instruction -> IF expression THEN . START bloc_instruction END [ SEMICOLON ]
 ## Transitions:
--- On START shift to state 81
+-- On START shift to state 79
 ## Reductions:
 
-State 81:
+State 79:
 ## Known stack suffix:
 ## IF expression THEN START
 ## LR(1) items:
@@ -1757,140 +1625,26 @@ instruction -> IF expression THEN START . bloc_instruction END ELSE START bloc_i
 instruction -> IF expression THEN START . bloc_instruction END [ SEMICOLON ]
 ## Transitions:
 -- On WIDTH_CHANGE shift to state 1
--- On WHILE shift to state 58
--- On VAR shift to state 62
--- On TURN shift to state 66
--- On RETURN shift to state 68
--- On REPEAT shift to state 70
--- On PRINT shift to state 74
--- On MOVE shift to state 76
--- On IF shift to state 78
--- On ID shift to state 82
--- On DRAW_ON shift to state 88
--- On DRAW_OFF shift to state 89
--- On DEF shift to state 90
--- On COLOR_CHANGE shift to state 100
--- On instruction shift to state 102
--- On bloc_instruction shift to state 107
+-- On WHILE shift to state 56
+-- On VAR shift to state 60
+-- On TURN shift to state 64
+-- On RETURN shift to state 66
+-- On REPEAT shift to state 68
+-- On PRINT shift to state 72
+-- On MOVE shift to state 74
+-- On IF shift to state 76
+-- On DRAW_ON shift to state 80
+-- On DRAW_OFF shift to state 81
+-- On DEF shift to state 82
+-- On COLOR_CHANGE shift to state 92
+-- On CHARS shift to state 94
+-- On instruction shift to state 100
+-- On bloc_instruction shift to state 105
 ## Reductions:
 -- On END
 --   reduce production bloc_instruction ->
 
-State 82:
-## Known stack suffix:
-## ID
-## LR(1) items:
-instruction -> ID . EGALE expression [ SEMICOLON ]
-instruction -> ID . LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN [ SEMICOLON ]
-## Transitions:
--- On LPAREN shift to state 83
--- On EGALE shift to state 86
-## Reductions:
-
-State 83:
-## Known stack suffix:
-## ID LPAREN
-## LR(1) items:
-instruction -> ID LPAREN . loption(separated_nonempty_list(COMA,expression)) RPAREN [ SEMICOLON ]
-## Transitions:
--- On VALBOOL shift to state 2
--- On TXT shift to state 3
--- On NOT shift to state 4
--- On MINUS shift to state 5
--- On LPAREN shift to state 6
--- On ID shift to state 7
--- On HEX shift to state 9
--- On GENN shift to state 10
--- On GENC shift to state 12
--- On COLOR shift to state 14
--- On separated_nonempty_list(COMA,expression) shift to state 46
--- On option(MINUS) shift to state 17
--- On loption(separated_nonempty_list(COMA,expression)) shift to state 84
--- On expression shift to state 49
-## Reductions:
--- On RPAREN
---   reduce production loption(separated_nonempty_list(COMA,expression)) ->
--- On NUM
---   reduce production option(MINUS) ->
-
-State 84:
-## Known stack suffix:
-## ID LPAREN loption(separated_nonempty_list(COMA,expression))
-## LR(1) items:
-instruction -> ID LPAREN loption(separated_nonempty_list(COMA,expression)) . RPAREN [ SEMICOLON ]
-## Transitions:
--- On RPAREN shift to state 85
-## Reductions:
-
-State 85:
-## Known stack suffix:
-## ID LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN
-## LR(1) items:
-instruction -> ID LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN . [ SEMICOLON ]
-## Transitions:
-## Reductions:
--- On SEMICOLON
---   reduce production instruction -> ID LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN
-
-State 86:
-## Known stack suffix:
-## ID EGALE
-## LR(1) items:
-instruction -> ID EGALE . expression [ SEMICOLON ]
-## Transitions:
--- On VALBOOL shift to state 2
--- On TXT shift to state 3
--- On NOT shift to state 4
--- On MINUS shift to state 5
--- On LPAREN shift to state 6
--- On ID shift to state 7
--- On HEX shift to state 9
--- On GENN shift to state 10
--- On GENC shift to state 12
--- On COLOR shift to state 14
--- On option(MINUS) shift to state 17
--- On expression shift to state 87
-## Reductions:
--- On NUM
---   reduce production option(MINUS) ->
-
-State 87:
-## Known stack suffix:
-## ID EGALE expression
-## LR(1) items:
-expression -> expression . PLUS expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
-expression -> expression . MINUS expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
-expression -> expression . TIME expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
-expression -> expression . DIVIDE expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
-expression -> expression . MODULO expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
-expression -> expression . LESS expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
-expression -> expression . MORE expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
-expression -> expression . LESS_EQUAL expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
-expression -> expression . MORE_EQUAL expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
-expression -> expression . BOOL_EQUAL expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
-expression -> expression . NOT_EQUAL expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
-expression -> expression . AND expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
-expression -> expression . OR expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
-instruction -> ID EGALE expression . [ SEMICOLON ]
-## Transitions:
--- On TIME shift to state 20
--- On PLUS shift to state 34
--- On OR shift to state 42
--- On NOT_EQUAL shift to state 22
--- On MORE_EQUAL shift to state 24
--- On MORE shift to state 26
--- On MODULO shift to state 36
--- On MINUS shift to state 44
--- On LESS_EQUAL shift to state 28
--- On LESS shift to state 30
--- On DIVIDE shift to state 38
--- On BOOL_EQUAL shift to state 32
--- On AND shift to state 40
-## Reductions:
--- On SEMICOLON
---   reduce production instruction -> ID EGALE expression
-
-State 88:
+State 80:
 ## Known stack suffix:
 ## DRAW_ON
 ## LR(1) items:
@@ -1900,7 +1654,7 @@ instruction -> DRAW_ON . [ SEMICOLON ]
 -- On SEMICOLON
 --   reduce production instruction -> DRAW_ON
 
-State 89:
+State 81:
 ## Known stack suffix:
 ## DRAW_OFF
 ## LR(1) items:
@@ -1910,124 +1664,124 @@ instruction -> DRAW_OFF . [ SEMICOLON ]
 -- On SEMICOLON
 --   reduce production instruction -> DRAW_OFF
 
-State 90:
+State 82:
 ## Known stack suffix:
 ## DEF
 ## LR(1) items:
-instruction -> DEF . ID LPAREN loption(separated_nonempty_list(COMA,ID)) RPAREN START bloc_instruction END [ SEMICOLON ]
+instruction -> DEF . CHARS LPAREN loption(separated_nonempty_list(COMA,CHARS)) RPAREN START bloc_instruction END [ SEMICOLON ]
 ## Transitions:
--- On ID shift to state 91
+-- On CHARS shift to state 83
+## Reductions:
+
+State 83:
+## Known stack suffix:
+## DEF CHARS
+## LR(1) items:
+instruction -> DEF CHARS . LPAREN loption(separated_nonempty_list(COMA,CHARS)) RPAREN START bloc_instruction END [ SEMICOLON ]
+## Transitions:
+-- On LPAREN shift to state 84
+## Reductions:
+
+State 84:
+## Known stack suffix:
+## DEF CHARS LPAREN
+## LR(1) items:
+instruction -> DEF CHARS LPAREN . loption(separated_nonempty_list(COMA,CHARS)) RPAREN START bloc_instruction END [ SEMICOLON ]
+## Transitions:
+-- On CHARS shift to state 85
+-- On separated_nonempty_list(COMA,CHARS) shift to state 88
+-- On loption(separated_nonempty_list(COMA,CHARS)) shift to state 89
+## Reductions:
+-- On RPAREN
+--   reduce production loption(separated_nonempty_list(COMA,CHARS)) ->
+
+State 85:
+## Known stack suffix:
+## CHARS
+## LR(1) items:
+separated_nonempty_list(COMA,CHARS) -> CHARS . [ RPAREN ]
+separated_nonempty_list(COMA,CHARS) -> CHARS . COMA separated_nonempty_list(COMA,CHARS) [ RPAREN ]
+## Transitions:
+-- On COMA shift to state 86
+## Reductions:
+-- On RPAREN
+--   reduce production separated_nonempty_list(COMA,CHARS) -> CHARS
+
+State 86:
+## Known stack suffix:
+## CHARS COMA
+## LR(1) items:
+separated_nonempty_list(COMA,CHARS) -> CHARS COMA . separated_nonempty_list(COMA,CHARS) [ RPAREN ]
+## Transitions:
+-- On CHARS shift to state 85
+-- On separated_nonempty_list(COMA,CHARS) shift to state 87
+## Reductions:
+
+State 87:
+## Known stack suffix:
+## CHARS COMA separated_nonempty_list(COMA,CHARS)
+## LR(1) items:
+separated_nonempty_list(COMA,CHARS) -> CHARS COMA separated_nonempty_list(COMA,CHARS) . [ RPAREN ]
+## Transitions:
+## Reductions:
+-- On RPAREN
+--   reduce production separated_nonempty_list(COMA,CHARS) -> CHARS COMA separated_nonempty_list(COMA,CHARS)
+
+State 88:
+## Known stack suffix:
+## separated_nonempty_list(COMA,CHARS)
+## LR(1) items:
+loption(separated_nonempty_list(COMA,CHARS)) -> separated_nonempty_list(COMA,CHARS) . [ RPAREN ]
+## Transitions:
+## Reductions:
+-- On RPAREN
+--   reduce production loption(separated_nonempty_list(COMA,CHARS)) -> separated_nonempty_list(COMA,CHARS)
+
+State 89:
+## Known stack suffix:
+## DEF CHARS LPAREN loption(separated_nonempty_list(COMA,CHARS))
+## LR(1) items:
+instruction -> DEF CHARS LPAREN loption(separated_nonempty_list(COMA,CHARS)) . RPAREN START bloc_instruction END [ SEMICOLON ]
+## Transitions:
+-- On RPAREN shift to state 90
+## Reductions:
+
+State 90:
+## Known stack suffix:
+## DEF CHARS LPAREN loption(separated_nonempty_list(COMA,CHARS)) RPAREN
+## LR(1) items:
+instruction -> DEF CHARS LPAREN loption(separated_nonempty_list(COMA,CHARS)) RPAREN . START bloc_instruction END [ SEMICOLON ]
+## Transitions:
+-- On START shift to state 91
 ## Reductions:
 
 State 91:
 ## Known stack suffix:
-## DEF ID
+## DEF CHARS LPAREN loption(separated_nonempty_list(COMA,CHARS)) RPAREN START
 ## LR(1) items:
-instruction -> DEF ID . LPAREN loption(separated_nonempty_list(COMA,ID)) RPAREN START bloc_instruction END [ SEMICOLON ]
-## Transitions:
--- On LPAREN shift to state 92
-## Reductions:
-
-State 92:
-## Known stack suffix:
-## DEF ID LPAREN
-## LR(1) items:
-instruction -> DEF ID LPAREN . loption(separated_nonempty_list(COMA,ID)) RPAREN START bloc_instruction END [ SEMICOLON ]
-## Transitions:
--- On ID shift to state 93
--- On separated_nonempty_list(COMA,ID) shift to state 96
--- On loption(separated_nonempty_list(COMA,ID)) shift to state 97
-## Reductions:
--- On RPAREN
---   reduce production loption(separated_nonempty_list(COMA,ID)) ->
-
-State 93:
-## Known stack suffix:
-## ID
-## LR(1) items:
-separated_nonempty_list(COMA,ID) -> ID . [ RPAREN ]
-separated_nonempty_list(COMA,ID) -> ID . COMA separated_nonempty_list(COMA,ID) [ RPAREN ]
-## Transitions:
--- On COMA shift to state 94
-## Reductions:
--- On RPAREN
---   reduce production separated_nonempty_list(COMA,ID) -> ID
-
-State 94:
-## Known stack suffix:
-## ID COMA
-## LR(1) items:
-separated_nonempty_list(COMA,ID) -> ID COMA . separated_nonempty_list(COMA,ID) [ RPAREN ]
-## Transitions:
--- On ID shift to state 93
--- On separated_nonempty_list(COMA,ID) shift to state 95
-## Reductions:
-
-State 95:
-## Known stack suffix:
-## ID COMA separated_nonempty_list(COMA,ID)
-## LR(1) items:
-separated_nonempty_list(COMA,ID) -> ID COMA separated_nonempty_list(COMA,ID) . [ RPAREN ]
-## Transitions:
-## Reductions:
--- On RPAREN
---   reduce production separated_nonempty_list(COMA,ID) -> ID COMA separated_nonempty_list(COMA,ID)
-
-State 96:
-## Known stack suffix:
-## separated_nonempty_list(COMA,ID)
-## LR(1) items:
-loption(separated_nonempty_list(COMA,ID)) -> separated_nonempty_list(COMA,ID) . [ RPAREN ]
-## Transitions:
-## Reductions:
--- On RPAREN
---   reduce production loption(separated_nonempty_list(COMA,ID)) -> separated_nonempty_list(COMA,ID)
-
-State 97:
-## Known stack suffix:
-## DEF ID LPAREN loption(separated_nonempty_list(COMA,ID))
-## LR(1) items:
-instruction -> DEF ID LPAREN loption(separated_nonempty_list(COMA,ID)) . RPAREN START bloc_instruction END [ SEMICOLON ]
-## Transitions:
--- On RPAREN shift to state 98
-## Reductions:
-
-State 98:
-## Known stack suffix:
-## DEF ID LPAREN loption(separated_nonempty_list(COMA,ID)) RPAREN
-## LR(1) items:
-instruction -> DEF ID LPAREN loption(separated_nonempty_list(COMA,ID)) RPAREN . START bloc_instruction END [ SEMICOLON ]
-## Transitions:
--- On START shift to state 99
-## Reductions:
-
-State 99:
-## Known stack suffix:
-## DEF ID LPAREN loption(separated_nonempty_list(COMA,ID)) RPAREN START
-## LR(1) items:
-instruction -> DEF ID LPAREN loption(separated_nonempty_list(COMA,ID)) RPAREN START . bloc_instruction END [ SEMICOLON ]
+instruction -> DEF CHARS LPAREN loption(separated_nonempty_list(COMA,CHARS)) RPAREN START . bloc_instruction END [ SEMICOLON ]
 ## Transitions:
 -- On WIDTH_CHANGE shift to state 1
--- On WHILE shift to state 58
--- On VAR shift to state 62
--- On TURN shift to state 66
--- On RETURN shift to state 68
--- On REPEAT shift to state 70
--- On PRINT shift to state 74
--- On MOVE shift to state 76
--- On IF shift to state 78
--- On ID shift to state 82
--- On DRAW_ON shift to state 88
--- On DRAW_OFF shift to state 89
--- On DEF shift to state 90
--- On COLOR_CHANGE shift to state 100
--- On instruction shift to state 102
--- On bloc_instruction shift to state 105
+-- On WHILE shift to state 56
+-- On VAR shift to state 60
+-- On TURN shift to state 64
+-- On RETURN shift to state 66
+-- On REPEAT shift to state 68
+-- On PRINT shift to state 72
+-- On MOVE shift to state 74
+-- On IF shift to state 76
+-- On DRAW_ON shift to state 80
+-- On DRAW_OFF shift to state 81
+-- On DEF shift to state 82
+-- On COLOR_CHANGE shift to state 92
+-- On CHARS shift to state 94
+-- On instruction shift to state 100
+-- On bloc_instruction shift to state 103
 ## Reductions:
 -- On END
 --   reduce production bloc_instruction ->
 
-State 100:
+State 92:
 ## Known stack suffix:
 ## COLOR_CHANGE
 ## LR(1) items:
@@ -2037,19 +1791,15 @@ instruction -> COLOR_CHANGE . expression [ SEMICOLON ]
 -- On TXT shift to state 3
 -- On NOT shift to state 4
 -- On MINUS shift to state 5
--- On LPAREN shift to state 6
--- On ID shift to state 7
--- On HEX shift to state 9
--- On GENN shift to state 10
--- On GENC shift to state 12
--- On COLOR shift to state 14
--- On option(MINUS) shift to state 17
--- On expression shift to state 101
+-- On LPAREN shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On expression shift to state 93
 ## Reductions:
--- On NUM
---   reduce production option(MINUS) ->
 
-State 101:
+State 93:
 ## Known stack suffix:
 ## COLOR_CHANGE expression
 ## LR(1) items:
@@ -2068,59 +1818,165 @@ expression -> expression . AND expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MOR
 expression -> expression . OR expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
 instruction -> COLOR_CHANGE expression . [ SEMICOLON ]
 ## Transitions:
--- On TIME shift to state 20
--- On PLUS shift to state 34
--- On OR shift to state 42
--- On NOT_EQUAL shift to state 22
--- On MORE_EQUAL shift to state 24
--- On MORE shift to state 26
--- On MODULO shift to state 36
--- On MINUS shift to state 44
--- On LESS_EQUAL shift to state 28
--- On LESS shift to state 30
--- On DIVIDE shift to state 38
--- On BOOL_EQUAL shift to state 32
--- On AND shift to state 40
+-- On TIME shift to state 19
+-- On PLUS shift to state 33
+-- On OR shift to state 41
+-- On NOT_EQUAL shift to state 21
+-- On MORE_EQUAL shift to state 23
+-- On MORE shift to state 25
+-- On MODULO shift to state 35
+-- On MINUS shift to state 43
+-- On LESS_EQUAL shift to state 27
+-- On LESS shift to state 29
+-- On DIVIDE shift to state 37
+-- On BOOL_EQUAL shift to state 31
+-- On AND shift to state 39
 ## Reductions:
 -- On SEMICOLON
 --   reduce production instruction -> COLOR_CHANGE expression
 
-State 102:
+State 94:
+## Known stack suffix:
+## CHARS
+## LR(1) items:
+instruction -> CHARS . EGALE expression [ SEMICOLON ]
+instruction -> CHARS . LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN [ SEMICOLON ]
+## Transitions:
+-- On LPAREN shift to state 95
+-- On EGALE shift to state 98
+## Reductions:
+
+State 95:
+## Known stack suffix:
+## CHARS LPAREN
+## LR(1) items:
+instruction -> CHARS LPAREN . loption(separated_nonempty_list(COMA,expression)) RPAREN [ SEMICOLON ]
+## Transitions:
+-- On VALBOOL shift to state 2
+-- On TXT shift to state 3
+-- On NOT shift to state 4
+-- On MINUS shift to state 5
+-- On LPAREN shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On separated_nonempty_list(COMA,expression) shift to state 15
+-- On loption(separated_nonempty_list(COMA,expression)) shift to state 96
+-- On expression shift to state 18
+## Reductions:
+-- On RPAREN
+--   reduce production loption(separated_nonempty_list(COMA,expression)) ->
+
+State 96:
+## Known stack suffix:
+## CHARS LPAREN loption(separated_nonempty_list(COMA,expression))
+## LR(1) items:
+instruction -> CHARS LPAREN loption(separated_nonempty_list(COMA,expression)) . RPAREN [ SEMICOLON ]
+## Transitions:
+-- On RPAREN shift to state 97
+## Reductions:
+
+State 97:
+## Known stack suffix:
+## CHARS LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN
+## LR(1) items:
+instruction -> CHARS LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN . [ SEMICOLON ]
+## Transitions:
+## Reductions:
+-- On SEMICOLON
+--   reduce production instruction -> CHARS LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN
+
+State 98:
+## Known stack suffix:
+## CHARS EGALE
+## LR(1) items:
+instruction -> CHARS EGALE . expression [ SEMICOLON ]
+## Transitions:
+-- On VALBOOL shift to state 2
+-- On TXT shift to state 3
+-- On NOT shift to state 4
+-- On MINUS shift to state 5
+-- On LPAREN shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On expression shift to state 99
+## Reductions:
+
+State 99:
+## Known stack suffix:
+## CHARS EGALE expression
+## LR(1) items:
+expression -> expression . PLUS expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
+expression -> expression . MINUS expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
+expression -> expression . TIME expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
+expression -> expression . DIVIDE expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
+expression -> expression . MODULO expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
+expression -> expression . LESS expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
+expression -> expression . MORE expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
+expression -> expression . LESS_EQUAL expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
+expression -> expression . MORE_EQUAL expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
+expression -> expression . BOOL_EQUAL expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
+expression -> expression . NOT_EQUAL expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
+expression -> expression . AND expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
+expression -> expression . OR expression [ TIME SEMICOLON PLUS OR NOT_EQUAL MORE_EQUAL MORE MODULO MINUS LESS_EQUAL LESS DIVIDE BOOL_EQUAL AND ]
+instruction -> CHARS EGALE expression . [ SEMICOLON ]
+## Transitions:
+-- On TIME shift to state 19
+-- On PLUS shift to state 33
+-- On OR shift to state 41
+-- On NOT_EQUAL shift to state 21
+-- On MORE_EQUAL shift to state 23
+-- On MORE shift to state 25
+-- On MODULO shift to state 35
+-- On MINUS shift to state 43
+-- On LESS_EQUAL shift to state 27
+-- On LESS shift to state 29
+-- On DIVIDE shift to state 37
+-- On BOOL_EQUAL shift to state 31
+-- On AND shift to state 39
+## Reductions:
+-- On SEMICOLON
+--   reduce production instruction -> CHARS EGALE expression
+
+State 100:
 ## Known stack suffix:
 ## instruction
 ## LR(1) items:
 bloc_instruction -> instruction . SEMICOLON bloc_instruction [ EOF END ]
 ## Transitions:
--- On SEMICOLON shift to state 103
+-- On SEMICOLON shift to state 101
 ## Reductions:
 
-State 103:
+State 101:
 ## Known stack suffix:
 ## instruction SEMICOLON
 ## LR(1) items:
 bloc_instruction -> instruction SEMICOLON . bloc_instruction [ EOF END ]
 ## Transitions:
 -- On WIDTH_CHANGE shift to state 1
--- On WHILE shift to state 58
--- On VAR shift to state 62
--- On TURN shift to state 66
--- On RETURN shift to state 68
--- On REPEAT shift to state 70
--- On PRINT shift to state 74
--- On MOVE shift to state 76
--- On IF shift to state 78
--- On ID shift to state 82
--- On DRAW_ON shift to state 88
--- On DRAW_OFF shift to state 89
--- On DEF shift to state 90
--- On COLOR_CHANGE shift to state 100
--- On instruction shift to state 102
--- On bloc_instruction shift to state 104
+-- On WHILE shift to state 56
+-- On VAR shift to state 60
+-- On TURN shift to state 64
+-- On RETURN shift to state 66
+-- On REPEAT shift to state 68
+-- On PRINT shift to state 72
+-- On MOVE shift to state 74
+-- On IF shift to state 76
+-- On DRAW_ON shift to state 80
+-- On DRAW_OFF shift to state 81
+-- On DEF shift to state 82
+-- On COLOR_CHANGE shift to state 92
+-- On CHARS shift to state 94
+-- On instruction shift to state 100
+-- On bloc_instruction shift to state 102
 ## Reductions:
 -- On EOF END
 --   reduce production bloc_instruction ->
 
-State 104:
+State 102:
 ## Known stack suffix:
 ## instruction SEMICOLON bloc_instruction
 ## LR(1) items:
@@ -2130,92 +1986,92 @@ bloc_instruction -> instruction SEMICOLON bloc_instruction . [ EOF END ]
 -- On EOF END
 --   reduce production bloc_instruction -> instruction SEMICOLON bloc_instruction
 
-State 105:
+State 103:
 ## Known stack suffix:
-## DEF ID LPAREN loption(separated_nonempty_list(COMA,ID)) RPAREN START bloc_instruction
+## DEF CHARS LPAREN loption(separated_nonempty_list(COMA,CHARS)) RPAREN START bloc_instruction
 ## LR(1) items:
-instruction -> DEF ID LPAREN loption(separated_nonempty_list(COMA,ID)) RPAREN START bloc_instruction . END [ SEMICOLON ]
+instruction -> DEF CHARS LPAREN loption(separated_nonempty_list(COMA,CHARS)) RPAREN START bloc_instruction . END [ SEMICOLON ]
 ## Transitions:
--- On END shift to state 106
+-- On END shift to state 104
 ## Reductions:
 
-State 106:
+State 104:
 ## Known stack suffix:
-## DEF ID LPAREN loption(separated_nonempty_list(COMA,ID)) RPAREN START bloc_instruction END
+## DEF CHARS LPAREN loption(separated_nonempty_list(COMA,CHARS)) RPAREN START bloc_instruction END
 ## LR(1) items:
-instruction -> DEF ID LPAREN loption(separated_nonempty_list(COMA,ID)) RPAREN START bloc_instruction END . [ SEMICOLON ]
+instruction -> DEF CHARS LPAREN loption(separated_nonempty_list(COMA,CHARS)) RPAREN START bloc_instruction END . [ SEMICOLON ]
 ## Transitions:
 ## Reductions:
 -- On SEMICOLON
---   reduce production instruction -> DEF ID LPAREN loption(separated_nonempty_list(COMA,ID)) RPAREN START bloc_instruction END
+--   reduce production instruction -> DEF CHARS LPAREN loption(separated_nonempty_list(COMA,CHARS)) RPAREN START bloc_instruction END
 
-State 107:
+State 105:
 ## Known stack suffix:
 ## IF expression THEN START bloc_instruction
 ## LR(1) items:
 instruction -> IF expression THEN START bloc_instruction . END ELSE START bloc_instruction END [ SEMICOLON ]
 instruction -> IF expression THEN START bloc_instruction . END [ SEMICOLON ]
 ## Transitions:
--- On END shift to state 108
+-- On END shift to state 106
 ## Reductions:
 
-State 108:
+State 106:
 ## Known stack suffix:
 ## IF expression THEN START bloc_instruction END
 ## LR(1) items:
 instruction -> IF expression THEN START bloc_instruction END . ELSE START bloc_instruction END [ SEMICOLON ]
 instruction -> IF expression THEN START bloc_instruction END . [ SEMICOLON ]
 ## Transitions:
--- On ELSE shift to state 109
+-- On ELSE shift to state 107
 ## Reductions:
 -- On SEMICOLON
 --   reduce production instruction -> IF expression THEN START bloc_instruction END
 
-State 109:
+State 107:
 ## Known stack suffix:
 ## IF expression THEN START bloc_instruction END ELSE
 ## LR(1) items:
 instruction -> IF expression THEN START bloc_instruction END ELSE . START bloc_instruction END [ SEMICOLON ]
 ## Transitions:
--- On START shift to state 110
+-- On START shift to state 108
 ## Reductions:
 
-State 110:
+State 108:
 ## Known stack suffix:
 ## IF expression THEN START bloc_instruction END ELSE START
 ## LR(1) items:
 instruction -> IF expression THEN START bloc_instruction END ELSE START . bloc_instruction END [ SEMICOLON ]
 ## Transitions:
 -- On WIDTH_CHANGE shift to state 1
--- On WHILE shift to state 58
--- On VAR shift to state 62
--- On TURN shift to state 66
--- On RETURN shift to state 68
--- On REPEAT shift to state 70
--- On PRINT shift to state 74
--- On MOVE shift to state 76
--- On IF shift to state 78
--- On ID shift to state 82
--- On DRAW_ON shift to state 88
--- On DRAW_OFF shift to state 89
--- On DEF shift to state 90
--- On COLOR_CHANGE shift to state 100
--- On instruction shift to state 102
--- On bloc_instruction shift to state 111
+-- On WHILE shift to state 56
+-- On VAR shift to state 60
+-- On TURN shift to state 64
+-- On RETURN shift to state 66
+-- On REPEAT shift to state 68
+-- On PRINT shift to state 72
+-- On MOVE shift to state 74
+-- On IF shift to state 76
+-- On DRAW_ON shift to state 80
+-- On DRAW_OFF shift to state 81
+-- On DEF shift to state 82
+-- On COLOR_CHANGE shift to state 92
+-- On CHARS shift to state 94
+-- On instruction shift to state 100
+-- On bloc_instruction shift to state 109
 ## Reductions:
 -- On END
 --   reduce production bloc_instruction ->
 
-State 111:
+State 109:
 ## Known stack suffix:
 ## IF expression THEN START bloc_instruction END ELSE START bloc_instruction
 ## LR(1) items:
 instruction -> IF expression THEN START bloc_instruction END ELSE START bloc_instruction . END [ SEMICOLON ]
 ## Transitions:
--- On END shift to state 112
+-- On END shift to state 110
 ## Reductions:
 
-State 112:
+State 110:
 ## Known stack suffix:
 ## IF expression THEN START bloc_instruction END ELSE START bloc_instruction END
 ## LR(1) items:
@@ -2225,16 +2081,16 @@ instruction -> IF expression THEN START bloc_instruction END ELSE START bloc_ins
 -- On SEMICOLON
 --   reduce production instruction -> IF expression THEN START bloc_instruction END ELSE START bloc_instruction END
 
-State 113:
+State 111:
 ## Known stack suffix:
 ## REPEAT expression MANY_TIMES START bloc_instruction
 ## LR(1) items:
 instruction -> REPEAT expression MANY_TIMES START bloc_instruction . END [ SEMICOLON ]
 ## Transitions:
--- On END shift to state 114
+-- On END shift to state 112
 ## Reductions:
 
-State 114:
+State 112:
 ## Known stack suffix:
 ## REPEAT expression MANY_TIMES START bloc_instruction END
 ## LR(1) items:
@@ -2244,16 +2100,16 @@ instruction -> REPEAT expression MANY_TIMES START bloc_instruction END . [ SEMIC
 -- On SEMICOLON
 --   reduce production instruction -> REPEAT expression MANY_TIMES START bloc_instruction END
 
-State 115:
+State 113:
 ## Known stack suffix:
 ## WHILE expression DO START bloc_instruction
 ## LR(1) items:
 instruction -> WHILE expression DO START bloc_instruction . END [ SEMICOLON ]
 ## Transitions:
--- On END shift to state 116
+-- On END shift to state 114
 ## Reductions:
 
-State 116:
+State 114:
 ## Known stack suffix:
 ## WHILE expression DO START bloc_instruction END
 ## LR(1) items:
@@ -2263,7 +2119,7 @@ instruction -> WHILE expression DO START bloc_instruction END . [ SEMICOLON ]
 -- On SEMICOLON
 --   reduce production instruction -> WHILE expression DO START bloc_instruction END
 
-State 117:
+State 115:
 ## Known stack suffix:
 ## programme
 ## LR(1) items:
@@ -2273,16 +2129,16 @@ programme' -> programme . [ # ]
 -- On #
 --   accept programme
 
-State 118:
+State 116:
 ## Known stack suffix:
 ## bloc_instruction
 ## LR(1) items:
 programme -> bloc_instruction . EOF [ # ]
 ## Transitions:
--- On EOF shift to state 119
+-- On EOF shift to state 117
 ## Reductions:
 
-State 119:
+State 117:
 ## Known stack suffix:
 ## bloc_instruction EOF
 ## LR(1) items:

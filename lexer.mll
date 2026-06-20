@@ -4,9 +4,7 @@
 }
 
 let layout = [ ' ' '\t' ]
-let num = ['0'-'9']
-let hexcode = ['A'-'F' '0'-'9']
-let id = ['a'-'z']['A'-'Z' '0'-'9' 'a'-'z']*
+let chars = ['a'-'z' '0'-'9' 'A'-'Z']
 let str = ['A'-'Z' '0'-'9' 'a'-'z' ' ' ''']+
 
 rule token = parse
@@ -45,9 +43,7 @@ rule token = parse
   | "Ou" {OR}
   | "Debut" {START}
   | "Fin"  {END}
-  | hexcode hexcode hexcode hexcode hexcode hexcode {HEX (Lexing.lexeme lexbuf)}
   | "=" {EGALE }
-  | num+  { NUM (Lexing.lexeme lexbuf) }
   | "LargeurPinceau" { WIDTH_CHANGE }
   | "CouleurPinceau" { COLOR_CHANGE }
   | "vert" 
@@ -62,6 +58,6 @@ rule token = parse
   | '*' {TIME}
   | '/' {DIVIDE}
   | ';' {SEMICOLON}
-  | id { ID (Lexing.lexeme lexbuf)}
+  | chars+ { CHARS (Lexing.lexeme lexbuf)}
   | eof { EOF }
   | _			{ raise (Error (Printf.sprintf "caractère inattendu : %c" (Lexing.lexeme_char lexbuf 0))) }
