@@ -3,12 +3,12 @@ open Ast
 %}
 
 %token EOF DRAW_OFF DRAW_ON GENC DIVIDE TIME GENN PRINT MINUS MODULO PLUS MOVE COMA TURN DEF RETURN AND OR RPAREN LPAREN SEMICOLON COLOR_CHANGE WIDTH_CHANGE VAR EGALE IF THEN ELSE WHILE DO REPEAT MANY_TIMES NOT_EQUAL LESS_EQUAL MORE_EQUAL BOOL_EQUAL LESS MORE START END NOT
-%token<string> HEX NUM ID TXT COLOR VALBOOL
+%token<string> CHARS TXT COLOR VALBOOL
 
 %left PLUS MINUS OR
 %left TIME DIVIDE AND MODULO
 %nonassoc LESS MORE LESS_EQUAL MORE_EQUAL BOOL_EQUAL NOT_EQUAL
-%right NOT
+%right NOT 
 
 %start<bloc_instruction> programme
 
@@ -29,29 +29,28 @@ instruction:
   | TURN c=expression { Turn (c, $startpos) }
   | COLOR_CHANGE c=expression { CouleurPinceau (c, $startpos) }
   | WIDTH_CHANGE e=expression { LargeurPinceau (e,$startpos) }
-  | VAR str=ID { VarDecla (str, $startpos) } 
-  | VAR str=ID EGALE t=expression  { VarDeclaInit (str, t, $startpos) }
-  | str=ID EGALE t=expression  { VarInit (str, t, $startpos) }
+  | VAR str=CHARS { VarDecla (str, $startpos) } 
+  | VAR str=CHARS EGALE t=expression  { VarDeclaInit (str, t, $startpos) }
+  | str=CHARS EGALE t=expression  { VarInit (str, t, $startpos) }
   | IF c=expression THEN START i1=bloc_instruction END ELSE START i2=bloc_instruction END  { IfThenElse (c, i1, i2, $startpos) } 
   | IF c=expression THEN START i=bloc_instruction END { IfThen (c,i, $startpos) }
   | WHILE c=expression DO START i=bloc_instruction END  { While (c,i, $startpos) }
   | REPEAT e=expression MANY_TIMES START i=bloc_instruction END { Repeat (e,i, $startpos) }
   | RETURN e=expression { Return (e,$startpos) }
-  | DEF n=ID LPAREN a=separated_list(COMA, ID) RPAREN START i=bloc_instruction END { FunDecla (n, a, i, $startpos) }
-  | n=ID LPAREN a=separated_list(COMA, expression) RPAREN  {ProcCall (n,a, $startpos)}
+  | DEF n=CHARS LPAREN a=separated_list(COMA, CHARS) RPAREN START i=bloc_instruction END { FunDecla (n, a, i, $startpos) }
+  | n=CHARS LPAREN a=separated_list(COMA, expression) RPAREN  {ProcCall (n,a, $startpos)}
   | PRINT e=expression { Print e }
 
 expression: 
-  | signe=option(MINUS) n=NUM { Valeur (signe, n) } 
+  | MINUS str=CHARS { NumOrVarOrHexa (Some (), str,$startpos) } 
+  | str=CHARS { NumOrVarOrHexa (None, str,$symbolstartpos) } 
   | LPAREN e=expression RPAREN { e }
   | l=expression op=op_bin r=expression { Op (l, op, r, $startpos) }
-  | str=ID  { Var (str,$startpos) }
   | GENN LPAREN a=separated_list(COMA, expression) RPAREN {GenN (a,$startpos)}
-  | n=ID LPAREN a=separated_list(COMA, expression) RPAREN  {FunCall (n,a, $startpos)}
+  | n=CHARS LPAREN a=separated_list(COMA, expression) RPAREN  {FunCall (n,a, $startpos)}
   | b=VALBOOL { ValBool b }
   | NOT c=expression  { Not (c,$startpos)}
   | c=COLOR {Color c}
-  | v=HEX  { Hexcode v }
   | GENC LPAREN a=option(expression) RPAREN  { GenC (a,$startpos) }
   | str=TXT { Text str } 
 
