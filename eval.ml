@@ -3,38 +3,52 @@ open Env
 open Graphics
 open Random 
 
-let decode_ref : (?initial_decla:variable list -> instruction list -> variable list ) ref = ref (fun ?initial_decla:_ _ -> [])
-
-let rec eval_exp = function 
+let rec eval_exp (state:Ast.state) ~decode = function 
     | NumOrVarOrHexa (s,a,pos) -> let mult = (match s with 
                         | Some _ -> -1.
                         | None -> 1.) in 
          if is_id a 
         then 
             let name = a in
-            let (flag,res) =  (get_val name !env) in  (match res with 
-            | Some e -> if mult == -1. then (match e with VFloat val_ -> VFloat (-1. *. val_) | _ -> Printf.printf "aie"; raise (FloatWaited(pos)))
-                            else e
+            let (flag,res) =  (get_val name state.env) in  (match res with 
+            | Some e -> if mult == -1. then (match e with VFloat val_ -> (VFloat (-1. *. val_), state) | _ -> raise (FloatWaited(pos)))
+                            else (e,state)
             | None -> if flag then raise (NotYetInitVar (name, pos)) else raise (UnknownVar (name,pos)))
-        else Unsure (mult, a)
+        else (Unsure (mult, a),state)
        
-    | Op (l, op, r, pos) ->  eval_op pos l r op 
-    | FunCall (n, argsValue ,pos) ->  let rec aux liste = match liste with
-                                        | a :: l -> (match !a with (str, param, instr) -> if String.equal str n 
-                                                    then (try
-                                                        let x = eval_list argsValue in
-                                                        setFonction n pos param x ;
-                                                        ignore(!decode_ref ~initial_decla:param instr); 
-                                                        No
-                                                        with 
-                                                            | ReturnValue (v:value) -> unsetFonction () ; v  )
-                                                    else aux l)  
+    | Op (l, op, r, pos) -> eval_op pos l r state ~decode op
+    | FunCall (n, argsValue ,pos) ->  let rec aux_env env = (match env with 
                                         | [] -> raise (UnknownFun (n,pos))
-                                    in aux !envFun
+                                        | truc :: otre -> let rec aux_scope scope = (match scope with
+                                                    | (str, param, instr) :: _ when String.equal str n 
+                                                    -> (try
+                                                        let x,state = eval_list state ~decode argsValue in
+                                                        let up_param = setFonction n pos param x in
+                                                        let up_state = {
+                                                            draw = state. draw;
+                                                            val_angle = state.val_angle;
+                                                            env = up_param :: state.env;
+                                                            env_fun = state.env_fun;
+                                                            deep = state.deep +1;
+                                                            seed_init = state.seed_init;
+                                                        } in 
+                                                        (No,decode instr up_state)
+                                                        with 
+                                                            | ReturnValue (v:value) ->  (v,{ state with deep = state.deep -1 })  )
+                                                    | _ :: l -> aux_scope l
+                                                    | [] -> aux_env otre)
+                                                    in aux_scope truc)
+                                    in aux_env state.env_fun
     | GenN (args, pos) -> (try match args with
-                            | a :: b :: c :: [] -> Random.init (int_of_float (as_float(eval_exp a) pos)) ; seed_init := true ; VFloat (float_of_int (Random.int_in_range ~min:(int_of_float (as_float(eval_exp b)pos)) ~max:(int_of_float (as_float(eval_exp c)pos)))) 
-                            | a :: b :: [] -> (if not !seed_init then self_init (); seed_init := true) ; VFloat (float_of_int (Random.int_in_range ~min:(int_of_float(as_float(eval_exp a)pos)) ~max:(int_of_float(as_float(eval_exp b)pos))))
-                            | a :: [] -> (if not !seed_init then self_init () ; seed_init := true) ; VFloat (float_of_int (Random.int_in_range ~min:1 ~max:(int_of_float(as_float(eval_exp a)pos))))
+                            | a :: b :: c :: [] -> let valA,state = eval_exp state ~decode a in Random.init (int_of_float (as_float valA pos)) ;
+                                                    let valB,state = eval_exp state ~decode b in 
+                                                    let valC,state = eval_exp state ~decode c in
+                                                    (VFloat (float_of_int (Random.int_in_range ~min:(int_of_float (as_float valB pos)) ~max:(int_of_float (as_float valC pos)))), {state with seed_init = true}) 
+                            | a :: b :: [] -> let valA,state = eval_exp state ~decode a in 
+                                                let valB,state = eval_exp state ~decode b in
+                                                (if not state.seed_init then self_init ()) ; (VFloat (float_of_int (Random.int_in_range ~min:(int_of_float(as_float valA pos)) ~max:(int_of_float(as_float valB pos)))),{state with seed_init =true})
+                            | a :: [] -> let valA,state = eval_exp state ~decode a in 
+                                        (if not state.seed_init then self_init ()) ; (VFloat (float_of_int (Random.int_in_range ~min:1 ~max:(int_of_float(as_float valA pos)))),{state with seed_init = true})
                             | _ -> invalid_arg ""
                         with 
                             | Invalid_argument _ -> raise (Invalid_argumentGenN pos))
@@ -44,44 +58,43 @@ let rec eval_exp = function
                             | "jaune" -> yellow
                             | "rouge" -> red
                             | _ -> black)
-                    in VCool c 
-    (*| Hexcode v  ->  let v1 = int_of_string ("0X" ^ String.sub v 0 2 ) and v2 = int_of_string ("0X" ^ String.sub v 2 2 ) and v3 = int_of_string ("0X" ^ String.sub v 4 2 ) in VCool (rgb v1 v2 v3)*)
+                    in (VCool c,state) 
     | GenC (args,pos) -> (match args with 
-                            | None -> (if not !seed_init then Random.self_init () ; seed_init := true ; 
-                                    let r = (Random.int_in_range ~min:0 ~max:255) and g = (Random.int_in_range ~min:0 ~max:255) and b = (Random.int_in_range ~min:0 ~max:255) in VCool(rgb r g b))
-                            | Some a -> (Random.init(int_of_float (as_float(eval_exp a) pos)); seed_init := true; 
-                                    let r = (Random.int_in_range ~min:0 ~max:255) and g = (Random.int_in_range ~min:0 ~max:255) and b = (Random.int_in_range ~min:0 ~max:255)  in VCool(rgb r g b) ))
-    | ValBool b -> (match b with
+                            | None -> (if not state.seed_init then Random.self_init () ;
+                                    let r = (Random.int_in_range ~min:0 ~max:255) and g = (Random.int_in_range ~min:0 ~max:255) and b = (Random.int_in_range ~min:0 ~max:255) in VCool(rgb r g b)),state
+                            | Some a -> let valA,state = eval_exp state ~decode a in (Random.init(int_of_float (as_float valA pos)); 
+                                    let r = (Random.int_in_range ~min:0 ~max:255) and g = (Random.int_in_range ~min:0 ~max:255) and b = (Random.int_in_range ~min:0 ~max:255)  in VCool(rgb r g b)),state) 
+    | ValBool b -> let valb = (match b with
                     | "Vrais" -> VBool true
-                    | _ -> VBool false )
-    | Not (c, pos) -> VBool(not (as_bool(eval_exp c) pos))
-    | Text str -> VText str
-and eval_op pos l r = 
-    let le = eval_exp l in let re = eval_exp r in function 
-    | Plus -> VFloat (as_float le pos +. as_float re pos)
-    | Minus -> VFloat  (as_float le pos -. as_float re pos) 
-    | Time ->  VFloat (as_float le pos *. as_float re pos)
-    | Divided -> let q = as_float re pos in VFloat (if q <> 0. then as_float le pos /. q else raise (Division_by_zero pos))
-    | Mod -> let le = as_float le pos and re = as_float re pos in VFloat (if re <> 0. then ( mod_float le re ) else raise (Division_by_zero pos))
-    | And -> VBool (as_bool le pos && as_bool re pos)
-    | Or -> VBool (as_bool le pos || as_bool re pos)
-    | Less -> VBool (as_float le pos < as_float re pos)
-    | Less_equal -> VBool (as_float le pos <= as_float re pos )
-    | Bool_equal -> VBool (as_float le pos = as_float re pos)
-    | Not_equal -> VBool (as_float le pos <> as_float re pos)
-    | More -> VBool (as_float le pos > as_float re pos)
-    | More_equal -> VBool (as_float le pos >= as_float re pos)
+                    | _ -> VBool false ) in (valb,state)
+    | Not (c, pos) -> let valb,state = eval_exp state ~decode c in  VBool(not (as_bool valb pos)), state
+    | Text str -> VText str,state
+and eval_op pos l r (state:state) ~decode = 
+    let le,state = eval_exp state ~decode l in let re,state = eval_exp state ~decode r in function 
+    | Plus -> VFloat (as_float le pos +. as_float re pos),state
+    | Minus -> VFloat  (as_float le pos -. as_float re pos) ,state
+    | Time ->  VFloat (as_float le pos *. as_float re pos),state
+    | Divided -> let q = as_float re pos in VFloat (if q <> 0. then as_float le pos /. q else raise (Division_by_zero pos)),state
+    | Mod -> let le = as_float le pos and re = as_float re pos in VFloat (if re <> 0. then ( mod_float le re ) else raise (Division_by_zero pos)),state
+    | And -> VBool (as_bool le pos && as_bool re pos),state
+    | Or -> VBool (as_bool le pos || as_bool re pos),state
+    | Less -> VBool (as_float le pos < as_float re pos),state
+    | Less_equal -> VBool (as_float le pos <= as_float re pos ),state
+    | Bool_equal ->  VBool (as_float le pos = as_float re pos),state
+    | Not_equal -> VBool (as_float le pos <> as_float re pos),state
+    | More -> VBool (as_float le pos > as_float re pos),state
+    | More_equal -> VBool (as_float le pos >= as_float re pos),state
             
-and as_float v pos = match v with 
-            | VFloat a -> a
-            | Unsure (fact,a) -> fact *. Float.of_string a
+and as_float (v:value) pos = match v with 
+            | (VFloat a) -> a
+            | (Unsure (fact,a))-> (fact *. Float.of_string a)
             | _ -> raise (FloatWaited pos)
-and as_bool v pos = match v with 
-            | VBool a -> a
+and as_bool (v:value) pos = match v with 
+            | (VBool a)-> a
             | _ -> raise (BoolWaited pos)
-and as_color v pos = match v with 
-            | VCool a -> a
-            | Unsure (fact,v) ->if fact == -1. then raise (ColorWaited pos); if is_hexa v then let v1 = int_of_string ("0X" ^ String.sub v 0 2 ) and v2 = int_of_string ("0X" ^ String.sub v 2 2 ) and v3 = int_of_string ("0X" ^ String.sub v 4 2 ) in rgb v1 v2 v3  else raise (ColorWaited pos)
+and as_color (v:value) pos = match v with 
+            | (VCool a) -> a
+            | (Unsure (fact,v)) ->if fact == -1. then raise (ColorWaited pos); if is_hexa v then let v1 = int_of_string ("0X" ^ String.sub v 0 2 ) and v2 = int_of_string ("0X" ^ String.sub v 2 2 ) and v3 = int_of_string ("0X" ^ String.sub v 4 2 ) in rgb v1 v2 v3  else raise (ColorWaited pos)
             | _ -> raise (ColorWaited pos)
 and as_string = function 
             | VText s -> String.sub s 1 ((String.length s) -2)
@@ -95,9 +108,10 @@ and as_string = function
             |Unsure (fact,a) -> (if fact == 1. then "" else "-") ^ a
             
 
-and eval_list = function 
-    | [] -> []
-    | a :: l ->  (eval_exp a) :: eval_list l
+and eval_list (state:state) ~decode l :value list * state =let rec aux acc state = function 
+    | [] -> List.rev acc,state
+    | a :: l -> let valuated,state = (eval_exp state ~decode a) in aux (valuated::acc) state l 
+    in let result,state = aux [] state l in result,state
 
 and is_id str =
   let n = String.length str in
