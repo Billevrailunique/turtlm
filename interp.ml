@@ -92,60 +92,62 @@ and next_action (state:Ast.state) instr : flow = match instr with
     | Print e -> let str,state = eval_exp state ~decode e in  draw_string (as_string str); Continue state
 
 (*check le nombre de param aux fonction est correcte, que l'ordre dans lequel les var et les fonctions sont décla, init, used est correcte*)    
-let rec check (black_list:string list) (state:state) instr : state = match instr with
-    | ProcCall (name, argsValue, pos) -> if List.exists (String.equal name) black_list then state else if already_declared_fun name state.env_fun then 
+
+let rec check (state:check_state) instr : check_state = match instr with
+    | ProcCall (name, argsValue, pos) -> if List.exists (String.equal name) state.black_list then state else if already_declared_fun name state.state.env_fun then 
                                 let rec aux_env env = match env with 
                                         | [] -> raise (UnknownFun (name, pos))
                                         | scope :: otre ->
                                             let rec aux_scope scope = match scope with   
                                                 |  (str, vars , instr) :: _ when String.equal str name 
-                                                            ->  let state = List.fold_left Eval.check state argsValue in 
+                                                            ->  let in_state = List.fold_left (Eval.check check) state argsValue in 
                                                                 let valuated = List.map (fun _ -> No) argsValue in
                                                                 let env = setFonction name pos vars valuated in 
-                                                                let state = {draw = state.draw; val_angle = state.val_angle; env = env :: state.env; env_fun = state.env_fun; seed_init = state.seed_init; deep = state.deep+1} in
-                                                                List.fold_left (check (name::black_list)) state instr (*warning : ptet que si dans instr on trouve des appels à des fonctions réc, on pourra pas mettre correc tement à jour black_list (solution envisageable : rajouté black_list à state)*)
+                                                                let lil_state = {draw = in_state.state.draw; val_angle =in_state.state.val_angle; env = env :: in_state.state.env; env_fun = in_state.state.env_fun; seed_init = in_state.state.seed_init; deep = in_state.state.deep+1} in
+                                                                let in_state = {state = lil_state; black_list = name :: in_state.black_list} in 
+                                                                let in_state = List.fold_left check in_state instr in {state = state.state; black_list = in_state.black_list} 
                                                 | _ :: l -> aux_scope l
                                                 | [] -> aux_env otre 
                                             in aux_scope scope
-                                        in aux_env state.env_fun 
+                                        in aux_env state.state.env_fun 
                                 else raise (UnknownFun (name, pos))
-    | FunDecla (name, args, bloc, pos) -> if not (already_declared_fun name state.env_fun) 
+    | FunDecla (name, args, bloc, pos) -> if not (already_declared_fun name state.state.env_fun) 
                                             then let vs = setVars args in let _ = no_double args pos in 
                                             let a = (name, vs, bloc) in 
-                                            (match state.env_fun with 
-                                                | scope :: otre -> {state with env_fun = (a :: scope) :: otre }  
+                                            (match state.state.env_fun with 
+                                                | scope :: otre -> let lil_state = {state.state with env_fun = (a :: scope) :: otre } in {state = lil_state; black_list = state.black_list}
                                                 | [] ->  raise EnvEmpty)
                                             else raise (AlreadyDeclaredFun (name, pos))
-    | Return (e,pos) -> if state.deep > 0 then Eval.check state e
+    | Return (e,pos) -> if state.state.deep > 0 then let in_state = Eval.check (check) state e in {state = state.state; black_list = in_state.black_list}
                         else raise (OutOfContextReturn pos)
-    | VarDecla (name, pos) -> if not (already_declared name state.env)  then
+    | VarDecla (name, pos) -> if not (already_declared name state.state.env)  then
                                 let a = (name, None) in 
-                                (match state.env with 
-                                    | scope :: otre -> {state with env = (a :: scope) :: otre}
+                                (match state.state.env with 
+                                    | scope :: otre -> let lil_state = {state.state with env = (a :: scope) :: otre} in {state = lil_state; black_list = state.black_list}
                                     | [] -> raise EnvEmpty)
                             else raise (AlreadyDeclaredVar (name,pos))
-    | VarDeclaInit (name, e , pos) -> if not (already_declared name state.env) then 
+    | VarDeclaInit (name, e , pos) -> if not (already_declared name state.state.env) then 
                                         let v = No in 
-                                        let state = Eval.check state e in   
+                                        let in_state = Eval.check (check) state e in   
                                         let a = (name, Some v) in 
-                                            (match state.env with 
-                                                | scope :: otre -> { state with env = (a:: scope) :: otre}
+                                            (match in_state.state.env with 
+                                                | scope :: otre -> let lil_state = { in_state.state with env = (a:: scope) :: otre} in {state = lil_state; black_list = in_state.black_list} 
                                                 | [] -> raise EnvEmpty)
                                     else raise (AlreadyDeclaredVar (name, pos))
-    | VarInit (name, e , pos) -> let v = No in let state = Eval.check state e in 
-                                let (env,check) = change_val name v state.env in 
-                                if check then {state with env = env} else raise (UnknownVar (name, pos))
+    | VarInit (name, e , pos) -> let v = No in let in_state = Eval.check check state e in 
+                                let (env,check) = change_val name v state.state.env in 
+                                if check then {state = {in_state.state with env = env}; black_list = in_state.black_list} else raise (UnknownVar (name, pos))
     | Move (e,_) 
     | CouleurPinceau (e,_) 
     | LargeurPinceau (e,_)
-    | Turn (e,_) -> Eval.check state e
+    | Turn (e,_) -> Eval.check check state e
     | While (x,i,_)
     | IfThen (x,i,_)
-    | Repeat (x,i,_) -> let state = Eval.check state x in List.fold_left (check black_list) state i
-    | IfThenElse (x,i1,i2,_) -> let state = Eval.check state x in ignore(List.fold_left (check black_list) state i1) ; ignore( List.fold_left (check black_list) state i2); state
-    | Print e -> Eval.check state e
+    | Repeat (x,i,_) -> let in_state = Eval.check check state x in let in_state = List.fold_left check in_state i in {state = state.state; black_list = in_state.black_list}
+    | IfThenElse (x,i1,i2,_) -> let in_state = Eval.check check state x in ignore(List.fold_left check in_state i1) ; ignore( List.fold_left check in_state i2); {state = state.state; black_list = in_state.black_list} 
+    | Print e -> Eval.check check state e 
     | _ -> state
 
-let pretraitement bloc = let state = {draw = false; val_angle = 90.; env = [[]]; env_fun = [[]]; deep = 0;seed_init = false} in 
-                            List.fold_left (check []) state bloc
+let pretraitement bloc = let lil_state = {draw = false; val_angle = 90.; env = [[]]; env_fun = [[]]; deep = 0;seed_init = false} in 
+                            List.fold_left check {state = lil_state; black_list = []} bloc
                                 

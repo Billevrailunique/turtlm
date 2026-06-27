@@ -135,40 +135,43 @@ and is_hexa str =
     (c >= 'A' && c <= 'F')
   ) str
 
-let rec check state e = match e with 
+let rec check check_instr (state:check_state) e = match e with 
     | NumOrVarOrHexa (_,a,pos) -> 
          if is_id a 
         then 
             let name = a in
-            let (flag,res) =  (get_val name state.env) in  (match res with 
+            let (flag,res) =  (get_val name state.state.env) in  (match res with 
             | Some _ -> state
             | None -> if flag then raise (NotYetInitVar (name, pos)) else raise (UnknownVar (name,pos)))
         else state 
-    | Op (l, _, r, _) -> let s = check state l  in check  s r 
-    | FunCall (n, argsValue ,pos) ->  let rec aux_env env = (match env with 
-                                        | [] -> raise (UnknownFun (n,pos))
+    | Op (l, _, r, _) -> let s = check check_instr state l  in check check_instr s r 
+    | FunCall (n, argsValue ,pos) -> if  List.exists (String.equal n) state.black_list then state else 
+        if not (already_declared_fun n state.state.env_fun) then raise (UnknownFun (n,pos)) 
+        else let rec aux_env env = (match env with 
+                                        | [] -> assert false 
                                         | truc :: otre -> let rec aux_scope scope = (match scope with
-                                                    | (str, param, _) :: _ when String.equal str n 
+                                                    | (str, param, instr) :: _ when String.equal str n 
                                                     -> 
                                                         let valuated = List.map (fun _ -> No) argsValue in 
                                                                 let env = setFonction str pos param valuated in 
-                                                                let state = {draw = state.draw; val_angle = state.val_angle; env = env :: state.env; env_fun = state.env_fun; seed_init = state.seed_init; deep = state.deep+1} in
-                                                                state
+                                                                let lil_state = {draw = state.state.draw; val_angle = state.state.val_angle; env = env :: state.state.env; env_fun = state.state.env_fun; seed_init = state.state.seed_init; deep = state.state.deep+1} in
+                                                                let in_state = {state = lil_state; black_list = n :: state.black_list} in
+                                                                let in_state = List.fold_left (check_instr) in_state instr in {state = state.state; black_list = in_state.black_list}
                                                     | _ :: l -> aux_scope l
                                                     | [] -> aux_env otre)
                                                     in aux_scope truc)
-                                    in aux_env state.env_fun
+                                    in aux_env state.state.env_fun
     | GenN (args, pos) -> (try match args with
-                            | a :: b :: c :: [] -> check (check (check state c) b) a   
-                            | a :: b :: [] -> check (check state b) a   
-                            | a :: [] -> check state a   
+                            | a :: b :: c :: [] -> check check_instr (check check_instr(check check_instr state c) b) a   
+                            | a :: b :: [] -> check check_instr (check check_instr state b) a   
+                            | a :: [] -> check check_instr state a   
                             | _ -> invalid_arg ""
                         with 
                             | Invalid_argument _ -> raise (Invalid_argumentGenN pos))
     | GenC (args,_) -> begin 
                             match args with 
                                 | None -> state  
-                                | Some a -> check state a
+                                | Some a -> check check_instr state a
                         end
-    | Not (c, _) -> check state c
+    | Not (c, _) -> check check_instr state c
     |  _ -> state

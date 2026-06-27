@@ -37,9 +37,7 @@ and op_bin = Plus
                 | Less_equal
                 | More_equal   
                 | Not_equal
-                | Bool_equal 
-
-
+                | Bool_equal
 
 type value =
     | VFloat of float
@@ -61,6 +59,11 @@ type state = {
     env_fun : scopeFun list;
     deep : int; (* 0 -> global ; > 0 -> dans une fonction *)
     seed_init : bool;
+}
+
+type check_state = {
+    state : state;
+    black_list : string  list
 }
 
 type flow =
