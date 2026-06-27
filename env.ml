@@ -75,4 +75,12 @@ let afficherEnv state =
         | a :: m -> afficherScopeFun a; aux m
         | [] -> ()) 
         in aux state.env_fun;
-        Printf.printf "fin\n";
+        Printf.printf "fin\n"
+
+
+let no_double args pos  = 
+        let rec aux acc liste = match liste with 
+                | [] -> ()
+                | str :: l -> if List.exists (fun arg -> String.equal arg str) acc then raise (AlreadyDeclaredVar (str,pos))
+                        else aux (str :: acc) l
+        in aux [] args

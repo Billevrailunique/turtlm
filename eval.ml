@@ -134,3 +134,41 @@ and is_hexa str =
     (c >= '0' && c <= '9') ||
     (c >= 'A' && c <= 'F')
   ) str
+
+let rec check state e = match e with 
+    | NumOrVarOrHexa (_,a,pos) -> 
+         if is_id a 
+        then 
+            let name = a in
+            let (flag,res) =  (get_val name state.env) in  (match res with 
+            | Some _ -> state
+            | None -> if flag then raise (NotYetInitVar (name, pos)) else raise (UnknownVar (name,pos)))
+        else state 
+    | Op (l, _, r, _) -> let s = check state l  in check  s r 
+    | FunCall (n, argsValue ,pos) ->  let rec aux_env env = (match env with 
+                                        | [] -> raise (UnknownFun (n,pos))
+                                        | truc :: otre -> let rec aux_scope scope = (match scope with
+                                                    | (str, param, _) :: _ when String.equal str n 
+                                                    -> 
+                                                        let valuated = List.map (fun _ -> No) argsValue in 
+                                                                let env = setFonction str pos param valuated in 
+                                                                let state = {draw = state.draw; val_angle = state.val_angle; env = env :: state.env; env_fun = state.env_fun; seed_init = state.seed_init; deep = state.deep+1} in
+                                                                state
+                                                    | _ :: l -> aux_scope l
+                                                    | [] -> aux_env otre)
+                                                    in aux_scope truc)
+                                    in aux_env state.env_fun
+    | GenN (args, pos) -> (try match args with
+                            | a :: b :: c :: [] -> check (check (check state c) b) a   
+                            | a :: b :: [] -> check (check state b) a   
+                            | a :: [] -> check state a   
+                            | _ -> invalid_arg ""
+                        with 
+                            | Invalid_argument _ -> raise (Invalid_argumentGenN pos))
+    | GenC (args,_) -> begin 
+                            match args with 
+                                | None -> state  
+                                | Some a -> check state a
+                        end
+    | Not (c, _) -> check state c
+    |  _ -> state
