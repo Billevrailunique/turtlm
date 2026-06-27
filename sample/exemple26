@@ -1,0 +1,11 @@
+BaisserPinceau;
+
+Def foo (count, size) Debut
+
+Var a = size * count;
+Avancer a;
+
+Fin;
+
+
+Afficher foo (2,10);

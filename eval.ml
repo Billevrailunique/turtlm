@@ -21,20 +21,21 @@ let rec eval_exp (state:Ast.state) ~decode = function
                                         | [] -> raise (UnknownFun (n,pos))
                                         | truc :: otre -> let rec aux_scope scope = (match scope with
                                                     | (str, param, instr) :: _ when String.equal str n 
-                                                    -> (try
-                                                        let x,state = eval_list state ~decode argsValue in
+                                                    -> 
+                                                        let x,up_state = eval_list state ~decode argsValue in
                                                         let up_param = setFonction n pos param x in
                                                         let up_state = {
-                                                            draw = state. draw;
-                                                            val_angle = state.val_angle;
-                                                            env = up_param :: state.env;
-                                                            env_fun = state.env_fun;
-                                                            deep = state.deep +1;
-                                                            seed_init = state.seed_init;
-                                                        } in 
-                                                        (No,decode instr up_state)
-                                                        with 
-                                                            | ReturnValue (v:value) ->  (v,{ state with deep = state.deep -1 })  )
+                                                            draw = up_state. draw;
+                                                            val_angle = up_state.val_angle;
+                                                            env = up_param :: up_state.env;
+                                                            env_fun = up_state.env_fun;
+                                                            deep = up_state.deep +1;
+                                                            seed_init = up_state.seed_init;
+                                                        } in begin 
+                                                        match decode instr up_state with 
+                                                                | Returned (v,_)-> (v,state)
+                                                                | Continue _ -> (No,state) 
+                                                        end 
                                                     | _ :: l -> aux_scope l
                                                     | [] -> aux_env otre)
                                                     in aux_scope truc)

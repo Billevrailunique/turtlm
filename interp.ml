@@ -5,7 +5,6 @@ open Graphics
 
 let angle val_angle = val_angle *. Float.pi /. 180. 
 
-
 let init_graphics () = open_graph " 800x800";
         set_window_title "projet GAS6";
         set_line_width 1;
@@ -13,11 +12,16 @@ let init_graphics () = open_graph " 800x800";
         moveto 400 400
         
 let rec decode bloc (state:state) = let up_state =  {draw = state.draw; val_angle = state.val_angle; env = [] :: state.env; env_fun = [] :: state.env_fun; deep = state.deep; seed_init = false} in 
-    List.fold_left next_action up_state bloc
+    let rec carpeDiem state liste = match liste with 
+        | [] -> Continue state
+        | instr :: reste -> match next_action state instr with 
+                            | Continue s -> carpeDiem s reste 
+                            | Returned _ as r -> r
+in carpeDiem up_state bloc
 
-and next_action (state:Ast.state) = function
-    | Draw_on -> {state with draw = true} 
-    | Draw_off -> {state with draw = false} 
+and next_action (state:Ast.state) instr : flow = match instr with
+    | Draw_on -> Continue {state with draw = true} 
+    | Draw_off -> Continue {state with draw = false} 
     | Move (e,pos) -> let val_distance,state = (eval_exp state ~decode e) in 
                 let distance = as_float val_distance pos in  
                 let a = angle state.val_angle in 
@@ -26,45 +30,48 @@ and next_action (state:Ast.state) = function
                 let nx = current_x () + dx in 
                 let ny = current_y () + dy
                  in if nx <= size_x () && ny <= size_y () && nx >= 0 && ny >= 0 then
-                     (if state.draw then (rlineto dx dy; state)
-                        else (rmoveto dx dy; state)) 
+                     (if state.draw then (rlineto dx dy; Continue state)
+                        else (rmoveto dx dy;Continue state)) 
                     else raise (OutOfBoundsCursor pos)
     | Turn (e,pos) -> let val_val_angle, state = (eval_exp state ~decode e)in 
-                        {state with val_angle = state.val_angle +. as_float(val_val_angle) pos} 
+                        Continue {state with val_angle = state.val_angle +. as_float(val_val_angle) pos} 
     | CouleurPinceau (c,pos) -> let val_couleur,state = (eval_exp state ~decode c) in
-                                let couleur = as_color val_couleur pos in set_color couleur; state
+                                let couleur = as_color val_couleur pos in set_color couleur; Continue state
     | LargeurPinceau (e, pos) -> let val_largeur,state = (eval_exp state ~decode e) in 
-                                let value = int_of_float (as_float val_largeur pos) in if value < 878 then (set_line_width value; state) else raise (OutOfBoundsPencilWidth pos)
+                                let value = int_of_float (as_float val_largeur pos) in if value < 878 then (set_line_width value; Continue state) else raise (OutOfBoundsPencilWidth pos)
     | VarDecla (name, _) -> let a = (name, None) in 
                                 (match state.env with 
-                                | vars :: other -> {state with env = (a :: vars) :: other }  
+                                | vars :: other -> Continue {state with env = (a :: vars) :: other }  
                                 | [] -> raise EnvEmpty)
     | VarDeclaInit (name, value, _) ->  let v,state = eval_exp state ~decode value in let a = (name, Some v) in 
                                             (match state.env with 
-                                            | vars :: other -> {state with env = (a :: vars) :: other }  
+                                            | vars :: other -> Continue {state with env = (a :: vars) :: other }  
                                             | [] -> raise EnvEmpty)
     | VarInit (name, value, _) -> let (v,state) = eval_exp state ~decode value in 
                                 let env,_ = change_val name v state.env
-                                in {state with env = env}
+                                in Continue {state with env = env}
     | Repeat (x,i,pos) -> let valuated,up_state = eval_exp state ~decode x in 
                         let n = int_of_float (as_float valuated pos) in 
                         if n < 0 then raise (NegativeRepeat pos) else 
                         let rec repeat i state n = 
-                            if n == 0 then state else
-                                let up_state = decode i up_state
-                            in repeat i up_state (n-1)
-                        in repeat i state n
+                            if n == 0 then Continue state else
+                                match decode i state  with 
+                                    | Continue s -> repeat i s (n-1)
+                                    | Returned _ as r -> r 
+                            in repeat i up_state n
     | While (c,i,pos) -> let rec tantque c state i = 
                             let valuated,up_state = (eval_exp state ~decode c) in
                             if as_bool valuated pos then 
-                                let up_state = decode i up_state in tantque c up_state i
-                        else state
+                                match decode i up_state with
+                                    | Continue s -> tantque c s i
+                                    | Returned _ as r -> r 
+                        else Continue state
                         in tantque c state i 
-    | IfThen (c,i,pos) -> let condition,state = eval_exp state ~decode c in if (as_bool condition pos) then decode i state else state
+    | IfThen (c,i,pos) -> let condition,state = eval_exp state ~decode c in if (as_bool condition pos) then decode i state else Continue state
     | IfThenElse (c,i1,i2,pos) -> let condition,state = eval_exp state ~decode c in if (as_bool condition pos) then decode i1 state  else decode i2 state 
     | FunDecla (name, args, bloc, _) ->  let vs = setVars args in let a = (name, vs, bloc) in 
                                 (match state.env_fun with 
-                                | scope :: otre -> {state with env_fun = (a :: scope) :: otre }  
+                                | scope :: otre -> Continue {state with env_fun = (a :: scope) :: otre }  
                                 | [] -> raise EnvEmpty)
     | ProcCall (name, argsValue, pos) ->  let rec aux_env env = match env with 
                                         | [] -> assert false
@@ -74,15 +81,15 @@ and next_action (state:Ast.state) = function
                                                             ->  let valuated,up_state = eval_list state ~decode argsValue in 
                                                                 let env = setFonction name pos vars valuated in 
                                                                 let up_state  = {draw = up_state.draw; val_angle = up_state.val_angle; env = env :: up_state.env; env_fun = up_state.env_fun; seed_init = up_state.seed_init; deep = up_state.deep+1} in
-                                                                ignore(List.fold_left next_action up_state instr); state
+                                                                ignore(decode instr up_state); Continue state
                                                 | _ :: l -> aux_scope l
                                                 | [] -> aux_env otre 
                                             in aux_scope scope
                                         in aux_env state.env_fun
 
-    | Return (e,_) -> let v,_ = eval_exp state ~decode e in raise (ReturnValue v)
+    | Return (e,_) -> let v,_ = eval_exp state ~decode e in Returned (v,state)
                         
-    | Print e -> let str,state = eval_exp state ~decode e in  draw_string (as_string str); state
+    | Print e -> let str,state = eval_exp state ~decode e in  draw_string (as_string str); Continue state
 
 (*check le nombre de param aux fonction est correcte, que l'ordre dans lequel les var et les fonctions sont décla, init, used est correcte*)
 (*TODO : check pour les doublons des param de la fonction *)

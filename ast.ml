@@ -39,6 +39,8 @@ and op_bin = Plus
                 | Not_equal
                 | Bool_equal 
 
+
+
 type value =
     | VFloat of float
     | VBool of bool
@@ -61,6 +63,9 @@ type state = {
     seed_init : bool;
 }
 
+type flow =
+    | Continue of state
+    | Returned of value * state
 
 exception ReturnValue of value
 exception TooManyArgsException of string * Lexing.position
