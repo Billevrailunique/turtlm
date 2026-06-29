@@ -29,6 +29,7 @@ let running_error e =
     | FloatWaited pos->  "float attandu\n", Some pos, true
     | BoolWaited pos->  "bool attendu\n", Some pos, true
     | ColorWaited pos->  "couleur attendu\n", Some pos, true
+    | NegativeRepeat pos -> "in repeat X fois, X must be positiv\n", Some pos, true
     | _ -> eprintf "erreur non pris en charge"; exit 1 
   in
   let location = sprintf "File \"%s\"\n" Sys.argv.(1) in
@@ -40,7 +41,13 @@ let running_error e =
 
 
 (*n'est executé qu'une fois, lorsqu'on réduit à l'axiome*)
-let run v = try ignore(pretraitement v);ignore(decode v)
+let run v = let initial_state =  {draw = false;
+                                  val_angle = 90.;
+                                  env = []; 
+                                  env_fun = [];
+                                  deep = 0;
+                                  seed_init = false} in 
+             try ignore(pretraitement v);ignore(decode v initial_state)
 with e -> running_error e
 
 let get_env checkpoint =
@@ -67,7 +74,7 @@ let rec parse lexbuf buffer supplier source checkpoint =
     | Shifting _ 
     | AboutToReduce _ -> let checkpoint = MInter.resume checkpoint in parse lexbuf buffer supplier source checkpoint 
     | HandlingError _ -> syntax_error checkpoint buffer source
-    | Accepted v -> run v 
+    | Accepted v ->  run v 
     | Rejected -> assert false
 
 let mode_fichier () = 

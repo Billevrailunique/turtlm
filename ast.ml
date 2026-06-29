@@ -37,7 +37,7 @@ and op_bin = Plus
                 | Less_equal
                 | More_equal   
                 | Not_equal
-                | Bool_equal 
+                | Bool_equal
 
 type value =
     | VFloat of float
@@ -47,14 +47,28 @@ type value =
     | Unsure of float * string 
     | No
 
-type variable = (string * value option ) ref 
-type declared =  variable list ref 
-type environnement = declared list ref 
+type var = string * (value option)
+type scope = var list
+type fonction = (string * scope * bloc_instruction)
+type scopeFun = fonction list     
 
-type fonction = (string * variable list * bloc_instruction) ref
+type state = {
+    draw : bool;
+    val_angle : float;
+    env : scope list;
+    env_fun : scopeFun list;
+    deep : int; (* 0 -> global ; > 0 -> dans une fonction *)
+    seed_init : bool;
+}
 
-type contex = Global 
-            | Fonction
+type check_state = {
+    state : state;
+    black_list : string  list
+}
+
+type flow =
+    | Continue of state
+    | Returned of value * state
 
 exception ReturnValue of value
 exception TooManyArgsException of string * Lexing.position
@@ -70,6 +84,7 @@ exception UnknownVar of string * Lexing.position
 exception OutOfContextReturn of Lexing.position
 exception NotYetInitVar of string * Lexing.position
 exception Invalid_argumentGenN of Lexing.position
+exception NegativeRepeat of Lexing.position
 exception FloatWaited of Lexing.position
 exception BoolWaited of Lexing.position
 exception ColorWaited of Lexing.position
