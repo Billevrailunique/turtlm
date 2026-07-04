@@ -4,12 +4,16 @@ open Ast
 open Printf
 
 let is_tested = Sys.getenv_opt "NO_WAIT" = None
-let is_interactif = Unix.isatty Unix.stdin
 
 module Err = MenhirLib.ErrorReports
 module MInter = Parser.MenhirInterpreter
 module Lex = MenhirLib.LexerUtil
 
+let () =
+  ignore (Sys.command "stty -echoctl");
+  at_exit (fun () -> ignore (Sys.command "stty echoctl"))
+
+let () = Sys.set_signal Sys.sigint (Sys.Signal_handle (fun _ -> close_graph(); print_endline "byebye !"; flush stdout; exit 0))
 
 let running_error e = 
   let msg,pos,while_running = match e with
@@ -52,17 +56,23 @@ with e -> running_error e
 
 let get_env checkpoint =
   match checkpoint with
-  | MInter.HandlingError env -> env
+  | MInter.InputNeeded env 
+  | MInter.Shifting (env,_,_)
+  | MInter.AboutToReduce (env,_)
+  | HandlingError env -> env
   | _ -> assert false
 
-let state checkpoint =
+let in_state checkpoint =
   MInter.current_state_number (get_env checkpoint)
 
 let syntax_error checkpoint buffer source = 
-  let num = (state checkpoint) in
+  let num = (in_state checkpoint) in
   let location = Lex.range (Err.last buffer) in
   let indication = sprintf  "Erreur syntaxique (echec in state %d) %s\n" num (Err.show (Err.extract source) buffer) in 
+  try 
   eprintf "%s%s%s" location indication (ParserMessages.message num);  close_graph () 
+with 
+| Not_found -> (print_endline "probleme avec la génération du message d'erreur de syntaxe"; flush stdout)
 
 let rec parse lexbuf buffer supplier source checkpoint =  
   match checkpoint with
@@ -87,7 +97,60 @@ let mode_fichier () =
     try ignore(read_key ()) 
     with | _ -> ()
 
+let initial_state =  {draw = false;
+                      val_angle = 90.;
+                      env = []; 
+                      env_fun = [];
+                      deep = 0;
+                      seed_init = false}
+
+let fresh_checkpoint () =
+    Parser.Incremental.programme Lexing.dummy_pos
+  
+let rec loop_on_line checkpoint state =
+    print_string ("> "); flush stdout;
+    match input_line stdin with
+    | exception End_of_file -> ()
+    | line ->
+      let source = line in
+      let lexbuf = Lexing.from_string (source) in
+      let supplier = MInter.lexer_lexbuf_to_supplier Lexer.token lexbuf in
+      let buffer, supplier = Err.wrap_supplier supplier in
+      feed checkpoint source supplier buffer state    
+
+and feed checkpoint source supplier buffer state =
+    match checkpoint with
+    | MInter.InputNeeded _ ->
+              (try
+                let checkpoint = MInter.offer checkpoint (supplier ()) in
+                feed checkpoint source supplier buffer state
+              with
+              | Lexer.Error msg ->
+                Printf.eprintf "Erreur lexicale : %s\n%!" msg;
+                loop_on_line (fresh_checkpoint ()) initial_state
+              | End_of_file ->
+                loop_on_line checkpoint state)
+    | Shifting _
+    | AboutToReduce _ ->
+      let checkpoint = MInter.resume checkpoint in
+      feed checkpoint source supplier buffer state
+    | Accepted v ->
+      let f = decode v state in 
+      begin 
+        match f with 
+              | Continue s -> loop_on_line (fresh_checkpoint ()) s
+              | Returned _ -> assert false
+      end
+    | MInter.HandlingError _ -> 
+        syntax_error checkpoint buffer source
+    | Rejected ->
+      assert false
+
+let mode_interactif () = loop_on_line (fresh_checkpoint ()) initial_state
+
 let () = init_graphics ();
-        mode_fichier () ;
+        if (Array.length Sys.argv = 2)
+        then mode_fichier () 
+        else (if (Array.length Sys.argv = 1 ) then mode_interactif () else print_endline "arg invalide");
         close_graph ()
         
