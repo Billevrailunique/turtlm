@@ -21,4 +21,5 @@ Fin;
 Fin;
 
 BaisserPinceau;
+CouleurPinceau GenC (1);
 dragon(12, 5);

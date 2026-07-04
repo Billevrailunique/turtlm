@@ -77,7 +77,6 @@ let afficherEnv state =
         in aux state.env_fun;
         Printf.printf "fin\n"
 
-
 let no_double args pos  = 
         let rec aux acc liste = match liste with 
                 | [] -> ()
