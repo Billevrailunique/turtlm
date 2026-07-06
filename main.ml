@@ -9,11 +9,17 @@ module Err = MenhirLib.ErrorReports
 module MInter = Parser.MenhirInterpreter
 module Lex = MenhirLib.LexerUtil
 
-let () =
-  ignore (Sys.command "stty -echoctl");
-  at_exit (fun () -> ignore (Sys.command "stty echoctl"))
+let () = ignore (Sys.command "awk 'BEGIN{RS=\"State \"} NR>1{ match ($0, /^[0-9]+/); num = substr($0, RSTART, RLENGTH); if ($0 ~ /On SEMICOLON/) print num }' parser.automaton > semicolon_error_state")
 
-let () = Sys.set_signal Sys.sigint (Sys.Signal_handle (fun _ -> close_graph(); print_endline "byebye !"; flush stdout; exit 0))
+let error_state_number file = 
+  let rec aux acc l = match input_line l with 
+                  | exception End_of_file -> acc
+                  | n -> aux (int_of_string n ::acc) l 
+in aux [] (open_in file)
+
+let semicolon_error_state_number = error_state_number "semicolon_error_state"
+
+let () = Sys.set_signal Sys.sigint (Sys.Signal_handle (fun _ -> close_graph();print_endline "\nbyebye !"; flush stdout; exit 0))
 
 let running_error e = 
   let msg,pos,while_running = match e with
@@ -141,10 +147,21 @@ and feed checkpoint source supplier buffer state =
               | Continue s -> loop_on_line (fresh_checkpoint ()) s
               | Returned _ -> assert false
       end
-    | MInter.HandlingError _ -> 
+    | MInter.HandlingError env -> 
+      let n = MInter.current_state_number env in 
+        if List.exists ((=)n) semicolon_error_state_number 
+        then recovery Parser.SEMICOLON source supplier buffer env state
+        else
         syntax_error checkpoint buffer source
     | Rejected ->
       assert false
+
+and recovery token source supplier buffer env state= 
+  let checkpoint = MInter.input_needed env in 
+  let pos = snd (Err.last buffer) in 
+  let triple_tok = (token,pos,pos) in 
+  if MInter.acceptable checkpoint token pos 
+  then let checkpoint = MInter.offer checkpoint triple_tok in feed checkpoint source supplier buffer state
 
 let mode_interactif () = loop_on_line (fresh_checkpoint ()) initial_state
 
