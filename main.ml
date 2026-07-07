@@ -9,7 +9,15 @@ module Err = MenhirLib.ErrorReports
 module MInter = Parser.MenhirInterpreter
 module Lex = MenhirLib.LexerUtil
 
-let () = ignore (Sys.command "awk 'BEGIN{RS=\"State \"} NR>1{ match ($0, /^[0-9]+/); num = substr($0, RSTART, RLENGTH); if ($0 ~ /On SEMICOLON/) print num }' parser.automaton > semicolon_error_state")
+let file_semicolon = "semicolon_error_state"
+let file_end = "end_error_state"
+
+
+
+let create_file token file = ignore (Sys.command ("awk 'BEGIN{RS=\"State \"} NR>1{ match ($0, /^[0-9]+/); num = substr($0, RSTART, RLENGTH); if ($0 ~ /On " ^ token ^"/) print num }' parser.automaton > " ^ file))
+let () = create_file "SEMICOLON" file_semicolon
+let () = create_file "END" file_end
+
 
 let error_state_number file = 
   let rec aux acc l = match input_line l with 
@@ -17,7 +25,10 @@ let error_state_number file =
                   | n -> aux (int_of_string n ::acc) l 
 in aux [] (open_in file)
 
-let semicolon_error_state_number = error_state_number "semicolon_error_state"
+
+let semicolon_error_state_number = error_state_number file_semicolon
+let end_error_state_number = error_state_number file_end
+
 
 let () = Sys.set_signal Sys.sigint (Sys.Signal_handle (fun _ -> close_graph();print_endline "\nbyebye !"; flush stdout; exit 0))
 
@@ -113,12 +124,12 @@ let initial_state =  {draw = false;
 let fresh_checkpoint () =
     Parser.Incremental.programme Lexing.dummy_pos
   
-let rec loop_on_line checkpoint state =
+let rec loop_on_line checkpoint state buffer =
     print_string ("> "); flush stdout;
     match input_line stdin with
     | exception End_of_file -> ()
     | line ->
-      let source = line in
+      let source = if buffer = "" then line else buffer ^ "\n" ^ line in
       let lexbuf = Lexing.from_string (source) in
       let supplier = MInter.lexer_lexbuf_to_supplier Lexer.token lexbuf in
       let buffer, supplier = Err.wrap_supplier supplier in
@@ -133,25 +144,32 @@ and feed checkpoint source supplier buffer state =
               with
               | Lexer.Error msg ->
                 Printf.eprintf "Erreur lexicale : %s\n%!" msg;
-                loop_on_line (fresh_checkpoint ()) initial_state
+                loop_on_line (fresh_checkpoint ()) initial_state ""
               | End_of_file ->
-                loop_on_line checkpoint state)
+                loop_on_line checkpoint state "") 
     | Shifting _
     | AboutToReduce _ ->
       let checkpoint = MInter.resume checkpoint in
       feed checkpoint source supplier buffer state
-    | Accepted v ->
+    | Accepted v -> 
       let f = decode v state in 
       begin 
         match f with 
-              | Continue s -> loop_on_line (fresh_checkpoint ()) s
+              | Continue s -> loop_on_line (fresh_checkpoint ()) s ""
               | Returned _ -> assert false
       end
     | MInter.HandlingError env -> 
       let n = MInter.current_state_number env in 
         if List.exists ((=)n) semicolon_error_state_number 
         then recovery Parser.SEMICOLON source supplier buffer env state
-        else
+        else if List.exists ((=)n) end_error_state_number 
+          then begin let rec aux env = 
+          match MInter.pop env with 
+          | Some a -> aux a
+          | None -> loop_on_line (fresh_checkpoint ()) state source
+          in aux env
+          end
+          else 
         syntax_error checkpoint buffer source
     | Rejected ->
       assert false
@@ -163,7 +181,7 @@ and recovery token source supplier buffer env state=
   if MInter.acceptable checkpoint token pos 
   then let checkpoint = MInter.offer checkpoint triple_tok in feed checkpoint source supplier buffer state
 
-let mode_interactif () = loop_on_line (fresh_checkpoint ()) initial_state
+let mode_interactif () = loop_on_line (fresh_checkpoint ()) initial_state ""
 
 let () = init_graphics ();
         if (Array.length Sys.argv = 2)
