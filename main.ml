@@ -90,7 +90,7 @@ let syntax_error checkpoint buffer source =
   let location = Lex.range (Err.last buffer) in
   let indication = sprintf  "Erreur syntaxique (echec in state %d) %s\n" num (Err.show (Err.extract source) buffer) in 
   try 
-  eprintf "%s%s%s" location indication (ParserMessages.message num);  close_graph () 
+  printf "%s%s%s" location indication (ParserMessages.message num); flush stdout
 with 
 | Not_found -> (print_endline "probleme avec la génération du message d'erreur de syntaxe"; flush stdout)
 
@@ -103,7 +103,7 @@ let rec parse lexbuf buffer supplier source checkpoint =
                               | Lexer.Error msg -> printf "Erreur lexicale %s\n" msg; exit 1)
     | Shifting _ 
     | AboutToReduce _ -> let checkpoint = MInter.resume checkpoint in parse lexbuf buffer supplier source checkpoint 
-    | HandlingError _ -> syntax_error checkpoint buffer source
+    | HandlingError _ -> syntax_error checkpoint buffer source; close_graph ()
     | Accepted v ->  run v 
     | Rejected -> assert false
 
@@ -170,16 +170,11 @@ and feed b checkpoint source supplier buffer state =
         if List.exists ((=)n) semicolon_error_state_number 
         then recovery Parser.SEMICOLON source supplier buffer env state b
         else if List.exists ((=)n) end_error_state_number 
-          then begin let rec aux env = 
-          match MInter.pop env with 
-          | Some a -> aux a
-          | None -> loop_on_line (1) (fresh_checkpoint ()) state source
-          in aux env
-          end
+          then loop_on_line (1) (fresh_checkpoint ()) state source
           else if List.exists ((=)n) start_error_state_number 
             then (print_endline "Debut"; recovery Parser.START (source ^ "\nDebut") supplier buffer env state b)
             else 
-        syntax_error checkpoint buffer source
+        (syntax_error checkpoint buffer source; loop_on_line b (fresh_checkpoint ()) state "")
     | Rejected ->
       assert false
 
