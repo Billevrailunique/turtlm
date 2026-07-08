@@ -9,11 +9,31 @@ module Err = MenhirLib.ErrorReports
 module MInter = Parser.MenhirInterpreter
 module Lex = MenhirLib.LexerUtil
 
-let () =
-  ignore (Sys.command "stty -echoctl");
-  at_exit (fun () -> ignore (Sys.command "stty echoctl"))
+let file_semicolon = "semicolon_error_state"
+let file_end = "end_error_state"
+let file_start = "start_error_state"
 
-let () = Sys.set_signal Sys.sigint (Sys.Signal_handle (fun _ -> close_graph(); print_endline "byebye !"; flush stdout; exit 0))
+
+
+let create_file token file = ignore (Sys.command ("awk 'BEGIN{RS=\"State \"} NR>1{ match ($0, /^[0-9]+/); num = substr($0, RSTART, RLENGTH); if ($0 ~ /On " ^ token ^"/) print num }' parser.automaton > " ^ file))
+let () = create_file "SEMICOLON" file_semicolon
+let () = create_file "END" file_end
+let () = create_file "START" file_start
+
+
+let error_state_number file = 
+  let rec aux acc l = match input_line l with 
+                  | exception End_of_file -> acc
+                  | n -> aux (int_of_string n ::acc) l 
+in aux [] (open_in file)
+
+
+let semicolon_error_state_number = error_state_number file_semicolon
+let end_error_state_number = error_state_number file_end
+let start_error_state_number = error_state_number file_start
+
+
+let () = Sys.set_signal Sys.sigint (Sys.Signal_handle (fun _ -> close_graph();print_endline "\nbyebye !"; flush stdout; exit 0))
 
 let running_error e = 
   let msg,pos,while_running = match e with
@@ -70,7 +90,7 @@ let syntax_error checkpoint buffer source =
   let location = Lex.range (Err.last buffer) in
   let indication = sprintf  "Erreur syntaxique (echec in state %d) %s\n" num (Err.show (Err.extract source) buffer) in 
   try 
-  eprintf "%s%s%s" location indication (ParserMessages.message num);  close_graph () 
+  printf "%s%s%s" location indication (ParserMessages.message num); flush stdout
 with 
 | Not_found -> (print_endline "probleme avec la génération du message d'erreur de syntaxe"; flush stdout)
 
@@ -83,7 +103,7 @@ let rec parse lexbuf buffer supplier source checkpoint =
                               | Lexer.Error msg -> printf "Erreur lexicale %s\n" msg; exit 1)
     | Shifting _ 
     | AboutToReduce _ -> let checkpoint = MInter.resume checkpoint in parse lexbuf buffer supplier source checkpoint 
-    | HandlingError _ -> syntax_error checkpoint buffer source
+    | HandlingError _ -> syntax_error checkpoint buffer source; close_graph ()
     | Accepted v ->  run v 
     | Rejected -> assert false
 
@@ -107,46 +127,65 @@ let initial_state =  {draw = false;
 let fresh_checkpoint () =
     Parser.Incremental.programme Lexing.dummy_pos
   
-let rec loop_on_line checkpoint state =
+let rec loop_on_line b checkpoint state buffer =
+    let rec aux b = match b with 
+    | 0 -> ()
+    | n -> (print_string ("  "); aux (n-1))
+    in aux b;
     print_string ("> "); flush stdout;
     match input_line stdin with
     | exception End_of_file -> ()
     | line ->
-      let source = line in
+      let source = if buffer = "" then line else buffer ^ "\n" ^ line in
       let lexbuf = Lexing.from_string (source) in
       let supplier = MInter.lexer_lexbuf_to_supplier Lexer.token lexbuf in
       let buffer, supplier = Err.wrap_supplier supplier in
-      feed checkpoint source supplier buffer state    
+      feed b checkpoint source supplier buffer state    
 
-and feed checkpoint source supplier buffer state =
+and feed b checkpoint source supplier buffer state =
     match checkpoint with
     | MInter.InputNeeded _ ->
               (try
                 let checkpoint = MInter.offer checkpoint (supplier ()) in
-                feed checkpoint source supplier buffer state
+                feed b checkpoint source supplier buffer state
               with
               | Lexer.Error msg ->
                 Printf.eprintf "Erreur lexicale : %s\n%!" msg;
-                loop_on_line (fresh_checkpoint ()) initial_state
+                loop_on_line 0 (fresh_checkpoint ()) initial_state ""
               | End_of_file ->
-                loop_on_line checkpoint state)
+                loop_on_line 0 checkpoint state "") 
     | Shifting _
     | AboutToReduce _ ->
       let checkpoint = MInter.resume checkpoint in
-      feed checkpoint source supplier buffer state
-    | Accepted v ->
+      feed b checkpoint source supplier buffer state
+    | Accepted v -> 
       let f = decode v state in 
       begin 
         match f with 
-              | Continue s -> loop_on_line (fresh_checkpoint ()) s
+              | Continue s -> loop_on_line 0 (fresh_checkpoint ()) s ""
               | Returned _ -> assert false
       end
-    | MInter.HandlingError _ -> 
-        syntax_error checkpoint buffer source
+    | MInter.HandlingError env -> 
+      let n = MInter.current_state_number env in 
+        if List.exists ((=)n) semicolon_error_state_number 
+        then recovery Parser.SEMICOLON source supplier buffer env state b
+        else if List.exists ((=)n) end_error_state_number 
+          then loop_on_line (1) (fresh_checkpoint ()) state source
+          else if List.exists ((=)n) start_error_state_number 
+            then (print_endline "Debut"; recovery Parser.START (source ^ "\nDebut") supplier buffer env state b)
+            else 
+        (syntax_error checkpoint buffer source; loop_on_line b (fresh_checkpoint ()) state "")
     | Rejected ->
       assert false
 
-let mode_interactif () = loop_on_line (fresh_checkpoint ()) initial_state
+and recovery token source supplier buffer env state b= 
+  let checkpoint = MInter.input_needed env in 
+  let pos = snd (Err.last buffer) in 
+  let triple_tok = (token,pos,pos) in 
+  if MInter.acceptable checkpoint token pos 
+  then let checkpoint = MInter.offer checkpoint triple_tok in feed b checkpoint source supplier buffer state
+
+let mode_interactif () = loop_on_line 0 (fresh_checkpoint ()) initial_state ""
 
 let () = init_graphics ();
         if (Array.length Sys.argv = 2)
