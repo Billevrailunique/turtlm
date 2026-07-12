@@ -76,9 +76,9 @@ let rec eval_exp (state:Ast.state) ~decode = function
                 | Vliste l -> begin 
                     match List.nth_opt l (int_of_float (as_float v pos)) with 
                         | Some a -> a,s
-                        | None -> raise EnvEmpty (*TODO : specific error*)
+                        | None -> raise (OutOfBoundsList (str,pos)) 
                              end
-                | _ -> raise (FloatWaited pos) 
+                | _ -> raise (ListWaited pos) 
             end 
             | None -> if flag then raise (NotYetInitVar (str, pos)) else raise (UnknownVar (str,pos)))
     | Liste l -> let l,s = eval_list state ~decode l in (Vliste l,s)

@@ -100,7 +100,7 @@ and next_action (state:Ast.state) instr : flow = match instr with
                                                         | VBool _
                                                         | VCool _
                                                         | VText _
-                                                        | Unsure _ -> raise EnvEmpty (*TODO specify error*)
+                                                        | Unsure _ -> raise (ListWaited pos) 
                                                         | Vliste l -> let up_l = let rec aux acc i = function
                                                                         | [] -> List.rev acc
                                                                         | _ :: l when i = 0 -> aux (valeur::acc) (i-1) l

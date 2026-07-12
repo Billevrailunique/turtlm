@@ -81,6 +81,7 @@ exception Division_by_zero of Lexing.position
 exception EnvEmpty
 exception OutOfBoundsCursor of Lexing.position 
 exception OutOfBoundsPencilWidth of Lexing.position 
+exception OutOfBoundsList of string * Lexing.position
 exception AlreadyDeclaredVar of string * Lexing.position 
 exception AlreadyDeclaredFun of string * Lexing.position 
 exception UnknownFun of string * Lexing.position
@@ -92,3 +93,4 @@ exception NegativeRepeat of Lexing.position
 exception FloatWaited of Lexing.position
 exception BoolWaited of Lexing.position
 exception ColorWaited of Lexing.position
+exception ListWaited of Lexing.position

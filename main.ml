@@ -48,13 +48,15 @@ let running_error e =
     | UnknownFun (name,pos) -> sprintf  "fonction %s inconnu\n" name, Some pos, false
     | UnknownVar (name, pos) -> sprintf "variable %s inconnu\n" name,Some pos, false
     | OutOfContextReturn pos ->  "return en dehors d'une fonction\n", Some pos, false
+    | OutOfBoundsList (name,pos) -> sprintf "accès à un element introuvable de la liste %s\n" name, Some pos, true
     | NotYetInitVar (name,pos) -> sprintf "variable %s pas encore initialisé\n" name, Some pos, false
     | Invalid_argumentGenN pos ->  "GenN mal utiliser\n", Some pos, true
     | FloatWaited pos->  "float attandu\n", Some pos, true
     | BoolWaited pos->  "bool attendu\n", Some pos, true
     | ColorWaited pos->  "couleur attendu\n", Some pos, true
     | NegativeRepeat pos -> "in repeat X fois, X must be positiv\n", Some pos, true
-    | _ -> eprintf "erreur non pris en charge"; exit 1 
+    | ListWaited pos -> "liste attendu\n", Some pos, true
+    | _ -> eprintf "erreur non pris en charge\n"; exit 1 
   in
   let location = sprintf "File \"%s\"\n" Sys.argv.(1) in
   let type_err = sprintf "Error %s" (if while_running then "Run : " else "PreRun : ")  in 
