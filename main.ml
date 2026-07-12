@@ -61,7 +61,7 @@ let running_error e =
   let indication = match pos with 
                     | Some e -> sprintf "à la ligne %d, char %d\n" e.Lexing.pos_lnum e.Lexing.pos_cnum 
                     | None -> "\n" in
-  eprintf "%s%s%s%s" location type_err indication msg; exit 1
+  eprintf "%s%s%s%s" location type_err indication msg
 
 
 (*n'est executé qu'une fois, lorsqu'on réduit à l'axiome*)
@@ -103,7 +103,7 @@ let rec parse lexbuf buffer supplier source checkpoint =
                               | Lexer.Error msg -> printf "Erreur lexicale %s\n" msg; exit 1)
     | Shifting _ 
     | AboutToReduce _ -> let checkpoint = MInter.resume checkpoint in parse lexbuf buffer supplier source checkpoint 
-    | HandlingError _ -> syntax_error checkpoint buffer source; close_graph ()
+    | HandlingError _ -> syntax_error checkpoint buffer source
     | Accepted v ->  run v 
     | Rejected -> assert false
 
@@ -170,7 +170,7 @@ and feed b checkpoint source supplier buffer state =
         if List.exists ((=)n) semicolon_error_state_number 
         then recovery Parser.SEMICOLON source supplier buffer env state b
         else if List.exists ((=)n) end_error_state_number 
-          then loop_on_line (1) (fresh_checkpoint ()) state source
+          then (printf "state : %d\n" n ;loop_on_line (1) (fresh_checkpoint ()) state source)
           else if List.exists ((=)n) start_error_state_number 
             then (print_endline "Debut"; recovery Parser.START (source ^ "\nDebut") supplier buffer env state b)
             else 

@@ -91,6 +91,24 @@ and next_action (state:Ast.state) instr : flow = match instr with
                         
     | Print e -> let str,state = eval_exp state ~decode e in  draw_string (as_string str); Continue state
 
+    | Set (name,indice,valeur,pos) -> let indice,s = eval_exp state ~decode indice in let valeur,s = eval_exp s ~decode valeur in 
+                                        match get_val name s.env with 
+                                        | b,None -> if b then raise (NotYetInitVar (name, pos)) else raise (UnknownVar (name,pos))
+                                        | _,Some a -> match a with 
+                                                        |No
+                                                        | VFloat _
+                                                        | VBool _
+                                                        | VCool _
+                                                        | VText _
+                                                        | Unsure _ -> raise EnvEmpty (*TODO specify error*)
+                                                        | Vliste l -> let up_l = let rec aux acc i = function
+                                                                        | [] -> List.rev acc
+                                                                        | _ :: l when i = 0 -> aux (valeur::acc) (i-1) l
+                                                                        | a :: l -> aux (a::acc) (i-1) l
+                                                                    in aux [] (int_of_float (as_float indice pos)) l
+                                                                in let env,_ = change_val name (Vliste up_l) s.env in Continue {state with env = env} 
+                                                        
+
 (*check le nombre de param aux fonction est correcte, que l'ordre dans lequel les var et les fonctions sont décla, init, used est correcte*)    
 
 let rec check (state:check_state) instr : check_state = match instr with

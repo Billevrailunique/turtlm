@@ -16,6 +16,7 @@ and instruction = Draw_on
                 | Print of expression
                 | Return of expression * Lexing.position
                 | ProcCall of string * expression list * Lexing.position
+                | Set of string * expression * expression * Lexing.position
 and expression = NumOrVarOrHexa of unit option * string * Lexing.position
                 | Op of expression * op_bin * expression * Lexing.position
                 | FunCall of string * expression list * Lexing.position
@@ -25,6 +26,8 @@ and expression = NumOrVarOrHexa of unit option * string * Lexing.position
                 | Color of string
                 | GenC of expression option * Lexing.position
                 | Text of string
+                | Liste of expression list 
+                | Get of string * expression * Lexing.position
 and op_bin = Plus 
                 | Minus
                 | Time 
@@ -45,6 +48,7 @@ type value =
     | VCool of Graphics.color
     | VText of string
     | Unsure of float * string 
+    | Vliste of value list
     | No
 
 type var = string * (value option)

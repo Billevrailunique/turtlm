@@ -1,0 +1,4 @@
+Var liste = [1,2,3,-1];
+Var indice = 1;
+Afficher liste.indice;
+Si liste.indice == 2 Alors Debut Afficher <oui>; Fin;
