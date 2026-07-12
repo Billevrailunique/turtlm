@@ -53,29 +53,6 @@ let setFonction name pos (vars : (string * value option) list) argsValue : (stri
                         | ([], _::_) -> raise (TooManyArgsException (name,pos))
         in aux vars argsValue  
 
-let afficherScope declared = let rec aux = function 
-                | (name,_) :: l -> Printf.printf "%s\n" name ; aux l
-                | [] -> () 
-        in aux declared
-        
-let afficherfun func = match func with (name, _, _) -> Printf.printf "%s\n" name
-
-let rec afficherScopeFun scopefun = match scopefun with
-        | a :: l -> afficherfun a; afficherScopeFun l
-        | [] -> ()
-let afficherEnv state =  
-        Printf.printf "affichage var début : \n";
-        (let rec aux = function
-                | a :: m -> afficherScope a ; aux m
-                | [] -> ()
-        in aux state.env);
-        Printf.printf "fin\n";
-        Printf.printf "affichage fonction début : \n";
-        let rec aux = (function
-        | a :: m -> afficherScopeFun a; aux m
-        | [] -> ()) 
-        in aux state.env_fun;
-        Printf.printf "fin\n"
 
 let no_double args pos  = 
         let rec aux acc liste = match liste with 
