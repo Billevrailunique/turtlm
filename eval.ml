@@ -70,6 +70,18 @@ let rec eval_exp (state:Ast.state) ~decode = function
                     | _ -> VBool false ) in (valb,state)
     | Not (c, pos) -> let valb,state = eval_exp state ~decode c in  VBool(not (as_bool valb pos)), state
     | Text str -> VText str,state
+    | Get (str, e, pos) -> let v,s = eval_exp state ~decode e in  let (flag,res) =  (get_val str s.env) in (match res with 
+            | Some l ->  begin
+                match l with 
+                | Vliste l -> begin 
+                    match List.nth_opt l (int_of_float (as_float v pos)) with 
+                        | Some a -> a,s
+                        | None -> raise (OutOfBoundsList (str,pos)) 
+                             end
+                | _ -> raise (ListWaited pos) 
+            end 
+            | None -> if flag then raise (NotYetInitVar (str, pos)) else raise (UnknownVar (str,pos)))
+    | Liste l -> let l,s = eval_list state ~decode l in (Vliste l,s)
 and eval_op pos l r (state:state) ~decode = 
     let le,state = eval_exp state ~decode l in let re,state = eval_exp state ~decode r in function 
     | Plus -> VFloat (as_float le pos +. as_float re pos),state
@@ -106,6 +118,7 @@ and as_string = function
                         let b = c land 0xFF in
                         "r:" ^ Int.to_string r ^ " g:" ^ Int.to_string g ^ " b:" ^ Int.to_string b 
             | No -> "NO"
+            | Vliste l -> String.concat "," (List.map as_string l) 
             |Unsure (fact,a) -> (if fact == 1. then "" else "-") ^ a
             
 

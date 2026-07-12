@@ -2,13 +2,14 @@
 open Ast
 %}
 
-%token EOF DRAW_OFF DRAW_ON GENC DIVIDE TIME GENN PRINT MINUS MODULO PLUS MOVE COMA TURN DEF RETURN AND OR RPAREN LPAREN SEMICOLON COLOR_CHANGE WIDTH_CHANGE VAR EGALE IF THEN ELSE WHILE DO REPEAT MANY_TIMES NOT_EQUAL LESS_EQUAL MORE_EQUAL BOOL_EQUAL LESS MORE START END NOT
+%token EOF DRAW_OFF DRAW_ON GENC DIVIDE TIME GENN POINT PRINT LCROCHET RCROCHET MINUS MODULO PLUS MOVE COMA TURN DEF RETURN AND OR RPAREN LPAREN SEMICOLON COLOR_CHANGE WIDTH_CHANGE VAR EGALE IF THEN ELSE WHILE DO REPEAT MANY_TIMES NOT_EQUAL LESS_EQUAL MORE_EQUAL BOOL_EQUAL LESS MORE START END NOT
 %token<string> CHARS TXT COLOR VALBOOL
 
 %left PLUS MINUS OR
 %left TIME DIVIDE AND MODULO
 %nonassoc LESS MORE LESS_EQUAL MORE_EQUAL BOOL_EQUAL NOT_EQUAL
 %right NOT 
+%nonassoc POINT
 
 %start<bloc_instruction> programme
 
@@ -40,6 +41,7 @@ instruction:
   | DEF n=CHARS LPAREN a=separated_list(COMA, CHARS) RPAREN START i=bloc_instruction END { FunDecla (n, a, i, $startpos) }
   | n=CHARS LPAREN a=separated_list(COMA, expression) RPAREN  {ProcCall (n,a, $startpos)}
   | PRINT e=expression { Print e }
+  |str=CHARS POINT i=expression EGALE e=expression { Set (str,i,e,$startpos) }
 
 expression: 
   | MINUS str=CHARS { NumOrVarOrHexa (Some (), str,$startpos) } 
@@ -53,6 +55,8 @@ expression:
   | c=COLOR {Color c}
   | GENC LPAREN a=option(expression) RPAREN  { GenC (a,$startpos) }
   | str=TXT { Text str } 
+  | LCROCHET a=separated_list(COMA, expression) RCROCHET  { Liste a }
+  | str=CHARS POINT e=expression { Get (str, e, $startpos) }
 
 %inline op_bin:
   | PLUS { Plus }

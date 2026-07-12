@@ -48,20 +48,22 @@ let running_error e =
     | UnknownFun (name,pos) -> sprintf  "fonction %s inconnu\n" name, Some pos, false
     | UnknownVar (name, pos) -> sprintf "variable %s inconnu\n" name,Some pos, false
     | OutOfContextReturn pos ->  "return en dehors d'une fonction\n", Some pos, false
+    | OutOfBoundsList (name,pos) -> sprintf "accès à un element introuvable de la liste %s\n" name, Some pos, true
     | NotYetInitVar (name,pos) -> sprintf "variable %s pas encore initialisé\n" name, Some pos, false
     | Invalid_argumentGenN pos ->  "GenN mal utiliser\n", Some pos, true
     | FloatWaited pos->  "float attandu\n", Some pos, true
     | BoolWaited pos->  "bool attendu\n", Some pos, true
     | ColorWaited pos->  "couleur attendu\n", Some pos, true
     | NegativeRepeat pos -> "in repeat X fois, X must be positiv\n", Some pos, true
-    | _ -> eprintf "erreur non pris en charge"; exit 1 
+    | ListWaited pos -> "liste attendu\n", Some pos, true
+    | _ -> eprintf "erreur non pris en charge\n"; exit 1 
   in
   let location = sprintf "File \"%s\"\n" Sys.argv.(1) in
   let type_err = sprintf "Error %s" (if while_running then "Run : " else "PreRun : ")  in 
   let indication = match pos with 
                     | Some e -> sprintf "à la ligne %d, char %d\n" e.Lexing.pos_lnum e.Lexing.pos_cnum 
                     | None -> "\n" in
-  eprintf "%s%s%s%s" location type_err indication msg; exit 1
+  eprintf "%s%s%s%s" location type_err indication msg
 
 
 (*n'est executé qu'une fois, lorsqu'on réduit à l'axiome*)
@@ -103,7 +105,7 @@ let rec parse lexbuf buffer supplier source checkpoint =
                               | Lexer.Error msg -> printf "Erreur lexicale %s\n" msg; exit 1)
     | Shifting _ 
     | AboutToReduce _ -> let checkpoint = MInter.resume checkpoint in parse lexbuf buffer supplier source checkpoint 
-    | HandlingError _ -> syntax_error checkpoint buffer source; close_graph ()
+    | HandlingError _ -> syntax_error checkpoint buffer source
     | Accepted v ->  run v 
     | Rejected -> assert false
 
@@ -170,7 +172,7 @@ and feed b checkpoint source supplier buffer state =
         if List.exists ((=)n) semicolon_error_state_number 
         then recovery Parser.SEMICOLON source supplier buffer env state b
         else if List.exists ((=)n) end_error_state_number 
-          then loop_on_line (1) (fresh_checkpoint ()) state source
+          then (printf "state : %d\n" n ;loop_on_line (1) (fresh_checkpoint ()) state source)
           else if List.exists ((=)n) start_error_state_number 
             then (print_endline "Debut"; recovery Parser.START (source ^ "\nDebut") supplier buffer env state b)
             else 

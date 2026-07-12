@@ -53,6 +53,9 @@ rule token = parse
   | "noir" { COLOR (Lexing.lexeme lexbuf) }
   | ')'	{ RPAREN }
   | '('	{ LPAREN }
+  | '[' { LCROCHET }
+  | ']' {RCROCHET}
+  | '.' {POINT}
   | '+' {PLUS}
   | '-' {MINUS}
   | '*' {TIME}
