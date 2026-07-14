@@ -58,6 +58,7 @@ let rec eval_exp (state:Ast.state) ~decode = function
                             | "bleu" -> blue
                             | "jaune" -> yellow
                             | "rouge" -> red
+                            | "blanc" -> white
                             | _ -> black)
                     in (VCool c,state) 
     | GenC (args,pos) -> (match args with 

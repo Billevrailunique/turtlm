@@ -47,6 +47,7 @@ rule token = parse
   | "LargeurPinceau" { WIDTH_CHANGE }
   | "CouleurPinceau" { COLOR_CHANGE }
   | "vert" 
+  | "blanc"
   | "bleu" 
   | "rouge" 
   | "jaune" 
