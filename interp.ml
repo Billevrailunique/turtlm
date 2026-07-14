@@ -11,7 +11,7 @@ let init_graphics () = open_graph " 800x800";
         set_color black;
         moveto 400 400
         
-let rec decode bloc (state:state) =  let up_state =  {draw = state.draw; val_angle = state.val_angle; env = [] :: state.env; env_fun = [] :: state.env_fun; deep = state.deep; seed_init = false} in 
+let rec decode bloc (state:state) = let up_state =  {draw = state.draw; val_angle = state.val_angle; env = [] :: state.env; env_fun = [] :: state.env_fun; deep = state.deep; seed_init = false} in 
     let rec carpeDiem state liste = match liste with 
         | [] -> Continue state
         | instr :: reste -> match next_action state instr with 
