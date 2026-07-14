@@ -11,13 +11,24 @@ let init_graphics () = open_graph " 800x800";
         set_color black;
         moveto 400 400
         
-let rec decode bloc (state:state) = let up_state =  {draw = state.draw; val_angle = state.val_angle; env = [] :: state.env; env_fun = [] :: state.env_fun; deep = state.deep; seed_init = false} in 
+let rec decode bloc (state:state) =  let up_state =  {draw = state.draw; val_angle = state.val_angle; env = [] :: state.env; env_fun = [] :: state.env_fun; deep = state.deep; seed_init = false} in 
     let rec carpeDiem state liste = match liste with 
         | [] -> Continue state
         | instr :: reste -> match next_action state instr with 
                             | Continue s -> carpeDiem s reste 
                             | Returned _ as r -> r
-in carpeDiem up_state bloc
+    in  let pop_frame s =
+        let env = match s.env with
+            | _ :: tail -> tail 
+            | [] -> [] 
+    in let env_fun = match s.env_fun with 
+            | _ :: tail -> tail 
+            | [] -> [] 
+        in {s with env; env_fun} 
+    in match carpeDiem up_state bloc with
+        | Continue s -> Continue (pop_frame s)
+        | Returned (v,s) -> Returned (v, pop_frame s)
+
 
 and next_action (state:Ast.state) instr : flow = match instr with
     | Draw_on -> Continue {state with draw = true} 
@@ -73,20 +84,26 @@ and next_action (state:Ast.state) instr : flow = match instr with
                                 (match state.env_fun with 
                                 | scope :: otre -> Continue {state with env_fun = (a :: scope) :: otre }  
                                 | [] -> raise EnvEmpty)
-    | ProcCall (name, argsValue, pos) ->  let rec aux_env env = match env with 
-                                        | [] -> assert false
-                                        | scope :: otre ->
-                                            let rec aux_scope scope = match scope with   
-                                                |  (str, vars , instr) :: _ when String.equal str name 
-                                                            ->  let valuated,up_state = eval_list state ~decode argsValue in 
-                                                                let env = setFonction name pos vars valuated in 
-                                                                let up_state  = {draw = up_state.draw; val_angle = up_state.val_angle; env = env :: up_state.env; env_fun = up_state.env_fun; seed_init = up_state.seed_init; deep = up_state.deep+1} in
-                                                                ignore(decode instr up_state); Continue state
-                                                | _ :: l -> aux_scope l
-                                                | [] -> aux_env otre 
-                                            in aux_scope scope
-                                        in aux_env state.env_fun
-
+    | ProcCall (name, argsValue, pos) -> let rec aux_env env = match env with 
+        | [] -> assert false
+        | scope :: otre ->
+            let rec aux_scope scope = match scope with   
+                |  (str, vars , instr) :: _ when String.equal str name 
+                            ->  
+                                let valuated,up_state = eval_list state ~decode argsValue in 
+                                let env = setFonction name pos vars valuated in 
+                                let call_state = {draw = up_state.draw; val_angle = up_state.val_angle; env = env :: up_state.env; env_fun = up_state.env_fun; seed_init = up_state.seed_init; deep = up_state.deep+1} in
+                                let finish s = 
+                                    let env = (match s.env with _ :: tail -> tail | [] -> []) in
+                                    Continue {s with env; deep = state.deep}
+                                in
+                                (match decode instr call_state with
+                                | Continue s     -> finish s
+                                | Returned (_,s) -> finish s)
+                | _ :: l -> aux_scope l
+                | [] -> aux_env otre 
+            in aux_scope scope
+        in aux_env state.env_fun
     | Return (e,_) -> let v,_ = eval_exp state ~decode e in Returned (v,state)
                         
     | Print e -> let str,state = eval_exp state ~decode e in  draw_string (as_string str); Continue state
@@ -162,8 +179,18 @@ let rec check (state:check_state) instr : check_state = match instr with
     | While (x,i,_)
     | IfThen (x,i,_)
     | Repeat (x,i,_) -> let in_state = Eval.check check state x in let in_state = List.fold_left check in_state i in {state = state.state; black_list = in_state.black_list}
-    | IfThenElse (x,i1,i2,_) -> let in_state = Eval.check check state x in ignore(List.fold_left check in_state i1) ; ignore( List.fold_left check in_state i2); {state = state.state; black_list = in_state.black_list} 
+    | IfThenElse (x,i1,i2,_) -> 
+        let in_state = Eval.check check state x in 
+        let s1 = List.fold_left check in_state i1 in
+        let s2 = List.fold_left check in_state i2 in
+        { state = state.state; 
+        black_list = List.sort_uniq compare (s1.black_list @ s2.black_list) }
     | Print e -> Eval.check check state e 
+    | Set (name, indice, valeur, pos) -> 
+        if already_declared name state.state.env then
+            let in_state = Eval.check check state indice in
+            Eval.check check in_state valeur
+        else raise (UnknownVar (name, pos))
     | _ -> state
 
 let pretraitement bloc = let lil_state = {draw = false; val_angle = 90.; env = [[]]; env_fun = [[]]; deep = 0;seed_init = false} in 
