@@ -1,10 +1,6 @@
 type bloc_instruction = instruction list
-and instruction = Draw_on
-                | Draw_off
-                | Move of expression * Lexing.position
-                | Turn of expression * Lexing.position
-                | CouleurPinceau of expression *Lexing.position
-                | LargeurPinceau of expression * Lexing.position
+and instruction = Draw of string
+                | Simple of string * expression * Lexing.position
                 | VarDecla of string * Lexing.position
                 | VarDeclaInit of string * expression * Lexing.position
                 | VarInit of string * expression * Lexing.position
@@ -13,11 +9,9 @@ and instruction = Draw_on
                 | IfThenElse of expression * bloc_instruction * bloc_instruction * Lexing.position
                 | IfThen of expression * bloc_instruction * Lexing.position
                 | FunDecla of string * string list * bloc_instruction * Lexing.position
-                | Print of expression
-                | Return of expression * Lexing.position
                 | ProcCall of string * expression list * Lexing.position
                 | Set of string * expression * expression * Lexing.position
-and expression = NumOrVarOrHexa of unit option * string * Lexing.position
+and expression = NumOrVarOrHexa of string * Lexing.position
                 | Op of expression * op_bin * expression * Lexing.position
                 | FunCall of string * expression list * Lexing.position
                 | GenN of expression list * Lexing.position
@@ -28,26 +22,16 @@ and expression = NumOrVarOrHexa of unit option * string * Lexing.position
                 | Text of string
                 | Liste of expression list 
                 | Get of string * expression * Lexing.position
-and op_bin = Plus 
-                | Minus
-                | Time 
-                | Divided 
-                | Mod
-                | And
-                | Or
-                |Less 
-                | More 
-                | Less_equal
-                | More_equal   
-                | Not_equal
-                | Bool_equal
+and op_bin = Add of string
+            | Mult of string
+            | Ordre of string
 
 type value =
     | VFloat of float
     | VBool of bool
     | VCool of Graphics.color
     | VText of string
-    | Unsure of float * string 
+    | Unsure of string 
     | Vliste of value list
     | No
 

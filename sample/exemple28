@@ -1,0 +1,11 @@
+BaisserPinceau;
+Avancer -10;
+CouleurPinceau bleu;
+Var a = 10;
+Avancer -a;
+CouleurPinceau noir;
+Avancer -(a);
+CouleurPinceau rouge;
+Avancer -a+10;
+CouleurPinceau bleu;
+Avancer - GenN(10);

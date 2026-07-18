@@ -2,12 +2,12 @@
 open Ast
 %}
 
-%token EOF DRAW_OFF DRAW_ON GENC DIVIDE TIME GENN POINT PRINT LCROCHET RCROCHET MINUS MODULO PLUS MOVE COMA TURN DEF RETURN AND OR RPAREN LPAREN SEMICOLON COLOR_CHANGE WIDTH_CHANGE VAR EGALE IF THEN ELSE WHILE DO REPEAT MANY_TIMES NOT_EQUAL LESS_EQUAL MORE_EQUAL BOOL_EQUAL LESS MORE START END NOT
-%token<string> CHARS TXT COLOR VALBOOL
+%token EOF GENC GENN POINT MINUS LCROCHET RCROCHET COMA DEF RPAREN LPAREN SEMICOLON VAR EGALE IF THEN ELSE WHILE DO REPEAT MANY_TIMES START END NOT
+%token<string> CHARS TXT COLOR VALBOOL DRAW SIMPLE ADDITIF MULTIPLICATIF ORDRE
 
-%left PLUS MINUS OR
-%left TIME DIVIDE AND MODULO
-%nonassoc LESS MORE LESS_EQUAL MORE_EQUAL BOOL_EQUAL NOT_EQUAL
+%left ADDITIF MINUS
+%left MULTIPLICATIF
+%nonassoc ORDRE
 %right NOT 
 %nonassoc POINT
 
@@ -23,52 +23,43 @@ bloc_instruction:
   |    { [] }
   | i=instruction SEMICOLON b=bloc_instruction { i::b }
 
+sous_bloc :
+  | START b=bloc_instruction END { b }
+
 instruction: 
-  | DRAW_ON { Draw_on }
-  | DRAW_OFF { Draw_off }
-  | MOVE c=expression { Move (c, $startpos) }
-  | TURN c=expression { Turn (c, $startpos) }
-  | COLOR_CHANGE c=expression { CouleurPinceau (c, $startpos) }
-  | WIDTH_CHANGE e=expression { LargeurPinceau (e,$startpos) }
+  | s=DRAW { Draw s }
+  | s=SIMPLE e=expression { Simple (s,e,$startpos) }
+  | WHILE e=expression DO s=sous_bloc { While (e,s,$startpos) }
+  | IF e=expression THEN s=sous_bloc{ IfThen (e,s,$startpos) }
+  | IF e=expression THEN s1=sous_bloc ELSE s2=sous_bloc{ IfThenElse (e,s1,s2,$startpos) }
+  | REPEAT e=expression MANY_TIMES s=sous_bloc { Repeat (e,s,$startpos) }
   | VAR str=CHARS { VarDecla (str, $startpos) } 
   | VAR str=CHARS EGALE t=expression  { VarDeclaInit (str, t, $startpos) }
   | str=CHARS EGALE t=expression  { VarInit (str, t, $startpos) }
-  | IF c=expression THEN START i1=bloc_instruction END ELSE START i2=bloc_instruction END  { IfThenElse (c, i1, i2, $startpos) } 
-  | IF c=expression THEN START i=bloc_instruction END { IfThen (c,i, $startpos) }
-  | WHILE c=expression DO START i=bloc_instruction END  { While (c,i, $startpos) }
-  | REPEAT e=expression MANY_TIMES START i=bloc_instruction END { Repeat (e,i, $startpos) }
-  | RETURN e=expression { Return (e,$startpos) }
-  | DEF n=CHARS LPAREN a=separated_list(COMA, CHARS) RPAREN START i=bloc_instruction END { FunDecla (n, a, i, $startpos) }
+  | DEF n=CHARS LPAREN a=separated_list(COMA, CHARS) RPAREN i=sous_bloc { FunDecla (n, a, i, $startpos) }
   | n=CHARS LPAREN a=separated_list(COMA, expression) RPAREN  {ProcCall (n,a, $startpos)}
-  | PRINT e=expression { Print e }
   |str=CHARS POINT i=expression EGALE e=expression { Set (str,i,e,$startpos) }
 
 expression: 
-  | MINUS str=CHARS { NumOrVarOrHexa (Some (), str,$startpos) } 
-  | str=CHARS { NumOrVarOrHexa (None, str,$symbolstartpos) } 
-  | LPAREN e=expression RPAREN { e }
-  | l=expression op=op_bin r=expression { Op (l, op, r, $startpos) }
-  | GENN LPAREN a=separated_list(COMA, expression) RPAREN {GenN (a,$startpos)}
-  | n=CHARS LPAREN a=separated_list(COMA, expression) RPAREN  {FunCall (n,a, $startpos)}
+  | e=minus_unaire_possible { e }
+  | MINUS e=minus_unaire_possible { Op (NumOrVarOrHexa ("0", $startpos), Add "-", e, $startpos) }
+  | l=expression op=op_bin r=expression { Op (l, op, r, $startpos) } 
   | b=VALBOOL { ValBool b }
   | NOT c=expression  { Not (c,$startpos)}
   | c=COLOR {Color c}
   | GENC LPAREN a=option(expression) RPAREN  { GenC (a,$startpos) }
   | str=TXT { Text str } 
   | LCROCHET a=separated_list(COMA, expression) RCROCHET  { Liste a }
+
+minus_unaire_possible:
+  | str=CHARS { NumOrVarOrHexa (str,$symbolstartpos) } 
+  | LPAREN e=expression RPAREN { e }
+  | GENN LPAREN a=separated_list(COMA, expression) RPAREN {GenN (a,$startpos)}
+  | n=CHARS LPAREN a=separated_list(COMA, expression) RPAREN {FunCall (n,a, $startpos)}
   | str=CHARS POINT e=expression { Get (str, e, $startpos) }
 
 %inline op_bin:
-  | PLUS { Plus }
-  | MINUS { Minus }
-  | TIME { Time }
-  | DIVIDE { Divided }
-  | MODULO {Mod}
-  | LESS {Less}
-  | MORE {More}
-  | LESS_EQUAL {Less_equal}
-  | MORE_EQUAL {More_equal}
-  | BOOL_EQUAL {Bool_equal}
-  | NOT_EQUAL  {Not_equal}
-  | AND {And} 
-  | OR {Or}
+  | o=ADDITIF {Add o}
+  | MINUS {Add "-"}
+  | o=MULTIPLICATIF {Mult o}
+  | o=ORDRE {Ordre o}

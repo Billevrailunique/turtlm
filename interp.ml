@@ -31,9 +31,12 @@ let rec decode bloc (state:state) =  let up_state =  {draw = state.draw; val_ang
 
 
 and next_action (state:Ast.state) instr : flow = match instr with
-    | Draw_on -> Continue {state with draw = true} 
-    | Draw_off -> Continue {state with draw = false} 
-    | Move (e,pos) -> let val_distance,state = (eval_exp state ~decode e) in 
+    | Draw s -> let bool = String.equal s "BaisserPinceau" in Continue { state with draw = bool }
+    | Simple (s,e,pos) -> begin 
+        match s with 
+        | "Tourner" -> let val_val_angle, state = (eval_exp state ~decode e)in 
+                        Continue {state with val_angle = state.val_angle +. as_float(val_val_angle) pos} 
+        | "Avancer" -> let val_distance,state = (eval_exp state ~decode e) in 
                 let distance = as_float val_distance pos in  
                 let a = angle state.val_angle in 
                 let dx = (int_of_float (distance *. cos a)) in
@@ -44,12 +47,15 @@ and next_action (state:Ast.state) instr : flow = match instr with
                      (if state.draw then (rlineto dx dy; Continue state)
                         else (rmoveto dx dy;Continue state)) 
                     else raise (OutOfBoundsCursor pos)
-    | Turn (e,pos) -> let val_val_angle, state = (eval_exp state ~decode e)in 
-                        Continue {state with val_angle = state.val_angle +. as_float(val_val_angle) pos} 
-    | CouleurPinceau (c,pos) -> let val_couleur,state = (eval_exp state ~decode c) in
+        | "CouleurPinceau" -> let val_couleur,state = (eval_exp state ~decode e) in
                                 let couleur = as_color val_couleur pos in set_color couleur; Continue state
-    | LargeurPinceau (e, pos) -> let val_largeur,state = (eval_exp state ~decode e) in 
+        | "LargeurPinceau" -> let val_largeur,state = (eval_exp state ~decode e) in 
                                 let value = int_of_float (as_float val_largeur pos) in if value < 878 then (set_line_width value; Continue state) else raise (OutOfBoundsPencilWidth pos)
+        | "Afficher" -> let str,state = eval_exp state ~decode e in  draw_string (as_string str); Continue state
+        | "Retourn" -> let v,_ = eval_exp state ~decode e in Returned (v,state)
+        | _ -> assert false
+        end  
+
     | VarDecla (name, _) -> let a = (name, None) in 
                                 (match state.env with 
                                 | vars :: other -> Continue {state with env = (a :: vars) :: other }  
@@ -104,9 +110,6 @@ and next_action (state:Ast.state) instr : flow = match instr with
                 | [] -> aux_env otre 
             in aux_scope scope
         in aux_env state.env_fun
-    | Return (e,_) -> let v,_ = eval_exp state ~decode e in Returned (v,state)
-                        
-    | Print e -> let str,state = eval_exp state ~decode e in  draw_string (as_string str); Continue state
 
     | Set (name,indice,valeur,pos) -> let indice,s = eval_exp state ~decode indice in let valeur,s = eval_exp s ~decode valeur in 
                                         match get_val name s.env with 
@@ -153,8 +156,6 @@ let rec check (state:check_state) instr : check_state = match instr with
                                                 | scope :: otre -> let lil_state = {state.state with env_fun = (a :: scope) :: otre } in {state = lil_state; black_list = state.black_list}
                                                 | [] ->  raise EnvEmpty)
                                             else raise (AlreadyDeclaredFun (name, pos))
-    | Return (e,pos) -> if state.state.deep > 0 then let in_state = Eval.check (check) state e in {state = state.state; black_list = in_state.black_list}
-                        else raise (OutOfContextReturn pos)
     | VarDecla (name, pos) -> if not (already_declared name state.state.env)  then
                                 let a = (name, None) in 
                                 (match state.state.env with 
@@ -172,10 +173,18 @@ let rec check (state:check_state) instr : check_state = match instr with
     | VarInit (name, e , pos) -> let v = No in let in_state = Eval.check check state e in 
                                 let (env,check) = change_val name v state.state.env in 
                                 if check then {state = {in_state.state with env = env}; black_list = in_state.black_list} else raise (UnknownVar (name, pos))
-    | Move (e,_) 
-    | CouleurPinceau (e,_) 
-    | LargeurPinceau (e,_)
-    | Turn (e,_) -> Eval.check check state e
+    
+    | Simple (s,e,pos) -> begin 
+        match s with  
+        | "Avancer" 
+        | "CouleurPinceau" 
+        | "LargeurPinceau" 
+        | "Tourner" 
+        | "Afficher"-> Eval.check check state e
+        | "Retourn" -> if state.state.deep > 0 then let in_state = Eval.check (check) state e in {state = state.state; black_list = in_state.black_list}
+                            else raise (OutOfContextReturn pos)
+        | _ -> assert false
+        end
     | While (x,i,_)
     | IfThen (x,i,_)
     | Repeat (x,i,_) -> let in_state = Eval.check check state x in let in_state = List.fold_left check in_state i in {state = state.state; black_list = in_state.black_list}
@@ -185,7 +194,7 @@ let rec check (state:check_state) instr : check_state = match instr with
         let s2 = List.fold_left check in_state i2 in
         { state = state.state; 
         black_list = List.sort_uniq compare (s1.black_list @ s2.black_list) }
-    | Print e -> Eval.check check state e 
+     
     | Set (name, indice, valeur, pos) -> 
         if already_declared name state.state.env then
             let in_state = Eval.check check state indice in
