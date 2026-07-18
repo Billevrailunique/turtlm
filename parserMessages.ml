@@ -6,191 +6,127 @@
 let message =
   fun s ->
     match s with
-    | 125 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 122 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 120 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 118 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 117 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 116 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 115 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 114 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 112 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 110 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 109 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 108 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 107 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 105 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 104 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 103 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 102 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 101 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 100 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 99 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 98 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 97 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 96 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 95 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 91 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
     | 90 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 89 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 88 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 87 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "fin de fichier attendue; \"Fin\" est en trop, il manque peut-etre un bloc \"Debut\" correspondant\n"
+    | 86 ->
+        "on attend \"Fin\" pour fermer le bloc \"Debut ... Fin\", ou une nouvelle instruction\n"
     | 84 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend une instruction; une valeur bool\195\169enne seule n'est pas une instruction\n"
     | 83 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend \";\" apres l'instruction\n"
     | 82 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend \";\" pour terminer l'affectation, ou un op\195\169rateur\n"
     | 81 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 80 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend une expression apres \"=\"\n"
     | 79 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend \")\" pour fermer les arguments de l'appel\n"
     | 78 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend une expression (les arguments), ou \")\" pour un appel sans argument\n"
     | 77 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend \";\" pour terminer l'affectation, ou un op\195\169rateur\n"
     | 76 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend une expression apres \"=\" pour la valeur a affecter\n"
     | 75 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend \"=\" apres l'index, ou un op\195\169rateur\n"
     | 74 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend une expression apres \".\" pour designer l'index\n"
     | 73 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 72 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend \"=\" pour une affectation, \"(\" pour un appel, ou \".\" pour un index\n"
     | 71 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 70 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 69 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 68 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend \"Debut\" pour ouvrir le corps de la fonction\n"
     | 67 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend un nom de parametre apres \",\"\n"
     | 66 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend \",\" pour un autre parametre, ou \")\" pour terminer la liste des parametres\n"
     | 65 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend un nom de parametre ou \")\" pour une fonction sans parametre\n"
     | 64 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend \"(\" apres le nom de la fonction\n"
     | 63 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 62 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 61 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend un nom de fonction apres \"Def\"\n"
     | 60 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend \"Debut\" pour ouvrir le bloc du \"Sinon\"\n"
+    | 59 ->
+        "on attend \";\" pour terminer le \"Si\", ou \"Sinon\"\n"
+    | 58 ->
+        "on attend \"Debut\" pour ouvrir le bloc du \"Alors\"\n"
     | 57 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 55 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend \"Alors\" apres la condition du \"Si\", ou un op\195\169rateur\n"
+    | 56 ->
+        "on attend une expression apres \"Si\"\n"
+    | 54 ->
+        "on attend \"Debut\" pour ouvrir le bloc a repeter\n"
     | 53 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend \"Fois\" apres le nombre de r\195\169p\195\169titions, ou un op\195\169rateur\n"
     | 52 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend une expression apres \"Repeter\"\n"
+    | 51 ->
+        "on attend \";\" pour terminer l'instruction, ou un op\195\169rateur\n"
+    | 50 ->
+        "on attend une expression apres cette instruction\n"
+    | 49 ->
+        "on attend \";\" pour terminer la d\195\169claration, ou un op\195\169rateur\n"
     | 48 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend une expression apres \"=\"\n"
+    | 47 ->
+        "on attend \";\" pour terminer la d\195\169claration, ou \"=\" pour l'initialiser\n"
     | 46 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend un nom de variable apres \"Var\"\n"
+    | 45 ->
+        "on attend une instruction apres \"Debut\"; une valeur bool\195\169enne seule n'est pas une instruction\n"
     | 44 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 42 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 40 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 38 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 36 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend \"Debut\" pour ouvrir le bloc du \"Tant que ... Faire\"\n"
+    | 43 ->
+        "on attend \"Faire\" apres la condition du \"Tant que\", ou un op\195\169rateur\n"
+    | 39 ->
+        "on attend \")\" pour fermer la parenth\195\168se, ou un op\195\169rateur pour prolonger l'expression\n"
+    | 37 ->
+        "on attend \"]\" pour fermer la liste\n"
     | 35 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend \")\" pour fermer les arguments de \"GenN\"\n"
     | 34 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 33 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 32 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 31 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend \")\" pour fermer l'argument de \"GenC\", ou un op\195\169rateur pour prolonger l'expression\n"
     | 30 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 29 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend une expression; un mot-cl\195\169 d'instruction ne peut pas commencer une expression\n"
     | 28 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 27 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend une expression; un mot-cl\195\169 d'instruction ne peut pas commencer une expression\n"
     | 26 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 25 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend une expression; un mot-cl\195\169 d'instruction ne peut pas commencer une expression\n"
     | 24 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend une expression; un mot-cl\195\169 d'instruction ne peut pas commencer une expression\n"
+    | 23 ->
+        "expression termin\195\169e: on attend soit un op\195\169rateur pour la prolonger, soit le symbole qui cl\195\180t le contexte courant (\";\", \")\", \",\", \"=\", \"Alors\", \"Faire\", \"Fois\", selon o\195\185 l'on se trouve)\n"
     | 22 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend une expression apres une relation d'ordre; un mot-cl\195\169 d'instruction ne peut pas commencer une expression\n"
     | 21 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend une expression ou une liste d'expression apres \"(\"; un mot-cl\195\169 d'instruction ne peut pas commencer une expression\n"
     | 19 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend \")\" pour fermer les arguments\n"
     | 17 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 16 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 15 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
-    | 12 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend une expression apres \"(\"; un mot-cl\195\169 d'instruction ne peut pas commencer une expression\n"
+    | 14 ->
+        "on attend une expression apres \".\"; un mot-cl\195\169 d'instruction ne peut pas commencer une expression\n"
+    | 13 ->
+        "apres ce nom ou ce nombre, on peut avoir \"(\" pour un appel ou \".\" pour un index; sinon il manque probablement \";\" pour terminer l'instruction, ou un op\195\169rateur\n"
     | 11 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend une expression apres \"(\"; un mot-cl\195\169 d'instruction ne peut pas commencer une expression\n"
     | 10 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend les arguments de \"GenC\"; un mot-cl\195\169 d'instruction ne peut pas commencer une expression\n"
     | 9 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend une expression apres \"(\"; un mot-cl\195\169 d'instruction ne peut pas commencer une expression\n"
     | 8 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend les arguments de \"GenN\"; un mot-cl\195\169 d'instruction ne peut pas commencer une expression\n"
     | 7 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend une expression apres \"[\"; un mot-cl\195\169 d'instruction ne peut pas commencer une expression\n"
+    | 6 ->
+        "on attend une expression apres \"(\"; un mot-cl\195\169 d'instruction ne peut pas commencer une expression\n"
     | 5 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend une expression apres \"-\"; un mot-cl\195\169 d'instruction ne peut pas commencer une expression\n"
     | 4 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend une expression apres \"Non\"; un mot-cl\195\169 d'instruction ne peut pas commencer une expression\n"
     | 1 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend une expression; \"Tant que\" est r\195\169p\195\169t\195\169\n"
     | 0 ->
-        "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+        "on attend une instruction; pas une expression\n"
     | _ ->
         raise Not_found
