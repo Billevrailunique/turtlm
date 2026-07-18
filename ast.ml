@@ -1,45 +1,80 @@
 type bloc_instruction = instruction list
-and instruction = Draw_on
-                | Draw_off
-                | Move of expression * Lexing.position
-                | Turn of expression
-                | CouleurPinceau of color
-                | LargeurPinceau of expression * Lexing.position
+and instruction = Draw of string
+                | Simple of string * expression * Lexing.position
                 | VarDecla of string * Lexing.position
                 | VarDeclaInit of string * expression * Lexing.position
                 | VarInit of string * expression * Lexing.position
-                | Repeat of string * bloc_instruction
-                | While of condition * bloc_instruction
-                | IfThenElse of condition * bloc_instruction * bloc_instruction
-                | IfThen of condition * bloc_instruction
-and expression = Valeur of string
-                | Op of expression * operateur * expression * Lexing.position
-                | Var of string * Lexing.position
-and operateur = Plus 
-                | Minus
-                | Time 
-                | Divided 
-and color = Hexcode of string
-            | Black
-            | Blue
-            | Red 
-            | Yellow
-            | Green
-and condition = True 
-            | False 
-            | TestBool of expression * op_num * expression
-            | Not of condition
-            | And of condition * condition
-            | Or of condition * condition
-and op_num = Less 
-            | More 
-            | Less_equal
-            | More_equal   
-            | Not_equal
-            | Bool_equal 
+                | Repeat of expression * bloc_instruction * Lexing.position
+                | While of expression * bloc_instruction * Lexing.position
+                | IfThenElse of expression * bloc_instruction * bloc_instruction * Lexing.position
+                | IfThen of expression * bloc_instruction * Lexing.position
+                | FunDecla of string * string list * bloc_instruction * Lexing.position
+                | ProcCall of string * expression list * Lexing.position
+                | Set of string * expression * expression * Lexing.position
+and expression = NumOrVarOrHexa of string * Lexing.position
+                | Op of expression * op_bin * expression * Lexing.position
+                | FunCall of string * expression list * Lexing.position
+                | GenN of expression list * Lexing.position
+                | ValBool of string
+                | Not of expression * Lexing.position
+                | Color of string
+                | GenC of expression option * Lexing.position
+                | Text of string
+                | Liste of expression list 
+                | Get of string * expression * Lexing.position
+and op_bin = Add of string
+            | Mult of string
+            | Ordre of string
 
-type variable = (string * float option ) ref 
-type declared =  variable list ref 
-type environnement = declared list ref 
+type value =
+    | VFloat of float
+    | VBool of bool
+    | VCool of Graphics.color
+    | VText of string
+    | Unsure of string 
+    | Vliste of value list
+    | No
 
+type var = string * (value option)
+type scope = var list
+type fonction = (string * scope * bloc_instruction)
+type scopeFun = fonction list     
 
+type state = {
+    draw : bool;
+    val_angle : float;
+    env : scope list;
+    env_fun : scopeFun list;
+    deep : int; (* 0 -> global ; > 0 -> dans une fonction *)
+    seed_init : bool;
+}
+
+type check_state = {
+    state : state;
+    black_list : string  list
+}
+
+type flow =
+    | Continue of state
+    | Returned of value * state
+
+exception ReturnValue of value
+exception TooManyArgsException of string * Lexing.position
+exception ArgsMissingException of string * Lexing.position
+exception Division_by_zero of Lexing.position
+exception EnvEmpty
+exception OutOfBoundsCursor of Lexing.position 
+exception OutOfBoundsPencilWidth of Lexing.position 
+exception OutOfBoundsList of string * Lexing.position
+exception AlreadyDeclaredVar of string * Lexing.position 
+exception AlreadyDeclaredFun of string * Lexing.position 
+exception UnknownFun of string * Lexing.position
+exception UnknownVar of string * Lexing.position 
+exception OutOfContextReturn of Lexing.position
+exception NotYetInitVar of string * Lexing.position
+exception Invalid_argumentGenN of Lexing.position
+exception NegativeRepeat of Lexing.position
+exception FloatWaited of Lexing.position
+exception BoolWaited of Lexing.position
+exception ColorWaited of Lexing.position
+exception ListWaited of Lexing.position

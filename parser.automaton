@@ -1,0 +1,1303 @@
+State 0:
+## Known stack suffix:
+##
+## LR(1) items:
+programme' -> . programme [ # ]
+## Transitions:
+-- On WHILE shift to state 1
+-- On VAR shift to state 46
+-- On SIMPLE shift to state 50
+-- On REPEAT shift to state 52
+-- On IF shift to state 56
+-- On DRAW shift to state 62
+-- On DEF shift to state 63
+-- On CHARS shift to state 73
+-- On programme shift to state 89
+-- On instruction shift to state 83
+-- On bloc_instruction shift to state 90
+## Reductions:
+-- On EOF
+--   reduce production bloc_instruction ->
+
+State 1:
+## Known stack suffix:
+## WHILE
+## LR(1) items:
+instruction -> WHILE . expression DO sous_bloc [ SEMICOLON ]
+## Transitions:
+-- On VALBOOL shift to state 2
+-- On TXT shift to state 3
+-- On NOT shift to state 4
+-- On MINUS shift to state 5
+-- On LPAREN shift to state 6
+-- On LCROCHET shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On minus_unaire_possible shift to state 15
+-- On expression shift to state 43
+## Reductions:
+
+State 2:
+## Known stack suffix:
+## VALBOOL
+## LR(1) items:
+expression -> VALBOOL . [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+## Reductions:
+-- On THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF
+--   reduce production expression -> VALBOOL
+
+State 3:
+## Known stack suffix:
+## TXT
+## LR(1) items:
+expression -> TXT . [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+## Reductions:
+-- On THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF
+--   reduce production expression -> TXT
+
+State 4:
+## Known stack suffix:
+## NOT
+## LR(1) items:
+expression -> NOT . expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+-- On VALBOOL shift to state 2
+-- On TXT shift to state 3
+-- On NOT shift to state 4
+-- On MINUS shift to state 5
+-- On LPAREN shift to state 6
+-- On LCROCHET shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On minus_unaire_possible shift to state 15
+-- On expression shift to state 42
+## Reductions:
+
+State 5:
+## Known stack suffix:
+## MINUS
+## LR(1) items:
+expression -> MINUS . minus_unaire_possible [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+-- On LPAREN shift to state 6
+-- On GENN shift to state 8
+-- On CHARS shift to state 13
+-- On minus_unaire_possible shift to state 41
+## Reductions:
+
+State 6:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
+minus_unaire_possible -> LPAREN . expression RPAREN [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+-- On VALBOOL shift to state 2
+-- On TXT shift to state 3
+-- On NOT shift to state 4
+-- On MINUS shift to state 5
+-- On LPAREN shift to state 6
+-- On LCROCHET shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On minus_unaire_possible shift to state 15
+-- On expression shift to state 39
+## Reductions:
+
+State 7:
+## Known stack suffix:
+## LCROCHET
+## LR(1) items:
+expression -> LCROCHET . loption(separated_nonempty_list(COMA,expression)) RCROCHET [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+-- On VALBOOL shift to state 2
+-- On TXT shift to state 3
+-- On NOT shift to state 4
+-- On MINUS shift to state 5
+-- On LPAREN shift to state 6
+-- On LCROCHET shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On separated_nonempty_list(COMA,expression) shift to state 18
+-- On minus_unaire_possible shift to state 15
+-- On loption(separated_nonempty_list(COMA,expression)) shift to state 37
+-- On expression shift to state 21
+## Reductions:
+-- On RCROCHET
+--   reduce production loption(separated_nonempty_list(COMA,expression)) ->
+
+State 8:
+## Known stack suffix:
+## GENN
+## LR(1) items:
+minus_unaire_possible -> GENN . LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+-- On LPAREN shift to state 9
+## Reductions:
+
+State 9:
+## Known stack suffix:
+## GENN LPAREN
+## LR(1) items:
+minus_unaire_possible -> GENN LPAREN . loption(separated_nonempty_list(COMA,expression)) RPAREN [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+-- On VALBOOL shift to state 2
+-- On TXT shift to state 3
+-- On NOT shift to state 4
+-- On MINUS shift to state 5
+-- On LPAREN shift to state 6
+-- On LCROCHET shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On separated_nonempty_list(COMA,expression) shift to state 18
+-- On minus_unaire_possible shift to state 15
+-- On loption(separated_nonempty_list(COMA,expression)) shift to state 35
+-- On expression shift to state 21
+## Reductions:
+-- On RPAREN
+--   reduce production loption(separated_nonempty_list(COMA,expression)) ->
+
+State 10:
+## Known stack suffix:
+## GENC
+## LR(1) items:
+expression -> GENC . LPAREN option(expression) RPAREN [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+-- On LPAREN shift to state 11
+## Reductions:
+
+State 11:
+## Known stack suffix:
+## GENC LPAREN
+## LR(1) items:
+expression -> GENC LPAREN . option(expression) RPAREN [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+-- On VALBOOL shift to state 2
+-- On TXT shift to state 3
+-- On NOT shift to state 4
+-- On MINUS shift to state 5
+-- On LPAREN shift to state 6
+-- On LCROCHET shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On option(expression) shift to state 32
+-- On minus_unaire_possible shift to state 15
+-- On expression shift to state 34
+## Reductions:
+-- On RPAREN
+--   reduce production option(expression) ->
+
+State 12:
+## Known stack suffix:
+## COLOR
+## LR(1) items:
+expression -> COLOR . [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+## Reductions:
+-- On THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF
+--   reduce production expression -> COLOR
+
+State 13:
+## Known stack suffix:
+## CHARS
+## LR(1) items:
+minus_unaire_possible -> CHARS . [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+minus_unaire_possible -> CHARS . LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+minus_unaire_possible -> CHARS . POINT expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+-- On POINT shift to state 14
+-- On LPAREN shift to state 17
+## Reductions:
+-- On THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF
+--   reduce production minus_unaire_possible -> CHARS
+
+State 14:
+## Known stack suffix:
+## CHARS POINT
+## LR(1) items:
+minus_unaire_possible -> CHARS POINT . expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+-- On VALBOOL shift to state 2
+-- On TXT shift to state 3
+-- On NOT shift to state 4
+-- On MINUS shift to state 5
+-- On LPAREN shift to state 6
+-- On LCROCHET shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On minus_unaire_possible shift to state 15
+-- On expression shift to state 16
+## Reductions:
+
+State 15:
+## Known stack suffix:
+## minus_unaire_possible
+## LR(1) items:
+expression -> minus_unaire_possible . [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+## Reductions:
+-- On THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF
+--   reduce production expression -> minus_unaire_possible
+
+State 16:
+## Known stack suffix:
+## CHARS POINT expression
+## LR(1) items:
+expression -> expression . ADDITIF expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+expression -> expression . MINUS expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+expression -> expression . MULTIPLICATIF expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+expression -> expression . ORDRE expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+minus_unaire_possible -> CHARS POINT expression . [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+## Reductions:
+-- On THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF
+--   reduce production minus_unaire_possible -> CHARS POINT expression
+
+State 17:
+## Known stack suffix:
+## CHARS LPAREN
+## LR(1) items:
+minus_unaire_possible -> CHARS LPAREN . loption(separated_nonempty_list(COMA,expression)) RPAREN [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+-- On VALBOOL shift to state 2
+-- On TXT shift to state 3
+-- On NOT shift to state 4
+-- On MINUS shift to state 5
+-- On LPAREN shift to state 6
+-- On LCROCHET shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On separated_nonempty_list(COMA,expression) shift to state 18
+-- On minus_unaire_possible shift to state 15
+-- On loption(separated_nonempty_list(COMA,expression)) shift to state 19
+-- On expression shift to state 21
+## Reductions:
+-- On RPAREN
+--   reduce production loption(separated_nonempty_list(COMA,expression)) ->
+
+State 18:
+## Known stack suffix:
+## separated_nonempty_list(COMA,expression)
+## LR(1) items:
+loption(separated_nonempty_list(COMA,expression)) -> separated_nonempty_list(COMA,expression) . [ RPAREN RCROCHET ]
+## Transitions:
+## Reductions:
+-- On RPAREN RCROCHET
+--   reduce production loption(separated_nonempty_list(COMA,expression)) -> separated_nonempty_list(COMA,expression)
+
+State 19:
+## Known stack suffix:
+## CHARS LPAREN loption(separated_nonempty_list(COMA,expression))
+## LR(1) items:
+minus_unaire_possible -> CHARS LPAREN loption(separated_nonempty_list(COMA,expression)) . RPAREN [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+-- On RPAREN shift to state 20
+## Reductions:
+
+State 20:
+## Known stack suffix:
+## CHARS LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN
+## LR(1) items:
+minus_unaire_possible -> CHARS LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN . [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+## Reductions:
+-- On THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF
+--   reduce production minus_unaire_possible -> CHARS LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN
+
+State 21:
+## Known stack suffix:
+## expression
+## LR(1) items:
+expression -> expression . ADDITIF expression [ RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS COMA ADDITIF ]
+expression -> expression . MINUS expression [ RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS COMA ADDITIF ]
+expression -> expression . MULTIPLICATIF expression [ RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS COMA ADDITIF ]
+expression -> expression . ORDRE expression [ RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS COMA ADDITIF ]
+separated_nonempty_list(COMA,expression) -> expression . [ RPAREN RCROCHET ]
+separated_nonempty_list(COMA,expression) -> expression . COMA separated_nonempty_list(COMA,expression) [ RPAREN RCROCHET ]
+## Transitions:
+-- On ORDRE shift to state 22
+-- On MULTIPLICATIF shift to state 24
+-- On MINUS shift to state 26
+-- On COMA shift to state 28
+-- On ADDITIF shift to state 30
+## Reductions:
+-- On RPAREN RCROCHET
+--   reduce production separated_nonempty_list(COMA,expression) -> expression
+
+State 22:
+## Known stack suffix:
+## expression ORDRE
+## LR(1) items:
+expression -> expression ORDRE . expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+-- On VALBOOL shift to state 2
+-- On TXT shift to state 3
+-- On NOT shift to state 4
+-- On MINUS shift to state 5
+-- On LPAREN shift to state 6
+-- On LCROCHET shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On minus_unaire_possible shift to state 15
+-- On expression shift to state 23
+## Reductions:
+
+State 23:
+## Known stack suffix:
+## expression ORDRE expression
+## LR(1) items:
+expression -> expression . ADDITIF expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+expression -> expression . MINUS expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+expression -> expression . MULTIPLICATIF expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+expression -> expression . ORDRE expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+expression -> expression ORDRE expression . [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+## Reductions:
+-- On THEN SEMICOLON RPAREN RCROCHET MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF
+--   reduce production expression -> expression ORDRE expression
+
+State 24:
+## Known stack suffix:
+## expression MULTIPLICATIF
+## LR(1) items:
+expression -> expression MULTIPLICATIF . expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+-- On VALBOOL shift to state 2
+-- On TXT shift to state 3
+-- On NOT shift to state 4
+-- On MINUS shift to state 5
+-- On LPAREN shift to state 6
+-- On LCROCHET shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On minus_unaire_possible shift to state 15
+-- On expression shift to state 25
+## Reductions:
+
+State 25:
+## Known stack suffix:
+## expression MULTIPLICATIF expression
+## LR(1) items:
+expression -> expression . ADDITIF expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+expression -> expression . MINUS expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+expression -> expression . MULTIPLICATIF expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+expression -> expression MULTIPLICATIF expression . [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+expression -> expression . ORDRE expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+-- On ORDRE shift to state 22
+## Reductions:
+-- On THEN SEMICOLON RPAREN RCROCHET MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF
+--   reduce production expression -> expression MULTIPLICATIF expression
+
+State 26:
+## Known stack suffix:
+## expression MINUS
+## LR(1) items:
+expression -> expression MINUS . expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+-- On VALBOOL shift to state 2
+-- On TXT shift to state 3
+-- On NOT shift to state 4
+-- On MINUS shift to state 5
+-- On LPAREN shift to state 6
+-- On LCROCHET shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On minus_unaire_possible shift to state 15
+-- On expression shift to state 27
+## Reductions:
+
+State 27:
+## Known stack suffix:
+## expression MINUS expression
+## LR(1) items:
+expression -> expression . ADDITIF expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+expression -> expression . MINUS expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+expression -> expression MINUS expression . [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+expression -> expression . MULTIPLICATIF expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+expression -> expression . ORDRE expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+-- On ORDRE shift to state 22
+-- On MULTIPLICATIF shift to state 24
+## Reductions:
+-- On THEN SEMICOLON RPAREN RCROCHET MINUS MANY_TIMES EGALE DO COMA ADDITIF
+--   reduce production expression -> expression MINUS expression
+
+State 28:
+## Known stack suffix:
+## expression COMA
+## LR(1) items:
+separated_nonempty_list(COMA,expression) -> expression COMA . separated_nonempty_list(COMA,expression) [ RPAREN RCROCHET ]
+## Transitions:
+-- On VALBOOL shift to state 2
+-- On TXT shift to state 3
+-- On NOT shift to state 4
+-- On MINUS shift to state 5
+-- On LPAREN shift to state 6
+-- On LCROCHET shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On separated_nonempty_list(COMA,expression) shift to state 29
+-- On minus_unaire_possible shift to state 15
+-- On expression shift to state 21
+## Reductions:
+
+State 29:
+## Known stack suffix:
+## expression COMA separated_nonempty_list(COMA,expression)
+## LR(1) items:
+separated_nonempty_list(COMA,expression) -> expression COMA separated_nonempty_list(COMA,expression) . [ RPAREN RCROCHET ]
+## Transitions:
+## Reductions:
+-- On RPAREN RCROCHET
+--   reduce production separated_nonempty_list(COMA,expression) -> expression COMA separated_nonempty_list(COMA,expression)
+
+State 30:
+## Known stack suffix:
+## expression ADDITIF
+## LR(1) items:
+expression -> expression ADDITIF . expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+-- On VALBOOL shift to state 2
+-- On TXT shift to state 3
+-- On NOT shift to state 4
+-- On MINUS shift to state 5
+-- On LPAREN shift to state 6
+-- On LCROCHET shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On minus_unaire_possible shift to state 15
+-- On expression shift to state 31
+## Reductions:
+
+State 31:
+## Known stack suffix:
+## expression ADDITIF expression
+## LR(1) items:
+expression -> expression . ADDITIF expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+expression -> expression ADDITIF expression . [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+expression -> expression . MINUS expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+expression -> expression . MULTIPLICATIF expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+expression -> expression . ORDRE expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+-- On ORDRE shift to state 22
+-- On MULTIPLICATIF shift to state 24
+## Reductions:
+-- On THEN SEMICOLON RPAREN RCROCHET MINUS MANY_TIMES EGALE DO COMA ADDITIF
+--   reduce production expression -> expression ADDITIF expression
+
+State 32:
+## Known stack suffix:
+## GENC LPAREN option(expression)
+## LR(1) items:
+expression -> GENC LPAREN option(expression) . RPAREN [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+-- On RPAREN shift to state 33
+## Reductions:
+
+State 33:
+## Known stack suffix:
+## GENC LPAREN option(expression) RPAREN
+## LR(1) items:
+expression -> GENC LPAREN option(expression) RPAREN . [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+## Reductions:
+-- On THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF
+--   reduce production expression -> GENC LPAREN option(expression) RPAREN
+
+State 34:
+## Known stack suffix:
+## expression
+## LR(1) items:
+expression -> expression . ADDITIF expression [ RPAREN ORDRE MULTIPLICATIF MINUS ADDITIF ]
+expression -> expression . MINUS expression [ RPAREN ORDRE MULTIPLICATIF MINUS ADDITIF ]
+expression -> expression . MULTIPLICATIF expression [ RPAREN ORDRE MULTIPLICATIF MINUS ADDITIF ]
+expression -> expression . ORDRE expression [ RPAREN ORDRE MULTIPLICATIF MINUS ADDITIF ]
+option(expression) -> expression . [ RPAREN ]
+## Transitions:
+-- On ORDRE shift to state 22
+-- On MULTIPLICATIF shift to state 24
+-- On MINUS shift to state 26
+-- On ADDITIF shift to state 30
+## Reductions:
+-- On RPAREN
+--   reduce production option(expression) -> expression
+
+State 35:
+## Known stack suffix:
+## GENN LPAREN loption(separated_nonempty_list(COMA,expression))
+## LR(1) items:
+minus_unaire_possible -> GENN LPAREN loption(separated_nonempty_list(COMA,expression)) . RPAREN [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+-- On RPAREN shift to state 36
+## Reductions:
+
+State 36:
+## Known stack suffix:
+## GENN LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN
+## LR(1) items:
+minus_unaire_possible -> GENN LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN . [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+## Reductions:
+-- On THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF
+--   reduce production minus_unaire_possible -> GENN LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN
+
+State 37:
+## Known stack suffix:
+## LCROCHET loption(separated_nonempty_list(COMA,expression))
+## LR(1) items:
+expression -> LCROCHET loption(separated_nonempty_list(COMA,expression)) . RCROCHET [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+-- On RCROCHET shift to state 38
+## Reductions:
+
+State 38:
+## Known stack suffix:
+## LCROCHET loption(separated_nonempty_list(COMA,expression)) RCROCHET
+## LR(1) items:
+expression -> LCROCHET loption(separated_nonempty_list(COMA,expression)) RCROCHET . [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+## Reductions:
+-- On THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF
+--   reduce production expression -> LCROCHET loption(separated_nonempty_list(COMA,expression)) RCROCHET
+
+State 39:
+## Known stack suffix:
+## LPAREN expression
+## LR(1) items:
+expression -> expression . ADDITIF expression [ RPAREN ORDRE MULTIPLICATIF MINUS ADDITIF ]
+expression -> expression . MINUS expression [ RPAREN ORDRE MULTIPLICATIF MINUS ADDITIF ]
+expression -> expression . MULTIPLICATIF expression [ RPAREN ORDRE MULTIPLICATIF MINUS ADDITIF ]
+expression -> expression . ORDRE expression [ RPAREN ORDRE MULTIPLICATIF MINUS ADDITIF ]
+minus_unaire_possible -> LPAREN expression . RPAREN [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+-- On RPAREN shift to state 40
+-- On ORDRE shift to state 22
+-- On MULTIPLICATIF shift to state 24
+-- On MINUS shift to state 26
+-- On ADDITIF shift to state 30
+## Reductions:
+
+State 40:
+## Known stack suffix:
+## LPAREN expression RPAREN
+## LR(1) items:
+minus_unaire_possible -> LPAREN expression RPAREN . [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+## Reductions:
+-- On THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF
+--   reduce production minus_unaire_possible -> LPAREN expression RPAREN
+
+State 41:
+## Known stack suffix:
+## MINUS minus_unaire_possible
+## LR(1) items:
+expression -> MINUS minus_unaire_possible . [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+## Reductions:
+-- On THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF
+--   reduce production expression -> MINUS minus_unaire_possible
+
+State 42:
+## Known stack suffix:
+## NOT expression
+## LR(1) items:
+expression -> expression . ADDITIF expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+expression -> expression . MINUS expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+expression -> expression . MULTIPLICATIF expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+expression -> expression . ORDRE expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+expression -> NOT expression . [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## Transitions:
+## Reductions:
+-- On THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF
+--   reduce production expression -> NOT expression
+
+State 43:
+## Known stack suffix:
+## WHILE expression
+## LR(1) items:
+expression -> expression . ADDITIF expression [ ORDRE MULTIPLICATIF MINUS DO ADDITIF ]
+expression -> expression . MINUS expression [ ORDRE MULTIPLICATIF MINUS DO ADDITIF ]
+expression -> expression . MULTIPLICATIF expression [ ORDRE MULTIPLICATIF MINUS DO ADDITIF ]
+expression -> expression . ORDRE expression [ ORDRE MULTIPLICATIF MINUS DO ADDITIF ]
+instruction -> WHILE expression . DO sous_bloc [ SEMICOLON ]
+## Transitions:
+-- On ORDRE shift to state 22
+-- On MULTIPLICATIF shift to state 24
+-- On MINUS shift to state 26
+-- On DO shift to state 44
+-- On ADDITIF shift to state 30
+## Reductions:
+
+State 44:
+## Known stack suffix:
+## WHILE expression DO
+## LR(1) items:
+instruction -> WHILE expression DO . sous_bloc [ SEMICOLON ]
+## Transitions:
+-- On START shift to state 45
+-- On sous_bloc shift to state 88
+## Reductions:
+
+State 45:
+## Known stack suffix:
+## START
+## LR(1) items:
+sous_bloc -> START . bloc_instruction END [ SEMICOLON ELSE ]
+## Transitions:
+-- On WHILE shift to state 1
+-- On VAR shift to state 46
+-- On SIMPLE shift to state 50
+-- On REPEAT shift to state 52
+-- On IF shift to state 56
+-- On DRAW shift to state 62
+-- On DEF shift to state 63
+-- On CHARS shift to state 73
+-- On instruction shift to state 83
+-- On bloc_instruction shift to state 86
+## Reductions:
+-- On END
+--   reduce production bloc_instruction ->
+
+State 46:
+## Known stack suffix:
+## VAR
+## LR(1) items:
+instruction -> VAR . CHARS [ SEMICOLON ]
+instruction -> VAR . CHARS EGALE expression [ SEMICOLON ]
+## Transitions:
+-- On CHARS shift to state 47
+## Reductions:
+
+State 47:
+## Known stack suffix:
+## VAR CHARS
+## LR(1) items:
+instruction -> VAR CHARS . [ SEMICOLON ]
+instruction -> VAR CHARS . EGALE expression [ SEMICOLON ]
+## Transitions:
+-- On EGALE shift to state 48
+## Reductions:
+-- On SEMICOLON
+--   reduce production instruction -> VAR CHARS
+
+State 48:
+## Known stack suffix:
+## VAR CHARS EGALE
+## LR(1) items:
+instruction -> VAR CHARS EGALE . expression [ SEMICOLON ]
+## Transitions:
+-- On VALBOOL shift to state 2
+-- On TXT shift to state 3
+-- On NOT shift to state 4
+-- On MINUS shift to state 5
+-- On LPAREN shift to state 6
+-- On LCROCHET shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On minus_unaire_possible shift to state 15
+-- On expression shift to state 49
+## Reductions:
+
+State 49:
+## Known stack suffix:
+## VAR CHARS EGALE expression
+## LR(1) items:
+expression -> expression . ADDITIF expression [ SEMICOLON ORDRE MULTIPLICATIF MINUS ADDITIF ]
+expression -> expression . MINUS expression [ SEMICOLON ORDRE MULTIPLICATIF MINUS ADDITIF ]
+expression -> expression . MULTIPLICATIF expression [ SEMICOLON ORDRE MULTIPLICATIF MINUS ADDITIF ]
+expression -> expression . ORDRE expression [ SEMICOLON ORDRE MULTIPLICATIF MINUS ADDITIF ]
+instruction -> VAR CHARS EGALE expression . [ SEMICOLON ]
+## Transitions:
+-- On ORDRE shift to state 22
+-- On MULTIPLICATIF shift to state 24
+-- On MINUS shift to state 26
+-- On ADDITIF shift to state 30
+## Reductions:
+-- On SEMICOLON
+--   reduce production instruction -> VAR CHARS EGALE expression
+
+State 50:
+## Known stack suffix:
+## SIMPLE
+## LR(1) items:
+instruction -> SIMPLE . expression [ SEMICOLON ]
+## Transitions:
+-- On VALBOOL shift to state 2
+-- On TXT shift to state 3
+-- On NOT shift to state 4
+-- On MINUS shift to state 5
+-- On LPAREN shift to state 6
+-- On LCROCHET shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On minus_unaire_possible shift to state 15
+-- On expression shift to state 51
+## Reductions:
+
+State 51:
+## Known stack suffix:
+## SIMPLE expression
+## LR(1) items:
+expression -> expression . ADDITIF expression [ SEMICOLON ORDRE MULTIPLICATIF MINUS ADDITIF ]
+expression -> expression . MINUS expression [ SEMICOLON ORDRE MULTIPLICATIF MINUS ADDITIF ]
+expression -> expression . MULTIPLICATIF expression [ SEMICOLON ORDRE MULTIPLICATIF MINUS ADDITIF ]
+expression -> expression . ORDRE expression [ SEMICOLON ORDRE MULTIPLICATIF MINUS ADDITIF ]
+instruction -> SIMPLE expression . [ SEMICOLON ]
+## Transitions:
+-- On ORDRE shift to state 22
+-- On MULTIPLICATIF shift to state 24
+-- On MINUS shift to state 26
+-- On ADDITIF shift to state 30
+## Reductions:
+-- On SEMICOLON
+--   reduce production instruction -> SIMPLE expression
+
+State 52:
+## Known stack suffix:
+## REPEAT
+## LR(1) items:
+instruction -> REPEAT . expression MANY_TIMES sous_bloc [ SEMICOLON ]
+## Transitions:
+-- On VALBOOL shift to state 2
+-- On TXT shift to state 3
+-- On NOT shift to state 4
+-- On MINUS shift to state 5
+-- On LPAREN shift to state 6
+-- On LCROCHET shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On minus_unaire_possible shift to state 15
+-- On expression shift to state 53
+## Reductions:
+
+State 53:
+## Known stack suffix:
+## REPEAT expression
+## LR(1) items:
+expression -> expression . ADDITIF expression [ ORDRE MULTIPLICATIF MINUS MANY_TIMES ADDITIF ]
+expression -> expression . MINUS expression [ ORDRE MULTIPLICATIF MINUS MANY_TIMES ADDITIF ]
+expression -> expression . MULTIPLICATIF expression [ ORDRE MULTIPLICATIF MINUS MANY_TIMES ADDITIF ]
+expression -> expression . ORDRE expression [ ORDRE MULTIPLICATIF MINUS MANY_TIMES ADDITIF ]
+instruction -> REPEAT expression . MANY_TIMES sous_bloc [ SEMICOLON ]
+## Transitions:
+-- On ORDRE shift to state 22
+-- On MULTIPLICATIF shift to state 24
+-- On MINUS shift to state 26
+-- On MANY_TIMES shift to state 54
+-- On ADDITIF shift to state 30
+## Reductions:
+
+State 54:
+## Known stack suffix:
+## REPEAT expression MANY_TIMES
+## LR(1) items:
+instruction -> REPEAT expression MANY_TIMES . sous_bloc [ SEMICOLON ]
+## Transitions:
+-- On START shift to state 45
+-- On sous_bloc shift to state 55
+## Reductions:
+
+State 55:
+## Known stack suffix:
+## REPEAT expression MANY_TIMES sous_bloc
+## LR(1) items:
+instruction -> REPEAT expression MANY_TIMES sous_bloc . [ SEMICOLON ]
+## Transitions:
+## Reductions:
+-- On SEMICOLON
+--   reduce production instruction -> REPEAT expression MANY_TIMES sous_bloc
+
+State 56:
+## Known stack suffix:
+## IF
+## LR(1) items:
+instruction -> IF . expression THEN sous_bloc [ SEMICOLON ]
+instruction -> IF . expression THEN sous_bloc ELSE sous_bloc [ SEMICOLON ]
+## Transitions:
+-- On VALBOOL shift to state 2
+-- On TXT shift to state 3
+-- On NOT shift to state 4
+-- On MINUS shift to state 5
+-- On LPAREN shift to state 6
+-- On LCROCHET shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On minus_unaire_possible shift to state 15
+-- On expression shift to state 57
+## Reductions:
+
+State 57:
+## Known stack suffix:
+## IF expression
+## LR(1) items:
+expression -> expression . ADDITIF expression [ THEN ORDRE MULTIPLICATIF MINUS ADDITIF ]
+expression -> expression . MINUS expression [ THEN ORDRE MULTIPLICATIF MINUS ADDITIF ]
+expression -> expression . MULTIPLICATIF expression [ THEN ORDRE MULTIPLICATIF MINUS ADDITIF ]
+expression -> expression . ORDRE expression [ THEN ORDRE MULTIPLICATIF MINUS ADDITIF ]
+instruction -> IF expression . THEN sous_bloc [ SEMICOLON ]
+instruction -> IF expression . THEN sous_bloc ELSE sous_bloc [ SEMICOLON ]
+## Transitions:
+-- On THEN shift to state 58
+-- On ORDRE shift to state 22
+-- On MULTIPLICATIF shift to state 24
+-- On MINUS shift to state 26
+-- On ADDITIF shift to state 30
+## Reductions:
+
+State 58:
+## Known stack suffix:
+## IF expression THEN
+## LR(1) items:
+instruction -> IF expression THEN . sous_bloc [ SEMICOLON ]
+instruction -> IF expression THEN . sous_bloc ELSE sous_bloc [ SEMICOLON ]
+## Transitions:
+-- On START shift to state 45
+-- On sous_bloc shift to state 59
+## Reductions:
+
+State 59:
+## Known stack suffix:
+## IF expression THEN sous_bloc
+## LR(1) items:
+instruction -> IF expression THEN sous_bloc . [ SEMICOLON ]
+instruction -> IF expression THEN sous_bloc . ELSE sous_bloc [ SEMICOLON ]
+## Transitions:
+-- On ELSE shift to state 60
+## Reductions:
+-- On SEMICOLON
+--   reduce production instruction -> IF expression THEN sous_bloc
+
+State 60:
+## Known stack suffix:
+## IF expression THEN sous_bloc ELSE
+## LR(1) items:
+instruction -> IF expression THEN sous_bloc ELSE . sous_bloc [ SEMICOLON ]
+## Transitions:
+-- On START shift to state 45
+-- On sous_bloc shift to state 61
+## Reductions:
+
+State 61:
+## Known stack suffix:
+## IF expression THEN sous_bloc ELSE sous_bloc
+## LR(1) items:
+instruction -> IF expression THEN sous_bloc ELSE sous_bloc . [ SEMICOLON ]
+## Transitions:
+## Reductions:
+-- On SEMICOLON
+--   reduce production instruction -> IF expression THEN sous_bloc ELSE sous_bloc
+
+State 62:
+## Known stack suffix:
+## DRAW
+## LR(1) items:
+instruction -> DRAW . [ SEMICOLON ]
+## Transitions:
+## Reductions:
+-- On SEMICOLON
+--   reduce production instruction -> DRAW
+
+State 63:
+## Known stack suffix:
+## DEF
+## LR(1) items:
+instruction -> DEF . CHARS LPAREN loption(separated_nonempty_list(COMA,CHARS)) RPAREN sous_bloc [ SEMICOLON ]
+## Transitions:
+-- On CHARS shift to state 64
+## Reductions:
+
+State 64:
+## Known stack suffix:
+## DEF CHARS
+## LR(1) items:
+instruction -> DEF CHARS . LPAREN loption(separated_nonempty_list(COMA,CHARS)) RPAREN sous_bloc [ SEMICOLON ]
+## Transitions:
+-- On LPAREN shift to state 65
+## Reductions:
+
+State 65:
+## Known stack suffix:
+## DEF CHARS LPAREN
+## LR(1) items:
+instruction -> DEF CHARS LPAREN . loption(separated_nonempty_list(COMA,CHARS)) RPAREN sous_bloc [ SEMICOLON ]
+## Transitions:
+-- On CHARS shift to state 66
+-- On separated_nonempty_list(COMA,CHARS) shift to state 69
+-- On loption(separated_nonempty_list(COMA,CHARS)) shift to state 70
+## Reductions:
+-- On RPAREN
+--   reduce production loption(separated_nonempty_list(COMA,CHARS)) ->
+
+State 66:
+## Known stack suffix:
+## CHARS
+## LR(1) items:
+separated_nonempty_list(COMA,CHARS) -> CHARS . [ RPAREN ]
+separated_nonempty_list(COMA,CHARS) -> CHARS . COMA separated_nonempty_list(COMA,CHARS) [ RPAREN ]
+## Transitions:
+-- On COMA shift to state 67
+## Reductions:
+-- On RPAREN
+--   reduce production separated_nonempty_list(COMA,CHARS) -> CHARS
+
+State 67:
+## Known stack suffix:
+## CHARS COMA
+## LR(1) items:
+separated_nonempty_list(COMA,CHARS) -> CHARS COMA . separated_nonempty_list(COMA,CHARS) [ RPAREN ]
+## Transitions:
+-- On CHARS shift to state 66
+-- On separated_nonempty_list(COMA,CHARS) shift to state 68
+## Reductions:
+
+State 68:
+## Known stack suffix:
+## CHARS COMA separated_nonempty_list(COMA,CHARS)
+## LR(1) items:
+separated_nonempty_list(COMA,CHARS) -> CHARS COMA separated_nonempty_list(COMA,CHARS) . [ RPAREN ]
+## Transitions:
+## Reductions:
+-- On RPAREN
+--   reduce production separated_nonempty_list(COMA,CHARS) -> CHARS COMA separated_nonempty_list(COMA,CHARS)
+
+State 69:
+## Known stack suffix:
+## separated_nonempty_list(COMA,CHARS)
+## LR(1) items:
+loption(separated_nonempty_list(COMA,CHARS)) -> separated_nonempty_list(COMA,CHARS) . [ RPAREN ]
+## Transitions:
+## Reductions:
+-- On RPAREN
+--   reduce production loption(separated_nonempty_list(COMA,CHARS)) -> separated_nonempty_list(COMA,CHARS)
+
+State 70:
+## Known stack suffix:
+## DEF CHARS LPAREN loption(separated_nonempty_list(COMA,CHARS))
+## LR(1) items:
+instruction -> DEF CHARS LPAREN loption(separated_nonempty_list(COMA,CHARS)) . RPAREN sous_bloc [ SEMICOLON ]
+## Transitions:
+-- On RPAREN shift to state 71
+## Reductions:
+
+State 71:
+## Known stack suffix:
+## DEF CHARS LPAREN loption(separated_nonempty_list(COMA,CHARS)) RPAREN
+## LR(1) items:
+instruction -> DEF CHARS LPAREN loption(separated_nonempty_list(COMA,CHARS)) RPAREN . sous_bloc [ SEMICOLON ]
+## Transitions:
+-- On START shift to state 45
+-- On sous_bloc shift to state 72
+## Reductions:
+
+State 72:
+## Known stack suffix:
+## DEF CHARS LPAREN loption(separated_nonempty_list(COMA,CHARS)) RPAREN sous_bloc
+## LR(1) items:
+instruction -> DEF CHARS LPAREN loption(separated_nonempty_list(COMA,CHARS)) RPAREN sous_bloc . [ SEMICOLON ]
+## Transitions:
+## Reductions:
+-- On SEMICOLON
+--   reduce production instruction -> DEF CHARS LPAREN loption(separated_nonempty_list(COMA,CHARS)) RPAREN sous_bloc
+
+State 73:
+## Known stack suffix:
+## CHARS
+## LR(1) items:
+instruction -> CHARS . EGALE expression [ SEMICOLON ]
+instruction -> CHARS . LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN [ SEMICOLON ]
+instruction -> CHARS . POINT expression EGALE expression [ SEMICOLON ]
+## Transitions:
+-- On POINT shift to state 74
+-- On LPAREN shift to state 78
+-- On EGALE shift to state 81
+## Reductions:
+
+State 74:
+## Known stack suffix:
+## CHARS POINT
+## LR(1) items:
+instruction -> CHARS POINT . expression EGALE expression [ SEMICOLON ]
+## Transitions:
+-- On VALBOOL shift to state 2
+-- On TXT shift to state 3
+-- On NOT shift to state 4
+-- On MINUS shift to state 5
+-- On LPAREN shift to state 6
+-- On LCROCHET shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On minus_unaire_possible shift to state 15
+-- On expression shift to state 75
+## Reductions:
+
+State 75:
+## Known stack suffix:
+## CHARS POINT expression
+## LR(1) items:
+expression -> expression . ADDITIF expression [ ORDRE MULTIPLICATIF MINUS EGALE ADDITIF ]
+expression -> expression . MINUS expression [ ORDRE MULTIPLICATIF MINUS EGALE ADDITIF ]
+expression -> expression . MULTIPLICATIF expression [ ORDRE MULTIPLICATIF MINUS EGALE ADDITIF ]
+expression -> expression . ORDRE expression [ ORDRE MULTIPLICATIF MINUS EGALE ADDITIF ]
+instruction -> CHARS POINT expression . EGALE expression [ SEMICOLON ]
+## Transitions:
+-- On ORDRE shift to state 22
+-- On MULTIPLICATIF shift to state 24
+-- On MINUS shift to state 26
+-- On EGALE shift to state 76
+-- On ADDITIF shift to state 30
+## Reductions:
+
+State 76:
+## Known stack suffix:
+## CHARS POINT expression EGALE
+## LR(1) items:
+instruction -> CHARS POINT expression EGALE . expression [ SEMICOLON ]
+## Transitions:
+-- On VALBOOL shift to state 2
+-- On TXT shift to state 3
+-- On NOT shift to state 4
+-- On MINUS shift to state 5
+-- On LPAREN shift to state 6
+-- On LCROCHET shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On minus_unaire_possible shift to state 15
+-- On expression shift to state 77
+## Reductions:
+
+State 77:
+## Known stack suffix:
+## CHARS POINT expression EGALE expression
+## LR(1) items:
+expression -> expression . ADDITIF expression [ SEMICOLON ORDRE MULTIPLICATIF MINUS ADDITIF ]
+expression -> expression . MINUS expression [ SEMICOLON ORDRE MULTIPLICATIF MINUS ADDITIF ]
+expression -> expression . MULTIPLICATIF expression [ SEMICOLON ORDRE MULTIPLICATIF MINUS ADDITIF ]
+expression -> expression . ORDRE expression [ SEMICOLON ORDRE MULTIPLICATIF MINUS ADDITIF ]
+instruction -> CHARS POINT expression EGALE expression . [ SEMICOLON ]
+## Transitions:
+-- On ORDRE shift to state 22
+-- On MULTIPLICATIF shift to state 24
+-- On MINUS shift to state 26
+-- On ADDITIF shift to state 30
+## Reductions:
+-- On SEMICOLON
+--   reduce production instruction -> CHARS POINT expression EGALE expression
+
+State 78:
+## Known stack suffix:
+## CHARS LPAREN
+## LR(1) items:
+instruction -> CHARS LPAREN . loption(separated_nonempty_list(COMA,expression)) RPAREN [ SEMICOLON ]
+## Transitions:
+-- On VALBOOL shift to state 2
+-- On TXT shift to state 3
+-- On NOT shift to state 4
+-- On MINUS shift to state 5
+-- On LPAREN shift to state 6
+-- On LCROCHET shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On separated_nonempty_list(COMA,expression) shift to state 18
+-- On minus_unaire_possible shift to state 15
+-- On loption(separated_nonempty_list(COMA,expression)) shift to state 79
+-- On expression shift to state 21
+## Reductions:
+-- On RPAREN
+--   reduce production loption(separated_nonempty_list(COMA,expression)) ->
+
+State 79:
+## Known stack suffix:
+## CHARS LPAREN loption(separated_nonempty_list(COMA,expression))
+## LR(1) items:
+instruction -> CHARS LPAREN loption(separated_nonempty_list(COMA,expression)) . RPAREN [ SEMICOLON ]
+## Transitions:
+-- On RPAREN shift to state 80
+## Reductions:
+
+State 80:
+## Known stack suffix:
+## CHARS LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN
+## LR(1) items:
+instruction -> CHARS LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN . [ SEMICOLON ]
+## Transitions:
+## Reductions:
+-- On SEMICOLON
+--   reduce production instruction -> CHARS LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN
+
+State 81:
+## Known stack suffix:
+## CHARS EGALE
+## LR(1) items:
+instruction -> CHARS EGALE . expression [ SEMICOLON ]
+## Transitions:
+-- On VALBOOL shift to state 2
+-- On TXT shift to state 3
+-- On NOT shift to state 4
+-- On MINUS shift to state 5
+-- On LPAREN shift to state 6
+-- On LCROCHET shift to state 7
+-- On GENN shift to state 8
+-- On GENC shift to state 10
+-- On COLOR shift to state 12
+-- On CHARS shift to state 13
+-- On minus_unaire_possible shift to state 15
+-- On expression shift to state 82
+## Reductions:
+
+State 82:
+## Known stack suffix:
+## CHARS EGALE expression
+## LR(1) items:
+expression -> expression . ADDITIF expression [ SEMICOLON ORDRE MULTIPLICATIF MINUS ADDITIF ]
+expression -> expression . MINUS expression [ SEMICOLON ORDRE MULTIPLICATIF MINUS ADDITIF ]
+expression -> expression . MULTIPLICATIF expression [ SEMICOLON ORDRE MULTIPLICATIF MINUS ADDITIF ]
+expression -> expression . ORDRE expression [ SEMICOLON ORDRE MULTIPLICATIF MINUS ADDITIF ]
+instruction -> CHARS EGALE expression . [ SEMICOLON ]
+## Transitions:
+-- On ORDRE shift to state 22
+-- On MULTIPLICATIF shift to state 24
+-- On MINUS shift to state 26
+-- On ADDITIF shift to state 30
+## Reductions:
+-- On SEMICOLON
+--   reduce production instruction -> CHARS EGALE expression
+
+State 83:
+## Known stack suffix:
+## instruction
+## LR(1) items:
+bloc_instruction -> instruction . SEMICOLON bloc_instruction [ EOF END ]
+## Transitions:
+-- On SEMICOLON shift to state 84
+## Reductions:
+
+State 84:
+## Known stack suffix:
+## instruction SEMICOLON
+## LR(1) items:
+bloc_instruction -> instruction SEMICOLON . bloc_instruction [ EOF END ]
+## Transitions:
+-- On WHILE shift to state 1
+-- On VAR shift to state 46
+-- On SIMPLE shift to state 50
+-- On REPEAT shift to state 52
+-- On IF shift to state 56
+-- On DRAW shift to state 62
+-- On DEF shift to state 63
+-- On CHARS shift to state 73
+-- On instruction shift to state 83
+-- On bloc_instruction shift to state 85
+## Reductions:
+-- On EOF END
+--   reduce production bloc_instruction ->
+
+State 85:
+## Known stack suffix:
+## instruction SEMICOLON bloc_instruction
+## LR(1) items:
+bloc_instruction -> instruction SEMICOLON bloc_instruction . [ EOF END ]
+## Transitions:
+## Reductions:
+-- On EOF END
+--   reduce production bloc_instruction -> instruction SEMICOLON bloc_instruction
+
+State 86:
+## Known stack suffix:
+## START bloc_instruction
+## LR(1) items:
+sous_bloc -> START bloc_instruction . END [ SEMICOLON ELSE ]
+## Transitions:
+-- On END shift to state 87
+## Reductions:
+
+State 87:
+## Known stack suffix:
+## START bloc_instruction END
+## LR(1) items:
+sous_bloc -> START bloc_instruction END . [ SEMICOLON ELSE ]
+## Transitions:
+## Reductions:
+-- On SEMICOLON ELSE
+--   reduce production sous_bloc -> START bloc_instruction END
+
+State 88:
+## Known stack suffix:
+## WHILE expression DO sous_bloc
+## LR(1) items:
+instruction -> WHILE expression DO sous_bloc . [ SEMICOLON ]
+## Transitions:
+## Reductions:
+-- On SEMICOLON
+--   reduce production instruction -> WHILE expression DO sous_bloc
+
+State 89:
+## Known stack suffix:
+## programme
+## LR(1) items:
+programme' -> programme . [ # ]
+## Transitions:
+## Reductions:
+-- On #
+--   accept programme
+
+State 90:
+## Known stack suffix:
+## bloc_instruction
+## LR(1) items:
+programme -> bloc_instruction . EOF [ # ]
+## Transitions:
+-- On EOF shift to state 91
+## Reductions:
+
+State 91:
+## Known stack suffix:
+## bloc_instruction EOF
+## LR(1) items:
+programme -> bloc_instruction EOF . [ # ]
+## Transitions:
+## Reductions:
+-- On #
+--   reduce production programme -> bloc_instruction EOF
+

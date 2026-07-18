@@ -1,0 +1,842 @@
+programme: VALBOOL
+##
+## Ends in an error in state: 0.
+##
+## programme' -> . programme [ # ]
+##
+## The known suffix of the stack is as follows:
+##
+##
+
+on attend une instruction; pas une expression
+
+programme: WHILE WHILE
+##
+## Ends in an error in state: 1.
+##
+## instruction -> WHILE . expression DO sous_bloc [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## WHILE
+##
+
+on attend une expression; "Tant que" est répété
+
+programme: WHILE NOT WHILE
+##
+## Ends in an error in state: 4.
+##
+## expression -> NOT . expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+##
+## The known suffix of the stack is as follows:
+## NOT
+##
+
+on attend une expression apres "Non"; un mot-clé d'instruction ne peut pas commencer une expression
+
+programme: WHILE MINUS WHILE
+##
+## Ends in an error in state: 5.
+##
+## expression -> MINUS . minus_unaire_possible [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+##
+## The known suffix of the stack is as follows:
+## MINUS
+##
+
+on attend une expression apres "-"; un mot-clé d'instruction ne peut pas commencer une expression
+
+programme: WHILE LPAREN WHILE
+##
+## Ends in an error in state: 6.
+##
+## minus_unaire_possible -> LPAREN . expression RPAREN [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+##
+## The known suffix of the stack is as follows:
+## LPAREN
+##
+
+on attend une expression apres "("; un mot-clé d'instruction ne peut pas commencer une expression
+
+programme: WHILE LCROCHET WHILE
+##
+## Ends in an error in state: 7.
+##
+## expression -> LCROCHET . loption(separated_nonempty_list(COMA,expression)) RCROCHET [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+##
+## The known suffix of the stack is as follows:
+## LCROCHET
+##
+
+on attend une expression apres "["; un mot-clé d'instruction ne peut pas commencer une expression
+
+programme: WHILE GENN WHILE
+##
+## Ends in an error in state: 8.
+##
+## minus_unaire_possible -> GENN . LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+##
+## The known suffix of the stack is as follows:
+## GENN
+##
+
+on attend les arguments de "GenN"; un mot-clé d'instruction ne peut pas commencer une expression
+
+programme: WHILE GENN LPAREN WHILE
+##
+## Ends in an error in state: 9.
+##
+## minus_unaire_possible -> GENN LPAREN . loption(separated_nonempty_list(COMA,expression)) RPAREN [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+##
+## The known suffix of the stack is as follows:
+## GENN LPAREN
+##
+
+on attend une expression apres "("; un mot-clé d'instruction ne peut pas commencer une expression
+
+programme: WHILE GENC WHILE
+##
+## Ends in an error in state: 10.
+##
+## expression -> GENC . LPAREN option(expression) RPAREN [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+##
+## The known suffix of the stack is as follows:
+## GENC
+##
+
+on attend les arguments de "GenC"; un mot-clé d'instruction ne peut pas commencer une expression
+
+programme: WHILE GENC LPAREN WHILE
+##
+## Ends in an error in state: 11.
+##
+## expression -> GENC LPAREN . option(expression) RPAREN [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+##
+## The known suffix of the stack is as follows:
+## GENC LPAREN
+##
+
+on attend une expression apres "("; un mot-clé d'instruction ne peut pas commencer une expression
+
+programme: WHILE CHARS WHILE
+##
+## Ends in an error in state: 13.
+##
+## minus_unaire_possible -> CHARS . [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## minus_unaire_possible -> CHARS . LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## minus_unaire_possible -> CHARS . POINT expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+##
+## The known suffix of the stack is as follows:
+## CHARS
+##
+
+apres ce nom ou ce nombre, on peut avoir "(" pour un appel ou "." pour un index; sinon il manque probablement ";" pour terminer l'instruction, ou un opérateur
+
+programme: WHILE CHARS POINT WHILE
+##
+## Ends in an error in state: 14.
+##
+## minus_unaire_possible -> CHARS POINT . expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+##
+## The known suffix of the stack is as follows:
+## CHARS POINT
+##
+
+on attend une expression apres "."; un mot-clé d'instruction ne peut pas commencer une expression
+
+programme: WHILE CHARS LPAREN WHILE
+##
+## Ends in an error in state: 17.
+##
+## minus_unaire_possible -> CHARS LPAREN . loption(separated_nonempty_list(COMA,expression)) RPAREN [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+##
+## The known suffix of the stack is as follows:
+## CHARS LPAREN
+##
+
+on attend une expression apres "("; un mot-clé d'instruction ne peut pas commencer une expression
+
+programme: WHILE CHARS LPAREN CHARS RCROCHET
+##
+## Ends in an error in state: 19.
+##
+## minus_unaire_possible -> CHARS LPAREN loption(separated_nonempty_list(COMA,expression)) . RPAREN [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+##
+## The known suffix of the stack is as follows:
+## CHARS LPAREN loption(separated_nonempty_list(COMA,expression))
+##
+## WARNING: This example involves spurious reductions.
+## This implies that, although the LR(1) items shown above provide an
+## accurate view of the past (what has been recognized so far), they
+## may provide an INCOMPLETE view of the future (what was expected next).
+## In state 13, spurious reduction of production minus_unaire_possible -> CHARS
+## In state 15, spurious reduction of production expression -> minus_unaire_possible
+## In state 21, spurious reduction of production separated_nonempty_list(COMA,expression) -> expression
+## In state 18, spurious reduction of production loption(separated_nonempty_list(COMA,expression)) -> separated_nonempty_list(COMA,expression)
+##
+
+on attend ")" pour fermer les arguments
+
+programme: CHARS LPAREN COLOR WHILE
+##
+## Ends in an error in state: 21.
+##
+## expression -> expression . ADDITIF expression [ RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS COMA ADDITIF ]
+## expression -> expression . MINUS expression [ RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS COMA ADDITIF ]
+## expression -> expression . MULTIPLICATIF expression [ RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS COMA ADDITIF ]
+## expression -> expression . ORDRE expression [ RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS COMA ADDITIF ]
+## separated_nonempty_list(COMA,expression) -> expression . [ RPAREN RCROCHET ]
+## separated_nonempty_list(COMA,expression) -> expression . COMA separated_nonempty_list(COMA,expression) [ RPAREN RCROCHET ]
+##
+## The known suffix of the stack is as follows:
+## expression
+##
+
+on attend une expression ou une liste d'expression apres "("; un mot-clé d'instruction ne peut pas commencer une expression
+
+programme: IF CHARS ORDRE WHILE
+##
+## Ends in an error in state: 22.
+##
+## expression -> expression ORDRE . expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+##
+## The known suffix of the stack is as follows:
+## expression ORDRE
+##
+
+on attend une expression apres une relation d'ordre; un mot-clé d'instruction ne peut pas commencer une expression
+
+programme: IF CHARS ORDRE COLOR WHILE
+##
+## Ends in an error in state: 23.
+##
+## expression -> expression . ADDITIF expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## expression -> expression . MINUS expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## expression -> expression . MULTIPLICATIF expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## expression -> expression . ORDRE expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+## expression -> expression ORDRE expression . [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+##
+## The known suffix of the stack is as follows:
+## expression ORDRE expression
+##
+
+expression terminée: on attend soit un opérateur pour la prolonger, soit le symbole qui clôt le contexte courant (";", ")", ",", "=", "Alors", "Faire", "Fois", selon où l'on se trouve)
+
+programme: IF CHARS MULTIPLICATIF WHILE
+##
+## Ends in an error in state: 24.
+##
+## expression -> expression MULTIPLICATIF . expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+##
+## The known suffix of the stack is as follows:
+## expression MULTIPLICATIF
+##
+
+on attend une expression; un mot-clé d'instruction ne peut pas commencer une expression
+
+programme: IF CHARS MINUS WHILE
+##
+## Ends in an error in state: 26.
+##
+## expression -> expression MINUS . expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+##
+## The known suffix of the stack is as follows:
+## expression MINUS
+##
+
+on attend une expression; un mot-clé d'instruction ne peut pas commencer une expression
+
+programme: CHARS LPAREN CHARS COMA WHILE
+##
+## Ends in an error in state: 28.
+##
+## separated_nonempty_list(COMA,expression) -> expression COMA . separated_nonempty_list(COMA,expression) [ RPAREN RCROCHET ]
+##
+## The known suffix of the stack is as follows:
+## expression COMA
+##
+
+on attend une expression; un mot-clé d'instruction ne peut pas commencer une expression
+
+programme: IF CHARS ADDITIF WHILE
+##
+## Ends in an error in state: 30.
+##
+## expression -> expression ADDITIF . expression [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+##
+## The known suffix of the stack is as follows:
+## expression ADDITIF
+##
+
+on attend une expression; un mot-clé d'instruction ne peut pas commencer une expression
+
+programme: WHILE GENC LPAREN COLOR WHILE
+##
+## Ends in an error in state: 34.
+##
+## expression -> expression . ADDITIF expression [ RPAREN ORDRE MULTIPLICATIF MINUS ADDITIF ]
+## expression -> expression . MINUS expression [ RPAREN ORDRE MULTIPLICATIF MINUS ADDITIF ]
+## expression -> expression . MULTIPLICATIF expression [ RPAREN ORDRE MULTIPLICATIF MINUS ADDITIF ]
+## expression -> expression . ORDRE expression [ RPAREN ORDRE MULTIPLICATIF MINUS ADDITIF ]
+## option(expression) -> expression . [ RPAREN ]
+##
+## The known suffix of the stack is as follows:
+## expression
+##
+
+on attend ")" pour fermer l'argument de "GenC", ou un opérateur pour prolonger l'expression
+
+programme: WHILE GENN LPAREN CHARS RCROCHET
+##
+## Ends in an error in state: 35.
+##
+## minus_unaire_possible -> GENN LPAREN loption(separated_nonempty_list(COMA,expression)) . RPAREN [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+##
+## The known suffix of the stack is as follows:
+## GENN LPAREN loption(separated_nonempty_list(COMA,expression))
+##
+## WARNING: This example involves spurious reductions.
+## This implies that, although the LR(1) items shown above provide an
+## accurate view of the past (what has been recognized so far), they
+## may provide an INCOMPLETE view of the future (what was expected next).
+## In state 13, spurious reduction of production minus_unaire_possible -> CHARS
+## In state 15, spurious reduction of production expression -> minus_unaire_possible
+## In state 21, spurious reduction of production separated_nonempty_list(COMA,expression) -> expression
+## In state 18, spurious reduction of production loption(separated_nonempty_list(COMA,expression)) -> separated_nonempty_list(COMA,expression)
+##
+
+on attend ")" pour fermer les arguments de "GenN"
+
+programme: WHILE LCROCHET CHARS RPAREN
+##
+## Ends in an error in state: 37.
+##
+## expression -> LCROCHET loption(separated_nonempty_list(COMA,expression)) . RCROCHET [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+##
+## The known suffix of the stack is as follows:
+## LCROCHET loption(separated_nonempty_list(COMA,expression))
+##
+## WARNING: This example involves spurious reductions.
+## This implies that, although the LR(1) items shown above provide an
+## accurate view of the past (what has been recognized so far), they
+## may provide an INCOMPLETE view of the future (what was expected next).
+## In state 13, spurious reduction of production minus_unaire_possible -> CHARS
+## In state 15, spurious reduction of production expression -> minus_unaire_possible
+## In state 21, spurious reduction of production separated_nonempty_list(COMA,expression) -> expression
+## In state 18, spurious reduction of production loption(separated_nonempty_list(COMA,expression)) -> separated_nonempty_list(COMA,expression)
+##
+
+on attend "]" pour fermer la liste
+
+programme: WHILE LPAREN COLOR WHILE
+##
+## Ends in an error in state: 39.
+##
+## expression -> expression . ADDITIF expression [ RPAREN ORDRE MULTIPLICATIF MINUS ADDITIF ]
+## expression -> expression . MINUS expression [ RPAREN ORDRE MULTIPLICATIF MINUS ADDITIF ]
+## expression -> expression . MULTIPLICATIF expression [ RPAREN ORDRE MULTIPLICATIF MINUS ADDITIF ]
+## expression -> expression . ORDRE expression [ RPAREN ORDRE MULTIPLICATIF MINUS ADDITIF ]
+## minus_unaire_possible -> LPAREN expression . RPAREN [ THEN SEMICOLON RPAREN RCROCHET ORDRE MULTIPLICATIF MINUS MANY_TIMES EGALE DO COMA ADDITIF ]
+##
+## The known suffix of the stack is as follows:
+## LPAREN expression
+##
+
+on attend ")" pour fermer la parenthèse, ou un opérateur pour prolonger l'expression
+
+programme: WHILE COLOR WHILE
+##
+## Ends in an error in state: 43.
+##
+## expression -> expression . ADDITIF expression [ ORDRE MULTIPLICATIF MINUS DO ADDITIF ]
+## expression -> expression . MINUS expression [ ORDRE MULTIPLICATIF MINUS DO ADDITIF ]
+## expression -> expression . MULTIPLICATIF expression [ ORDRE MULTIPLICATIF MINUS DO ADDITIF ]
+## expression -> expression . ORDRE expression [ ORDRE MULTIPLICATIF MINUS DO ADDITIF ]
+## instruction -> WHILE expression . DO sous_bloc [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## WHILE expression
+##
+
+on attend "Faire" apres la condition du "Tant que", ou un opérateur
+
+programme: WHILE CHARS DO WHILE
+##
+## Ends in an error in state: 44.
+##
+## instruction -> WHILE expression DO . sous_bloc [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## WHILE expression DO
+##
+
+on attend "Debut" pour ouvrir le bloc du "Tant que ... Faire"
+
+programme: WHILE CHARS DO START VALBOOL
+##
+## Ends in an error in state: 45.
+##
+## sous_bloc -> START . bloc_instruction END [ SEMICOLON ELSE ]
+##
+## The known suffix of the stack is as follows:
+## START
+##
+
+on attend une instruction apres "Debut"; une valeur booléenne seule n'est pas une instruction
+
+programme: VAR WHILE
+##
+## Ends in an error in state: 46.
+##
+## instruction -> VAR . CHARS [ SEMICOLON ]
+## instruction -> VAR . CHARS EGALE expression [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## VAR
+##
+
+on attend un nom de variable apres "Var"
+
+programme: VAR CHARS WHILE
+##
+## Ends in an error in state: 47.
+##
+## instruction -> VAR CHARS . [ SEMICOLON ]
+## instruction -> VAR CHARS . EGALE expression [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## VAR CHARS
+##
+
+on attend ";" pour terminer la déclaration, ou "=" pour l'initialiser
+
+programme: VAR CHARS EGALE WHILE
+##
+## Ends in an error in state: 48.
+##
+## instruction -> VAR CHARS EGALE . expression [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## VAR CHARS EGALE
+##
+
+on attend une expression apres "="
+
+programme: VAR CHARS EGALE COLOR WHILE
+##
+## Ends in an error in state: 49.
+##
+## expression -> expression . ADDITIF expression [ SEMICOLON ORDRE MULTIPLICATIF MINUS ADDITIF ]
+## expression -> expression . MINUS expression [ SEMICOLON ORDRE MULTIPLICATIF MINUS ADDITIF ]
+## expression -> expression . MULTIPLICATIF expression [ SEMICOLON ORDRE MULTIPLICATIF MINUS ADDITIF ]
+## expression -> expression . ORDRE expression [ SEMICOLON ORDRE MULTIPLICATIF MINUS ADDITIF ]
+## instruction -> VAR CHARS EGALE expression . [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## VAR CHARS EGALE expression
+##
+
+on attend ";" pour terminer la déclaration, ou un opérateur
+
+programme: SIMPLE WHILE
+##
+## Ends in an error in state: 50.
+##
+## instruction -> SIMPLE . expression [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## SIMPLE
+##
+
+on attend une expression apres cette instruction
+
+programme: SIMPLE COLOR WHILE
+##
+## Ends in an error in state: 51.
+##
+## expression -> expression . ADDITIF expression [ SEMICOLON ORDRE MULTIPLICATIF MINUS ADDITIF ]
+## expression -> expression . MINUS expression [ SEMICOLON ORDRE MULTIPLICATIF MINUS ADDITIF ]
+## expression -> expression . MULTIPLICATIF expression [ SEMICOLON ORDRE MULTIPLICATIF MINUS ADDITIF ]
+## expression -> expression . ORDRE expression [ SEMICOLON ORDRE MULTIPLICATIF MINUS ADDITIF ]
+## instruction -> SIMPLE expression . [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## SIMPLE expression
+##
+
+on attend ";" pour terminer l'instruction, ou un opérateur
+
+programme: REPEAT WHILE
+##
+## Ends in an error in state: 52.
+##
+## instruction -> REPEAT . expression MANY_TIMES sous_bloc [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## REPEAT
+##
+
+on attend une expression apres "Repeter"
+
+programme: REPEAT COLOR WHILE
+##
+## Ends in an error in state: 53.
+##
+## expression -> expression . ADDITIF expression [ ORDRE MULTIPLICATIF MINUS MANY_TIMES ADDITIF ]
+## expression -> expression . MINUS expression [ ORDRE MULTIPLICATIF MINUS MANY_TIMES ADDITIF ]
+## expression -> expression . MULTIPLICATIF expression [ ORDRE MULTIPLICATIF MINUS MANY_TIMES ADDITIF ]
+## expression -> expression . ORDRE expression [ ORDRE MULTIPLICATIF MINUS MANY_TIMES ADDITIF ]
+## instruction -> REPEAT expression . MANY_TIMES sous_bloc [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## REPEAT expression
+##
+
+on attend "Fois" apres le nombre de répétitions, ou un opérateur
+
+programme: REPEAT CHARS MANY_TIMES WHILE
+##
+## Ends in an error in state: 54.
+##
+## instruction -> REPEAT expression MANY_TIMES . sous_bloc [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## REPEAT expression MANY_TIMES
+##
+
+on attend "Debut" pour ouvrir le bloc a repeter
+
+programme: IF WHILE
+##
+## Ends in an error in state: 56.
+##
+## instruction -> IF . expression THEN sous_bloc [ SEMICOLON ]
+## instruction -> IF . expression THEN sous_bloc ELSE sous_bloc [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## IF
+##
+
+on attend une expression apres "Si"
+
+programme: IF COLOR WHILE
+##
+## Ends in an error in state: 57.
+##
+## expression -> expression . ADDITIF expression [ THEN ORDRE MULTIPLICATIF MINUS ADDITIF ]
+## expression -> expression . MINUS expression [ THEN ORDRE MULTIPLICATIF MINUS ADDITIF ]
+## expression -> expression . MULTIPLICATIF expression [ THEN ORDRE MULTIPLICATIF MINUS ADDITIF ]
+## expression -> expression . ORDRE expression [ THEN ORDRE MULTIPLICATIF MINUS ADDITIF ]
+## instruction -> IF expression . THEN sous_bloc [ SEMICOLON ]
+## instruction -> IF expression . THEN sous_bloc ELSE sous_bloc [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## IF expression
+##
+
+on attend "Alors" apres la condition du "Si", ou un opérateur
+
+programme: IF CHARS THEN WHILE
+##
+## Ends in an error in state: 58.
+##
+## instruction -> IF expression THEN . sous_bloc [ SEMICOLON ]
+## instruction -> IF expression THEN . sous_bloc ELSE sous_bloc [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## IF expression THEN
+##
+
+on attend "Debut" pour ouvrir le bloc du "Alors"
+
+programme: IF CHARS THEN START END WHILE
+##
+## Ends in an error in state: 59.
+##
+## instruction -> IF expression THEN sous_bloc . [ SEMICOLON ]
+## instruction -> IF expression THEN sous_bloc . ELSE sous_bloc [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## IF expression THEN sous_bloc
+##
+
+on attend ";" pour terminer le "Si", ou "Sinon"
+
+programme: IF CHARS THEN START END ELSE WHILE
+##
+## Ends in an error in state: 60.
+##
+## instruction -> IF expression THEN sous_bloc ELSE . sous_bloc [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## IF expression THEN sous_bloc ELSE
+##
+
+on attend "Debut" pour ouvrir le bloc du "Sinon"
+
+programme: DEF WHILE
+##
+## Ends in an error in state: 63.
+##
+## instruction -> DEF . CHARS LPAREN loption(separated_nonempty_list(COMA,CHARS)) RPAREN sous_bloc [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## DEF
+##
+
+on attend un nom de fonction apres "Def"
+
+programme: DEF CHARS WHILE
+##
+## Ends in an error in state: 64.
+##
+## instruction -> DEF CHARS . LPAREN loption(separated_nonempty_list(COMA,CHARS)) RPAREN sous_bloc [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## DEF CHARS
+##
+
+on attend "(" apres le nom de la fonction
+
+programme: DEF CHARS LPAREN WHILE
+##
+## Ends in an error in state: 65.
+##
+## instruction -> DEF CHARS LPAREN . loption(separated_nonempty_list(COMA,CHARS)) RPAREN sous_bloc [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## DEF CHARS LPAREN
+##
+
+on attend un nom de parametre ou ")" pour une fonction sans parametre
+
+programme: DEF CHARS LPAREN CHARS WHILE
+##
+## Ends in an error in state: 66.
+##
+## separated_nonempty_list(COMA,CHARS) -> CHARS . [ RPAREN ]
+## separated_nonempty_list(COMA,CHARS) -> CHARS . COMA separated_nonempty_list(COMA,CHARS) [ RPAREN ]
+##
+## The known suffix of the stack is as follows:
+## CHARS
+##
+
+on attend "," pour un autre parametre, ou ")" pour terminer la liste des parametres
+
+programme: DEF CHARS LPAREN CHARS COMA WHILE
+##
+## Ends in an error in state: 67.
+##
+## separated_nonempty_list(COMA,CHARS) -> CHARS COMA . separated_nonempty_list(COMA,CHARS) [ RPAREN ]
+##
+## The known suffix of the stack is as follows:
+## CHARS COMA
+##
+
+on attend un nom de parametre apres ","
+
+programme: DEF CHARS LPAREN RPAREN WHILE
+##
+## Ends in an error in state: 71.
+##
+## instruction -> DEF CHARS LPAREN loption(separated_nonempty_list(COMA,CHARS)) RPAREN . sous_bloc [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## DEF CHARS LPAREN loption(separated_nonempty_list(COMA,CHARS)) RPAREN
+##
+
+on attend "Debut" pour ouvrir le corps de la fonction
+
+programme: CHARS WHILE
+##
+## Ends in an error in state: 73.
+##
+## instruction -> CHARS . EGALE expression [ SEMICOLON ]
+## instruction -> CHARS . LPAREN loption(separated_nonempty_list(COMA,expression)) RPAREN [ SEMICOLON ]
+## instruction -> CHARS . POINT expression EGALE expression [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## CHARS
+##
+
+on attend "=" pour une affectation, "(" pour un appel, ou "." pour un index
+
+programme: CHARS POINT WHILE
+##
+## Ends in an error in state: 74.
+##
+## instruction -> CHARS POINT . expression EGALE expression [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## CHARS POINT
+##
+
+on attend une expression apres "." pour designer l'index
+
+programme: CHARS POINT COLOR WHILE
+##
+## Ends in an error in state: 75.
+##
+## expression -> expression . ADDITIF expression [ ORDRE MULTIPLICATIF MINUS EGALE ADDITIF ]
+## expression -> expression . MINUS expression [ ORDRE MULTIPLICATIF MINUS EGALE ADDITIF ]
+## expression -> expression . MULTIPLICATIF expression [ ORDRE MULTIPLICATIF MINUS EGALE ADDITIF ]
+## expression -> expression . ORDRE expression [ ORDRE MULTIPLICATIF MINUS EGALE ADDITIF ]
+## instruction -> CHARS POINT expression . EGALE expression [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## CHARS POINT expression
+##
+
+on attend "=" apres l'index, ou un opérateur
+
+programme: CHARS POINT CHARS EGALE WHILE
+##
+## Ends in an error in state: 76.
+##
+## instruction -> CHARS POINT expression EGALE . expression [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## CHARS POINT expression EGALE
+##
+
+on attend une expression apres "=" pour la valeur a affecter
+
+programme: CHARS POINT CHARS EGALE COLOR WHILE
+##
+## Ends in an error in state: 77.
+##
+## expression -> expression . ADDITIF expression [ SEMICOLON ORDRE MULTIPLICATIF MINUS ADDITIF ]
+## expression -> expression . MINUS expression [ SEMICOLON ORDRE MULTIPLICATIF MINUS ADDITIF ]
+## expression -> expression . MULTIPLICATIF expression [ SEMICOLON ORDRE MULTIPLICATIF MINUS ADDITIF ]
+## expression -> expression . ORDRE expression [ SEMICOLON ORDRE MULTIPLICATIF MINUS ADDITIF ]
+## instruction -> CHARS POINT expression EGALE expression . [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## CHARS POINT expression EGALE expression
+##
+
+on attend ";" pour terminer l'affectation, ou un opérateur
+
+programme: CHARS LPAREN WHILE
+##
+## Ends in an error in state: 78.
+##
+## instruction -> CHARS LPAREN . loption(separated_nonempty_list(COMA,expression)) RPAREN [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## CHARS LPAREN
+##
+
+on attend une expression (les arguments), ou ")" pour un appel sans argument
+
+programme: CHARS LPAREN CHARS RCROCHET
+##
+## Ends in an error in state: 79.
+##
+## instruction -> CHARS LPAREN loption(separated_nonempty_list(COMA,expression)) . RPAREN [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## CHARS LPAREN loption(separated_nonempty_list(COMA,expression))
+##
+## WARNING: This example involves spurious reductions.
+## This implies that, although the LR(1) items shown above provide an
+## accurate view of the past (what has been recognized so far), they
+## may provide an INCOMPLETE view of the future (what was expected next).
+## In state 13, spurious reduction of production minus_unaire_possible -> CHARS
+## In state 15, spurious reduction of production expression -> minus_unaire_possible
+## In state 21, spurious reduction of production separated_nonempty_list(COMA,expression) -> expression
+## In state 18, spurious reduction of production loption(separated_nonempty_list(COMA,expression)) -> separated_nonempty_list(COMA,expression)
+##
+
+on attend ")" pour fermer les arguments de l'appel
+
+programme: CHARS EGALE WHILE
+##
+## Ends in an error in state: 81.
+##
+## instruction -> CHARS EGALE . expression [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## CHARS EGALE
+##
+
+on attend une expression apres "="
+
+programme: CHARS EGALE COLOR WHILE
+##
+## Ends in an error in state: 82.
+##
+## expression -> expression . ADDITIF expression [ SEMICOLON ORDRE MULTIPLICATIF MINUS ADDITIF ]
+## expression -> expression . MINUS expression [ SEMICOLON ORDRE MULTIPLICATIF MINUS ADDITIF ]
+## expression -> expression . MULTIPLICATIF expression [ SEMICOLON ORDRE MULTIPLICATIF MINUS ADDITIF ]
+## expression -> expression . ORDRE expression [ SEMICOLON ORDRE MULTIPLICATIF MINUS ADDITIF ]
+## instruction -> CHARS EGALE expression . [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## CHARS EGALE expression
+##
+
+on attend ";" pour terminer l'affectation, ou un opérateur
+
+programme: DRAW WHILE
+##
+## Ends in an error in state: 83.
+##
+## bloc_instruction -> instruction . SEMICOLON bloc_instruction [ EOF END ]
+##
+## The known suffix of the stack is as follows:
+## instruction
+##
+
+on attend ";" apres l'instruction
+
+programme: DRAW SEMICOLON VALBOOL
+##
+## Ends in an error in state: 84.
+##
+## bloc_instruction -> instruction SEMICOLON . bloc_instruction [ EOF END ]
+##
+## The known suffix of the stack is as follows:
+## instruction SEMICOLON
+##
+
+on attend une instruction; une valeur booléenne seule n'est pas une instruction
+
+programme: WHILE CHARS DO START DRAW SEMICOLON EOF
+##
+## Ends in an error in state: 86.
+##
+## sous_bloc -> START bloc_instruction . END [ SEMICOLON ELSE ]
+##
+## The known suffix of the stack is as follows:
+## START bloc_instruction
+##
+## WARNING: This example involves spurious reductions.
+## This implies that, although the LR(1) items shown above provide an
+## accurate view of the past (what has been recognized so far), they
+## may provide an INCOMPLETE view of the future (what was expected next).
+## In state 84, spurious reduction of production bloc_instruction ->
+## In state 85, spurious reduction of production bloc_instruction -> instruction SEMICOLON bloc_instruction
+##
+
+on attend "Fin" pour fermer le bloc "Debut ... Fin", ou une nouvelle instruction
+
+programme: DRAW SEMICOLON END
+##
+## Ends in an error in state: 90.
+##
+## programme -> bloc_instruction . EOF [ # ]
+##
+## The known suffix of the stack is as follows:
+## bloc_instruction
+##
+## WARNING: This example involves spurious reductions.
+## This implies that, although the LR(1) items shown above provide an
+## accurate view of the past (what has been recognized so far), they
+## may provide an INCOMPLETE view of the future (what was expected next).
+## In state 84, spurious reduction of production bloc_instruction ->
+## In state 85, spurious reduction of production bloc_instruction -> instruction SEMICOLON bloc_instruction
+##
+
+fin de fichier attendue; "Fin" est en trop, il manque peut-etre un bloc "Debut" correspondant
+

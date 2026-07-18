@@ -1,0 +1,18 @@
+Var str = < j'ai mange un flan >;
+Afficher str;
+Tourner 180;
+Avancer 50;
+Tourner -90;
+Avancer 100;
+Afficher <et maintenant il est absent>;
+Tourner 90;
+Avancer 50;
+Tourner -90;
+Avancer 100;
+Var flanIsGone = Vrais;
+Afficher flanIsGone;
+Tourner 90;
+Avancer 50;
+Tourner -90;
+Avancer 100;
+Afficher vert;

@@ -5,5 +5,5 @@ Tourner 120;
 CouleurPinceau bleu ;
 Avancer 50;
 Tourner 120;
-CouleurPinceau FF1493 ;
+CouleurPinceau 000000 ;
 Avancer 50;

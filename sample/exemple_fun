@@ -1,0 +1,13 @@
+Def foo (x, y)
+Debut
+Afficher (<foo>);
+Def bar (z)
+Debut
+Var a = x + y + z;
+Afficher (a);
+Fin;
+bar(3);
+Fin;
+
+foo(1,2);
+bar(7);

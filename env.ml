@@ -1,22 +1,62 @@
 open Ast 
 
-let (env:environnement) = ref []
-
 let rec already_declared name = function 
     | [] -> false     
-    | a :: otre -> match !a with (str,_) -> (if String.equal name str then true else already_declared name otre)
+    | l :: otre -> let rec aux y = match y with 
+                                | [] -> already_declared name otre
+                                | (str,_) :: _ when String.equal name str -> true
+                                |  _ :: otre -> aux otre
+                    in aux l
+
+let rec already_declared_fun name = function 
+        | [] -> false     
+        | l :: otre -> let rec aux y = match y with
+                                | [] -> already_declared_fun name otre
+                                | (str,_,_) :: _ when String.equal name str -> true 
+                                | _ :: otre -> aux otre
+                        in aux l
     
-and change_val name value = function
-                            | [] -> false
-                            | r :: otre -> match !r with 
-                                    | (a,_) -> if String.equal name a
-                                                then (r := (a, Some value) ; true)
-                                                else change_val name value otre    
 
-and flatten_spe (env:declared list) = match env with 
+let change_val name (value:value) (env:scope list) : (scope list* bool) = 
+        let rec aux_scope env was_change : scope list * bool = match env with
+                            | [] -> ([], was_change)
+                            | scope :: otre -> 
+                                    let rec aux_var y  = match y with 
+                                                    | [] -> None
+                                                    | (a,_) :: reste when String.equal name a -> Some( (a, Some value) :: reste)
+                                                    | var :: reste -> (match aux_var reste with
+                                                                        |None -> None
+                                                                        |Some thg -> Some (var :: thg))
+                            in (match aux_var scope with
+                                | Some scope' ->((scope' :: otre), true)
+                                | None ->  let (lst,b) = aux_scope otre was_change in  ((scope :: lst), b))
+                        in aux_scope env false
+                                
+
+let rec get_val name = function 
+                    | [] -> false,None
+                    | l :: otre -> let rec aux y = match y with 
+                                    | [] -> get_val name otre
+                                    | (a,b) :: _ when  String.equal a name -> true,b 
+                                    | _::z -> aux z
+                                    in aux l
+
+let rec  setVars (l:string list) = match l with 
                                 | [] -> []
-                                | r :: suite -> !r @ flatten_spe suite
+                                | str :: reste -> (str, None) :: setVars reste
 
-and get_val name = function 
-                    | [] -> None
-                    | r :: otre -> match !r with (a,b) -> if String.equal a name then b else get_val name otre
+let setFonction name pos (vars : (string * value option) list) argsValue : (string * value option) list =  
+        let rec aux a b  = match (a,b) with 
+                        | ([] , []) -> []
+                        | ((a,_) :: l , s :: m) -> (a,Some s) :: aux l m
+                        | (_::_, []) -> raise (ArgsMissingException (name, pos))
+                        | ([], _::_) -> raise (TooManyArgsException (name,pos))
+        in aux vars argsValue  
+
+
+let no_double args pos  = 
+        let rec aux acc liste = match liste with 
+                | [] -> ()
+                | str :: l -> if List.exists (fun arg -> String.equal arg str) acc then raise (AlreadyDeclaredVar (str,pos))
+                        else aux (str :: acc) l
+        in aux [] args

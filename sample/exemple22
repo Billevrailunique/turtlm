@@ -1,0 +1,3 @@
+Var a = GenN (10, 400);
+BaisserPinceau;
+Avancer a;

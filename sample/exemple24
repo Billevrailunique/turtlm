@@ -1,0 +1,4 @@
+Var couleur = bleu;
+Var check = Vrais Ou Faux Et Faux Ou Non Faux;
+BaisserPinceau;
+Si check Alors Debut CouleurPinceau couleur; Avancer 10; Fin;

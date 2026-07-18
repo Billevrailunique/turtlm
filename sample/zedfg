@@ -1,0 +1,7 @@
+Repeter 2 Fois
+Debut
+Var a = 12;
+Avancer a;
+Fin;
+
+Avancer b;

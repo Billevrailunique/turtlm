@@ -2,7 +2,7 @@ BaisserPinceau ;
 Var distance = 200;
 Tant que distance > 0 Faire
 Debut
-    Avancer distance ;
-    Tourner 90;
-    distance = distance - 10;
-Fin ;
+Avancer distance ;
+Tourner 90;
+distance = distance - 10;
+Fin;

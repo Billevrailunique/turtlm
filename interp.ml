@@ -3,89 +3,205 @@ open Env
 open Eval
 open Graphics
 
-let draw = ref false
-
-let val_angle = ref 90. 
-let angle () = !val_angle *. Float.pi /. 180. 
-
+let angle val_angle = val_angle *. Float.pi /. 180. 
 
 let init_graphics () = open_graph " 800x800";
         set_window_title "projet GAS6";
         set_line_width 1;
         set_color black;
         moveto 400 400
+        
+let rec decode bloc (state:state) =  let up_state =  {draw = state.draw; val_angle = state.val_angle; env = [] :: state.env; env_fun = [] :: state.env_fun; deep = state.deep; seed_init = false} in 
+    let rec carpeDiem state liste = match liste with 
+        | [] -> Continue state
+        | instr :: reste -> match next_action state instr with 
+                            | Continue s -> carpeDiem s reste 
+                            | Returned _ as r -> r
+    in  let pop_frame s =
+        let env = match s.env with
+            | _ :: tail -> tail 
+            | [] -> [] 
+    in let env_fun = match s.env_fun with 
+            | _ :: tail -> tail 
+            | [] -> [] 
+        in {s with env; env_fun} 
+    in match carpeDiem up_state bloc with
+        | Continue s -> Continue (pop_frame s)
+        | Returned (v,s) -> Returned (v, pop_frame s)
 
-let rec decode bloc = env := ref [] :: !env ;
-                debloc bloc;
-                match !env with 
-                    | _ :: l -> env := l
-                    | [] -> 
-                            begin
-                                Printf.eprintf "Erreur, dépiler env vide \n" ;
-                                exit 1
-                            end
 
-and debloc bloc =  match bloc with 
-                    | i :: suite -> next_action i; debloc suite
-                                    
-                    | [] -> ()
-
-and next_action = function
-    | Draw_on -> draw := true
-    | Draw_off -> draw := false
-    | Move (e,pos) -> let distance = eval_exp e in let a = angle () in 
+and next_action (state:Ast.state) instr : flow = match instr with
+    | Draw s -> let bool = String.equal s "BaisserPinceau" in Continue { state with draw = bool }
+    | Simple (s,e,pos) -> begin 
+        match s with 
+        | "Tourner" -> let val_val_angle, state = (eval_exp state ~decode e)in 
+                        Continue {state with val_angle = state.val_angle +. as_float(val_val_angle) pos} 
+        | "Avancer" -> let val_distance,state = (eval_exp state ~decode e) in 
+                let distance = as_float val_distance pos in  
+                let a = angle state.val_angle in 
                 let dx = (int_of_float (distance *. cos a)) in
-                let dy = (int_of_float (distance *. sin a)) 
-                 in if current_x () + dx <= size_x () && current_y () + dy <= size_y () then
-                     (if !draw then rlineto dx dy
-                        else rmoveto dx dy)
-                    else 
-                begin
-                    Printf.eprintf "Erreur curseur en dehors de l'écran à la ligne %d\n" pos.Lexing.pos_lnum;
-                    exit 1
-                end
-    | Turn e -> val_angle := !val_angle +. eval_exp e
-    | CouleurPinceau c -> let couleur = eval_couleur c in set_color couleur
-    | LargeurPinceau (e, pos) -> let value = int_of_float (eval_exp e) in if value < 878 then set_line_width value else
-                begin 
-                    Printf.eprintf "Erreur largeur pinceau trop grande à la ligne %d\n" pos.Lexing.pos_lnum;
-                    exit 1
-                    end
-    | VarDecla (name, pos) -> if not (already_declared name (flatten_spe !env)) then let a = ref (name, None) in 
-                                (match !env with 
-                                | vars :: _ -> vars := a :: !vars  
-                                | [] -> 
-                                    begin 
-                                        Printf.eprintf "Erreur, env n'est pas sencé être vide";
-                                        exit 1
-                                    end)
-                 
-                else begin
-                    Printf.eprintf "Erreur var %s already declared quand on arrive à la ligne %d\n" name pos.Lexing.pos_lnum;
-                    exit 1 
-                end
-    | VarDeclaInit (name, value, pos) -> if not (already_declared name (flatten_spe !env)) then let a = ref (name, Some (eval_exp value)) in 
-                                            (match !env with 
-                                            | vars :: _ -> vars := a :: !vars
-                                            | [] -> 
-                                                begin 
-                                                    Printf.eprintf "Erreur, env n'est pas sencé être vide";
-                                                    exit 1
-                                                end)
-                else begin
-                    Printf.eprintf "Erreur var %s already declared quand on arrive à la ligne %d\n" name pos.Lexing.pos_lnum;
-                    exit 1 
-                end
-    | VarInit (name, value, pos) -> let v = (eval_exp value) in if (change_val name v (flatten_spe !env)) then () else 
-                begin
-                    Printf.eprintf "Erreur var %s not declared yet quand on arrive à la ligne %d\n" name pos.Lexing.pos_lnum;
-                    exit 1 
-                end
-    | Repeat (x,i) -> let n = int_of_string x in for _ = 1 to n do 
-                        decode i
-                    done
-    | While (c,i) -> while (eval_bool c) do 
-                       decode i 
-                    done 
-    | IfThen (c,i) -> if eval_bool c then decode i 
-    | IfThenElse (c,i1,i2) -> if eval_bool c then decode i1 else decode i2
+                let dy = (int_of_float (distance *. sin a)) in 
+                let nx = current_x () + dx in 
+                let ny = current_y () + dy
+                 in if nx <= size_x () && ny <= size_y () && nx >= 0 && ny >= 0 then
+                     (if state.draw then (rlineto dx dy; Continue state)
+                        else (rmoveto dx dy;Continue state)) 
+                    else raise (OutOfBoundsCursor pos)
+        | "CouleurPinceau" -> let val_couleur,state = (eval_exp state ~decode e) in
+                                let couleur = as_color val_couleur pos in set_color couleur; Continue state
+        | "LargeurPinceau" -> let val_largeur,state = (eval_exp state ~decode e) in 
+                                let value = int_of_float (as_float val_largeur pos) in if value < 878 then (set_line_width value; Continue state) else raise (OutOfBoundsPencilWidth pos)
+        | "Afficher" -> let str,state = eval_exp state ~decode e in  draw_string (as_string str); Continue state
+        | "Retourn" -> let v,_ = eval_exp state ~decode e in Returned (v,state)
+        | _ -> assert false
+        end  
+
+    | VarDecla (name, _) -> let a = (name, None) in 
+                                (match state.env with 
+                                | vars :: other -> Continue {state with env = (a :: vars) :: other }  
+                                | [] -> raise EnvEmpty)
+    | VarDeclaInit (name, value, _) ->  let v,state = eval_exp state ~decode value in let a = (name, Some v) in 
+                                            (match state.env with 
+                                            | vars :: other -> Continue {state with env = (a :: vars) :: other }  
+                                            | [] -> raise EnvEmpty)
+    | VarInit (name, value, _) -> let (v,state) = eval_exp state ~decode value in 
+                                let env,_ = change_val name v state.env
+                                in Continue {state with env = env}
+    | Repeat (x,i,pos) -> let valuated,up_state = eval_exp state ~decode x in 
+                        let n = int_of_float (as_float valuated pos) in 
+                        if n < 0 then raise (NegativeRepeat pos) else 
+                        let rec repeat i state n = 
+                            if n == 0 then Continue state else
+                                match decode i state  with 
+                                    | Continue s -> repeat i s (n-1)
+                                    | Returned _ as r -> r 
+                            in repeat i up_state n
+    | While (c,i,pos) -> let rec tantque c state i = 
+                            let valuated,up_state = (eval_exp state ~decode c) in
+                            if as_bool valuated pos then 
+                                match decode i up_state with
+                                    | Continue s -> tantque c s i
+                                    | Returned _ as r -> r 
+                        else Continue state
+                        in tantque c state i 
+    | IfThen (c,i,pos) -> let condition,state = eval_exp state ~decode c in if (as_bool condition pos) then decode i state else Continue state
+    | IfThenElse (c,i1,i2,pos) -> let condition,state = eval_exp state ~decode c in if (as_bool condition pos) then decode i1 state  else decode i2 state 
+    | FunDecla (name, args, bloc, _) ->  let vs = setVars args in let a = (name, vs, bloc) in 
+                                (match state.env_fun with 
+                                | scope :: otre -> Continue {state with env_fun = (a :: scope) :: otre }  
+                                | [] -> raise EnvEmpty)
+    | ProcCall (name, argsValue, pos) -> let rec aux_env env = match env with 
+        | [] -> assert false
+        | scope :: otre ->
+            let rec aux_scope scope = match scope with   
+                |  (str, vars , instr) :: _ when String.equal str name 
+                            ->  
+                                let valuated,up_state = eval_list state ~decode argsValue in 
+                                let env = setFonction name pos vars valuated in 
+                                let call_state = {draw = up_state.draw; val_angle = up_state.val_angle; env = env :: up_state.env; env_fun = up_state.env_fun; seed_init = up_state.seed_init; deep = up_state.deep+1} in
+                                let finish s = 
+                                    let env = (match s.env with _ :: tail -> tail | [] -> []) in
+                                    Continue {s with env; deep = state.deep}
+                                in
+                                (match decode instr call_state with
+                                | Continue s     -> finish s
+                                | Returned (_,s) -> finish s)
+                | _ :: l -> aux_scope l
+                | [] -> aux_env otre 
+            in aux_scope scope
+        in aux_env state.env_fun
+
+    | Set (name,indice,valeur,pos) -> let indice,s = eval_exp state ~decode indice in let valeur,s = eval_exp s ~decode valeur in 
+                                        match get_val name s.env with 
+                                        | b,None -> if b then raise (NotYetInitVar (name, pos)) else raise (UnknownVar (name,pos))
+                                        | _,Some a -> match a with 
+                                                        |No
+                                                        | VFloat _
+                                                        | VBool _
+                                                        | VCool _
+                                                        | VText _
+                                                        | Unsure _ -> raise (ListWaited pos) 
+                                                        | Vliste l -> let up_l = let rec aux acc i = function
+                                                                        | [] -> List.rev acc
+                                                                        | _ :: l when i = 0 -> aux (valeur::acc) (i-1) l
+                                                                        | a :: l -> aux (a::acc) (i-1) l
+                                                                    in aux [] (int_of_float (as_float indice pos)) l
+                                                                in let env,_ = change_val name (Vliste up_l) s.env in Continue {state with env = env} 
+                                                        
+
+(*check le nombre de param aux fonction est correcte, que l'ordre dans lequel les var et les fonctions sont décla, init, used est correcte*)    
+
+let rec check (state:check_state) instr : check_state = match instr with
+    | ProcCall (name, argsValue, pos) -> if List.exists (String.equal name) state.black_list then state else if already_declared_fun name state.state.env_fun then 
+                                let rec aux_env env = match env with 
+                                        | [] -> raise (UnknownFun (name, pos))
+                                        | scope :: otre ->
+                                            let rec aux_scope scope = match scope with   
+                                                |  (str, vars , instr) :: _ when String.equal str name 
+                                                            ->  let in_state = List.fold_left (Eval.check check) state argsValue in 
+                                                                let valuated = List.map (fun _ -> No) argsValue in
+                                                                let env = setFonction name pos vars valuated in 
+                                                                let lil_state = {draw = in_state.state.draw; val_angle =in_state.state.val_angle; env = env :: in_state.state.env; env_fun = in_state.state.env_fun; seed_init = in_state.state.seed_init; deep = in_state.state.deep+1} in
+                                                                let in_state = {state = lil_state; black_list = name :: in_state.black_list} in 
+                                                                let in_state = List.fold_left check in_state instr in {state = state.state; black_list = in_state.black_list} 
+                                                | _ :: l -> aux_scope l
+                                                | [] -> aux_env otre 
+                                            in aux_scope scope
+                                        in aux_env state.state.env_fun 
+                                else raise (UnknownFun (name, pos))
+    | FunDecla (name, args, bloc, pos) -> if not (already_declared_fun name state.state.env_fun) 
+                                            then let vs = setVars args in let _ = no_double args pos in 
+                                            let a = (name, vs, bloc) in 
+                                            (match state.state.env_fun with 
+                                                | scope :: otre -> let lil_state = {state.state with env_fun = (a :: scope) :: otre } in {state = lil_state; black_list = state.black_list}
+                                                | [] ->  raise EnvEmpty)
+                                            else raise (AlreadyDeclaredFun (name, pos))
+    | VarDecla (name, pos) -> if not (already_declared name state.state.env)  then
+                                let a = (name, None) in 
+                                (match state.state.env with 
+                                    | scope :: otre -> let lil_state = {state.state with env = (a :: scope) :: otre} in {state = lil_state; black_list = state.black_list}
+                                    | [] -> raise EnvEmpty)
+                            else raise (AlreadyDeclaredVar (name,pos))
+    | VarDeclaInit (name, e , pos) -> if not (already_declared name state.state.env) then 
+                                        let v = No in 
+                                        let in_state = Eval.check (check) state e in   
+                                        let a = (name, Some v) in 
+                                            (match in_state.state.env with 
+                                                | scope :: otre -> let lil_state = { in_state.state with env = (a:: scope) :: otre} in {state = lil_state; black_list = in_state.black_list} 
+                                                | [] -> raise EnvEmpty)
+                                    else raise (AlreadyDeclaredVar (name, pos))
+    | VarInit (name, e , pos) -> let v = No in let in_state = Eval.check check state e in 
+                                let (env,check) = change_val name v state.state.env in 
+                                if check then {state = {in_state.state with env = env}; black_list = in_state.black_list} else raise (UnknownVar (name, pos))
+    
+    | Simple (s,e,pos) -> begin 
+        match s with  
+        | "Avancer" 
+        | "CouleurPinceau" 
+        | "LargeurPinceau" 
+        | "Tourner" 
+        | "Afficher"-> Eval.check check state e
+        | "Retourn" -> if state.state.deep > 0 then let in_state = Eval.check (check) state e in {state = state.state; black_list = in_state.black_list}
+                            else raise (OutOfContextReturn pos)
+        | _ -> assert false
+        end
+    | While (x,i,_)
+    | IfThen (x,i,_)
+    | Repeat (x,i,_) -> let in_state = Eval.check check state x in let in_state = List.fold_left check in_state i in {state = state.state; black_list = in_state.black_list}
+    | IfThenElse (x,i1,i2,_) -> 
+        let in_state = Eval.check check state x in 
+        let s1 = List.fold_left check in_state i1 in
+        let s2 = List.fold_left check in_state i2 in
+        { state = state.state; 
+        black_list = List.sort_uniq compare (s1.black_list @ s2.black_list) }
+     
+    | Set (name, indice, valeur, pos) -> 
+        if already_declared name state.state.env then
+            let in_state = Eval.check check state indice in
+            Eval.check check in_state valeur
+        else raise (UnknownVar (name, pos))
+    | _ -> state
+
+let pretraitement bloc = let lil_state = {draw = false; val_angle = 90.; env = [[]]; env_fun = [[]]; deep = 0;seed_init = false} in 
+                            List.fold_left check {state = lil_state; black_list = []} bloc
+                                

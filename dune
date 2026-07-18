@@ -1,9 +1,9 @@
 (executable
 	 (name main)
-   (modules main parser lexer ast env eval interp)
-	 (libraries graphics)) 
+   (modules main parser lexer ast env eval interp parserMessages printl)
+	 (libraries graphics unix menhirLib)) 
 (ocamllex (modules lexer))
 (menhir
   (modules parser)
   (infer true)
-  (flags --explain --dump))
+  (flags --explain --table))
