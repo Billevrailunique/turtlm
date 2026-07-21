@@ -5,17 +5,22 @@ open Ast
 %token EOF GENC GENN POINT MINUS LCROCHET RCROCHET COMA DEF RPAREN LPAREN SEMICOLON VAR EGALE IF THEN ELSE WHILE DO REPEAT MANY_TIMES START END NOT
 %token<string> CHARS TXT COLOR VALBOOL DRAW SIMPLE ADDITIF MULTIPLICATIF ORDRE
 
+(*déclaration de la prédéscence*)
 %left ADDITIF MINUS
 %left MULTIPLICATIF
 %nonassoc ORDRE
 %right NOT 
 %nonassoc POINT
 
+(*axiome de la grammaire*)
 %start<bloc_instruction> programme
 
+(*si erreur et que le lookahead montre une expression, la réduire -> meilleur message d'erreur*)
 %on_error_reduce expression
 
 %%
+
+(*règle*)
 
 programme: b=bloc_instruction EOF { b }
 

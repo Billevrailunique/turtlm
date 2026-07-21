@@ -3,14 +3,22 @@ open Env
 open Eval
 open Graphics
 
+(* float -> float
+retourne un angle en radian à partir d'un angle en degré  *)
 let angle val_angle = val_angle *. Float.pi /. 180. 
 
+(*unit -> unit
+appelé une fois en début de programme pour ouvrir la fenêtre et initialiser les paramètres*)
 let init_graphics () = open_graph " 800x800";
         set_window_title "projet GAS6";
         set_line_width 1;
         set_color black;
         moveto 400 400
         
+(*bloc_instruction -> state -> flow
+prend le state existant (de la dernière exécution par ex), incrémente le scope des var et des func
+et exécute une à une les instructions du bloc en sauvegardant le state entre les appels ou en propageant un return
+avant de dépiler le scope de var et de func*)
 let rec decode bloc (state:state) =  let up_state =  {draw = state.draw; val_angle = state.val_angle; env = [] :: state.env; env_fun = [] :: state.env_fun; deep = state.deep; seed_init = false} in 
     let rec carpeDiem state liste = match liste with 
         | [] -> Continue state
@@ -29,7 +37,8 @@ let rec decode bloc (state:state) =  let up_state =  {draw = state.draw; val_ang
         | Continue s -> Continue (pop_frame s)
         | Returned (v,s) -> Returned (v, pop_frame s)
 
-
+(*state -> instruction -> flow
+exécute une instruction, modifie le state si nécessaire *)
 and next_action (state:Ast.state) instr : flow = match instr with
     | Draw s -> let bool = String.equal s "BaisserPinceau" in Continue { state with draw = bool }
     | Simple (s,e,pos) -> begin 
@@ -104,7 +113,7 @@ and next_action (state:Ast.state) instr : flow = match instr with
                                     Continue {s with env; deep = state.deep}
                                 in
                                 (match decode instr call_state with
-                                | Continue s     -> finish s
+                                | Continue s -> finish s
                                 | Returned (_,s) -> finish s)
                 | _ :: l -> aux_scope l
                 | [] -> aux_env otre 
@@ -129,8 +138,9 @@ and next_action (state:Ast.state) instr : flow = match instr with
                                                                 in let env,_ = change_val name (Vliste up_l) s.env in Continue {state with env = env} 
                                                         
 
-(*check le nombre de param aux fonction est correcte, que l'ordre dans lequel les var et les fonctions sont décla, init, used est correcte*)    
-
+(*check_state -> instruction -> check_state 
+appelé pendant le prétraitement, n'exécute rien
+check le nombre de param aux fonction est correcte, que l'ordre dans lequel les var et les fonctions sont décla, init, used est correcte*)    
 let rec check (state:check_state) instr : check_state = match instr with
     | ProcCall (name, argsValue, pos) -> if List.exists (String.equal name) state.black_list then state else if already_declared_fun name state.state.env_fun then 
                                 let rec aux_env env = match env with 
@@ -202,6 +212,8 @@ let rec check (state:check_state) instr : check_state = match instr with
         else raise (UnknownVar (name, pos))
     | _ -> state
 
+(*bloc_instruction -> check_state
+initialise un state et lance check sur toutes les instructions du bloc*)
 let pretraitement bloc = let lil_state = {draw = false; val_angle = 90.; env = [[]]; env_fun = [[]]; deep = 0;seed_init = false} in 
                             List.fold_left check {state = lil_state; black_list = []} bloc
                                 

@@ -1,8 +1,10 @@
 
 (* This file was auto-generated based on "parser.messages". *)
-
+(*on y touche pas du coup*)
 (* Please note that the function [message] can raise [Not_found]. *)
 
+(*int -> string
+en fonction d'un numéros (celui de l'état du parse où une erreur s'est produit), on renvoie la string du message d'erreur correspondant*)
 let message =
   fun s ->
     match s with
