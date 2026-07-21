@@ -1,88 +1,74 @@
-#  TurtLM
+# TurtLM 
 
-> Interpréteur d'un langage de dessin, développé en OCaml.
+> Un langage de dessin style turtle, avec son interpréteur écrit en OCaml.
 
-## Présentation
+TurtLM permet de créer des dessins — du simple carré aux fractales et automates cellulaires — en pilotant un pinceau via un petit langage de programmation dédié : déplacements, rotations, conditions, boucles, fonctions récursives...
 
-TurtLM est un interpréteur pour un langage permettant de créer des dessins en manipulant une tortue virtuelle à l'aide d'instructions telles que les déplacements, rotations, structures conditionnelles, boucles et fonctions.
+Le langage est [**Turing-complet**](https://fr.wikipedia.org/wiki/Turing-complet) : Tout ce qui est calculable/programmable/dessinable peut être, en théorie, calculé/programmé/dessiné
 
-Le langage est Turing-complet.
+## Pourquoi ce projet ?
 
-Le lexer utilise OCamlLex. \
-Le parser utilise Menhir. \
-L'affichage est géré par la bibliothèque Graphics
+TurtLM n'est pas qu'un simple exécuteur de commandes de dessin : c'est un véritable petit langage de programmation, avec sa propre chaîne de compilation :
 
----
+- **Lexer** généré avec OCamlLex
+- **Parser** généré avec [Menhir](https://gallium.inria.fr/~fpottier/menhir/) ([grammaire](https://fr.wikipedia.org/wiki/Grammaire_non_contextuelle) LR)
+- **Interpréteur** qui évalue l'AST et pilote l'affichage via la bibliothèque `Graphics`
 
-# Fonctionnalités
+Le projet illustre concrètement les étapes classiques d'un interpréteur (analyse lexicale -> syntaxique -> prétraitement -> évaluation), tout en offrant un résultat visuel immédiat.
 
--  Mode interactif
--  Exécution depuis un fichier
--  Message d'erreur de syntaxe précis
--  Restauration après erreur (mode interactif uniquement)
+## Fonctionnalités
+
+-  Mode interactif (REPL) pour tester des instructions à la volée
+-  Exécution de programmes depuis un fichier
+-  Messages d'erreur de syntaxe précis (ligne, position, contexte)
+-  Restauration après erreur en mode interactif (fini l'arrachage de checveux après un ";" manquant)
+-  Boucles, conditions, fonctions récursives 
+
+## Exemples
+
+Le dossier [`sample/`](./sample) contient de nombreux programmes de démonstration, notamment :
+
+- une **fractale** (`sample/fractal`)
+![sample/fractal](image/fractal.png)
+- un **Gosper Glider Gun**, motif du [jeu de la vie de Conway](https://fr.wikipedia.org/wiki/Jeu_de_la_vie) (`sample/game_of_life`)
 
 
+![sample/game_of_life](image/gol.png)
 
----
+## Installation & compilation
 
-# Compilation
+Le projet utilise [Dune](https://dune.build/).
 
-Le projet utilise **Dune**.
+**Dépendances :** OCaml, Dune, Menhir, ocamllex, Graphics
 
 ```bash
 dune build
 ```
 
----
+## Utilisation
 
-# Exécution
-
-Exécuter un programme :
+**Exécuter un programme :**
 
 ```bash
 _build/default/main.exe sample/exemple1
 ```
 
-Mode interactif :
+**Mode interactif :**
 
 ```bash
 _build/default/main.exe
 ```
 
-Puis saisir les commandes du langage.
+Puis saisir directement les instructions du langage.
 
----
+## Tests
 
-# Exemples
-
-Le dossier `sample/` contient de nombreux programmes pour tester l'interpréteur, notamment une fractal (`sample/fractal`) et une simulation de Gosper Glider Gun du jeu de la vie de Conway (`sample/game_of_life`).
-
----
-
-# Dépendances
-
-- OCaml
-- Dune
-- Menhir
-- ocamllex
-- Graphics
-
-
----
-
-# Tests
-
-Le dépôt contient un script :
+Un script exécute l'ensemble des programmes de `sample/` et compare la sortie à celle attendue dans `sample_ans/` :
 
 ```bash
 ./test.sh
 ```
 
-exécutant un ensemble de programme de `sample/`avant de tester l'égalité avec la sortie erreur attandue dans `sample_ans/`.
-
-
----
-
-# Licence
+## Licence
 
 Projet académique.
