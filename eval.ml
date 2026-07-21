@@ -3,6 +3,8 @@ open Env
 open Graphics
 open Random 
 
+(*state -> ~decode -> expression -> value * state 
+évalue une expression (nombre, booléen, couleur, texte, liste) en une value et modifie le state si nécessaire (appel d'une procédure)*)
 let rec eval_exp (state:Ast.state) ~decode = function 
     | NumOrVarOrHexa (a,pos) -> 
          if is_id a 
@@ -80,6 +82,9 @@ let rec eval_exp (state:Ast.state) ~decode = function
             end 
             | None -> if flag then raise (NotYetInitVar (str, pos)) else raise (UnknownVar (str,pos)))
     | Liste l -> let l,s = eval_list state ~decode l in (Vliste l,s)
+
+(*position -> expression -> expression -> state -> ~decode -> op_bin -> value * state
+évalue une opération binaire entre 2 expressions après avoir évalué chaque partie*)
 and eval_op pos l r (state:state) ~decode = 
     let le,state = eval_exp state ~decode l in let re,state = eval_exp state ~decode r in 
     function 
@@ -105,18 +110,29 @@ and eval_op pos l r (state:state) ~decode =
         | ">=" -> VBool (as_float le pos >= as_float re pos),state
         | _ -> assert false 
     end 
-            
+  
+(*value -> position -> float 
+ouvre une value et s'attand à un float, erreur sinon*)
 and as_float (v:value) pos = match v with 
             | (VFloat a) -> a
             | (Unsure (a))-> (Float.of_string a)
             | _ -> raise (FloatWaited pos)
+
+(*value -> position -> bool 
+ouvre une value et s'attand à un bool, erreur sinon*)
 and as_bool (v:value) pos = match v with 
             | (VBool a)-> a
             | _ -> raise (BoolWaited pos)
+
+(*value -> position -> color
+ouvre une value et s'attand à un color, erreur sinon*)
 and as_color (v:value) pos = match v with 
             | (VCool a) -> a
             | (Unsure (v)) -> if is_hexa v then let v1 = int_of_string ("0X" ^ String.sub v 0 2 ) and v2 = int_of_string ("0X" ^ String.sub v 2 2 ) and v3 = int_of_string ("0X" ^ String.sub v 4 2 ) in rgb v1 v2 v3  else raise (ColorWaited pos)
             | _ -> raise (ColorWaited pos)
+
+(*value -> position -> string
+ouvre une value et retourne son string associé, n'échoue pas *)
 and as_string = function 
             | VText s -> String.sub s 1 ((String.length s) -2)
             | VBool b -> Bool.to_string b
@@ -129,12 +145,16 @@ and as_string = function
             | Vliste l -> String.concat "," (List.map as_string l) 
             |Unsure (a) ->  a
             
-
+(*state -> ~decode -> bloc_instruction -> value list * state
+évalue chaque expression d'une liste en propageant le state, renvoie la liste des values correspondante et le state final*)
 and eval_list (state:state) ~decode l :value list * state =let rec aux acc state = function 
     | [] -> List.rev acc,state
     | a :: l -> let valuated,state = (eval_exp state ~decode a) in aux (valuated::acc) state l 
     in let result,state = aux [] state l in result,state
 
+(* string -> bool
+check si un string ressemble à un nom de variable 
+true si commence par une minuscule et ne contient que des lettres et des chiffres*)
 and is_id str =
   let n = String.length str in
   if n = 0 then false
@@ -149,6 +169,9 @@ and is_id str =
     is_lowercase_alpha str.[0] &&
     String.for_all is_valid_char str
 
+(* string -> bool
+check si un string ressemble à une couleur en héxa  
+true si 6 caractères de type A-F ou 0-9*)
 and is_hexa str =
   String.length str = 6 &&
   String.for_all (fun c ->
@@ -156,6 +179,8 @@ and is_hexa str =
     (c >= 'A' && c <= 'F')
   ) str
 
+(*~Interp.check -> check_state -> expression -> check_state
+check si les var et les func ont été initialisé *)
 let rec check check_instr (state:check_state) e = match e with 
     | NumOrVarOrHexa (a,pos) -> 
          if is_id a 

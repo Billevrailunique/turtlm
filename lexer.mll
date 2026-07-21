@@ -3,8 +3,11 @@
   exception Error of string
 }
 
+(*espace et tabulation, a ignorer*)
 let layout = [ ' ' '\t' ]
+(*nombre, variable, couleur en héxa*)
 let chars = ['a'-'z' '0'-'9' 'A'-'Z']
+(*plain text *)
 let str = ['A'-'Z' '0'-'9' 'a'-'z' ' ' ''']+
 
 rule token = parse
@@ -18,20 +21,20 @@ rule token = parse
   | "Tourner" 
   | "Retourn"  
   | "LargeurPinceau" 
-  | "CouleurPinceau"  { SIMPLE (Lexing.lexeme lexbuf) } 
+  | "CouleurPinceau"  { SIMPLE (Lexing.lexeme lexbuf) }  (*instruction simple avec une expression derière *)
   | "Ou" 
-  | '+'  {ADDITIF (Lexing.lexeme lexbuf)}
+  | '+'  {ADDITIF (Lexing.lexeme lexbuf)}  (*opérateur à prédéscence (?) faible (le moins séparé pour gérer le moins unaire non associatif*)
   | '-' {MINUS}
   | "Et" 
   | "mod" 
   | '*' 
-  | '/' {MULTIPLICATIF (Lexing.lexeme lexbuf)}
+  | '/' {MULTIPLICATIF (Lexing.lexeme lexbuf)}  (*opérateur à prédéscence (?) forte *)
   | "==" 
   | "<="
   | ">=" 
   | "!=" 
   | "<" 
-  | ">"  {ORDRE (Lexing.lexeme lexbuf)}
+  | ">"  {ORDRE (Lexing.lexeme lexbuf)}   (*relation d'ordre*)
   | "vert" 
   | "blanc"
   | "bleu" 

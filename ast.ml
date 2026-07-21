@@ -1,3 +1,4 @@
+(*valeur sémantique renvoyé par le parse*)
 type bloc_instruction = instruction list
 and instruction = Draw of string
                 | Simple of string * expression * Lexing.position
@@ -26,34 +27,45 @@ and op_bin = Add of string
             | Mult of string
             | Ordre of string
 
+(*permet aux variables de pouvoir traiter plusieurs type*)
 type value =
     | VFloat of float
     | VBool of bool
     | VCool of Graphics.color
     | VText of string
-    | Unsure of string 
+    | Unsure of string     (*cas où ça peut être un nombre ou une couleur en héxa*)
     | Vliste of value list
     | No
 
+(*une var, c'est un nom (unique) et peut-être un valeur si ça a été initialisé*)
 type var = string * (value option)
+
+(*un scope est l'ensemble des variables accessibles localement*)
 type scope = var list
+
+(*une func, c'est un nom (unique), un scope (ses paramètres), et le bloc d'instruction à exécuter si on l'appele*)
 type fonction = (string * scope * bloc_instruction)
+
+(*scope des fonctions*)
 type scopeFun = fonction list     
 
+(*représente l'état d'un programme à un moment donnée *)
 type state = {
-    draw : bool;
-    val_angle : float;
-    env : scope list;
-    env_fun : scopeFun list;
+    draw : bool;   (*true : pinceau baissé; false :pinceau levé*)
+    val_angle : float;   (*angle en degré du pinceau (0 à droite)*)
+    env : scope list;     (*l'ensemble des variables accessibles*)
+    env_fun : scopeFun list;   (*l'ensemble des fonctions accessibles*)
     deep : int; (* 0 -> global ; > 0 -> dans une fonction *)
     seed_init : bool;
 }
 
+(*comme state mais uniquement pendant le prétraitement*)
 type check_state = {
     state : state;
-    black_list : string  list
+    black_list : string  list   (*liste des fonctions déjà rencontrés (donc déjà checkés) pour éviter la récursion infini*)
 }
 
+(*brise l'enchainement naturelle des instructions si on retourn une valeur*)
 type flow =
     | Continue of state
     | Returned of value * state
